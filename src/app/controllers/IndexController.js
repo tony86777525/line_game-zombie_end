@@ -1,15 +1,7 @@
-const presenter = require('./../presenters/index');
+const common = require('./CommonController');
 
 module.exports = async function App(context) {
-    // const view = require('/src/resources/views/index/index.js');
+    const view = require(common.route.view + 'index');
 
-
-    return textFlex;
+    return view;
 };
-
-async function textRandom() {
-    return presenter.messenger.randomMessageResponse;
-}
-async function textFlex(context) {
-    return presenter.messenger.flexMessageResponse(context);
-}
