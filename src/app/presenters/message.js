@@ -1,4 +1,5 @@
 const { sendText, random } = require('bottender-compose');
+const imagePath = 'https://fdb1-218-35-166-9.ngrok.io/';
 
 let result = {
     type: 'bubble',
@@ -50,135 +51,68 @@ async function randomMessageResponse() {
     ]);
 }
 
-async function setA() {
-    return this;
-}
-
 async function flexMessageResponse(context) {
+    let number = {
+        '1' : '一',
+        '2' : '二',
+        '3' : '三',
+        '4' : '四',
+        '5' : '五',
+        '6' : '六',
+        '7' : '七',
+        '8' : '八',
+        '9' : '九',
+    };
+    let contents = [];
+
+    for (let i = 1; i <= 9; i++) {
+        const content = {
+            "type": "bubble",
+            "direction": "ltr",
+            "header": {
+                "type": "box",
+                "layout": "horizontal",
+                "contents": [
+                    {
+                        "type": "text",
+                        "text": "數字" + number[i],
+                        "weight": "bold",
+                        "size": "xxl",
+                        "align": "center",
+                        "gravity": "center",
+                        "contents": []
+                    }
+                ]
+            },
+            "hero": {
+                "type": "image",
+                "url": imagePath + 'src/public/assets/img/game/numbers/' + i + '.jpg',
+                "size": "full",
+                "aspectRatio": "20:13",
+                "aspectMode": "fit",
+            },
+            "footer": {
+                "type": "box",
+                "layout": "horizontal",
+                "contents": [
+                    {
+                        "type": "button",
+                        "action": {
+                            "type": "postback",
+                            "label": "選擇號碼",
+                            "data": i
+                        }
+                    }
+                ]
+            }
+        };
+
+        contents.push(content);
+    }
+
     return context.replyFlex('123', {
         "type": "carousel",
-        "contents": [
-            {
-                "type": "bubble",
-                "direction": "ltr",
-                "header": {
-                    "type": "box",
-                    "layout": "horizontal",
-                    "contents": [
-                        {
-                            "type": "text",
-                            "text": "數字一",
-                            "weight": "bold",
-                            "size": "xxl",
-                            "align": "center",
-                            "gravity": "center",
-                            "contents": []
-                        }
-                    ]
-                },
-                "hero": {
-                    "type": "image",
-                    "url": "https://eaa1-61-216-67-131.ngrok.io/public/assets/img/game/numbers/0.jpg",
-                    "size": "full",
-                    "aspectRatio": "20:13",
-                    "aspectMode": "fit",
-                },
-                "footer": {
-                    "type": "box",
-                    "layout": "horizontal",
-                    "contents": [
-                        {
-                            "type": "button",
-                            "action": {
-                                "type": "postback",
-                                "label": "選擇號碼",
-                                "data": "1"
-                            }
-                        }
-                    ]
-                }
-            },
-            {
-                "type": "bubble",
-                "direction": "ltr",
-                "header": {
-                    "type": "box",
-                    "layout": "horizontal",
-                    "contents": [
-                        {
-                            "type": "text",
-                            "text": "數字二",
-                            "weight": "bold",
-                            "size": "xxl",
-                            "align": "center",
-                            "gravity": "center",
-                            "contents": []
-                        }
-                    ]
-                },
-                "hero": {
-                    "type": "image",
-                    "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_4_news.png",
-                    "size": "full",
-                    "aspectRatio": "20:13",
-                    "aspectMode": "fit",
-                },
-                "footer": {
-                    "type": "box",
-                    "layout": "horizontal",
-                    "contents": [
-                        {
-                            "type": "button",
-                            "action": {
-                                "type": "postback",
-                                "label": "選擇號碼",
-                                "data": "1"
-                            }
-                        }
-                    ]
-                }
-            },
-            {
-                "type": "bubble",
-                "direction": "ltr",
-                "header": {
-                    "type": "box",
-                    "layout": "horizontal",
-                    "contents": [
-                        {
-                            "type": "text",
-                            "text": "數字三",
-                            "weight": "bold",
-                            "size": "xxl",
-                            "align": "center",
-                            "gravity": "center",
-                            "contents": []
-                        }
-                    ]
-                },
-                "hero": {
-                    "type": "image",
-                    "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_4_news.png",
-                    "size": "full",
-                    "aspectRatio": "20:13",
-                    "aspectMode": "fit",
-                },
-                "footer": {
-                    "type": "box",
-                    "layout": "horizontal",
-                    "contents": [
-                        {
-                            "type": "button",
-                            "action": {
-                                "type": "postback",
-                                "label": "選擇號碼",
-                                "data": "1"
-                            }
-                        }
-                    ]
-                }
-            }
-        ]
+        "contents": contents
     });
 }
 
