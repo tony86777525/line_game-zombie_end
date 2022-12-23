@@ -66,14 +66,14 @@ class Message
         };
     }
 
-    _getFooterContent($actionText, $actionValue, $style = true)
+    _getFooterContent($style = true, $actionValue)
     {
         return {
             "type": "button",
             "style": false === $style ? 'secondary' : 'primary',
             "action": {
                 "type": "postback",
-                "label": $actionText,
+                "label": false === $style ? '已選擇號碼' : '選擇號碼',
                 "data": $actionValue
             }
         };
@@ -97,7 +97,7 @@ class Message
 
             content.header.contents.push(this._getHeaderContent("數字" + value));
             content.hero.url = this.imagePath + 'src/public/assets/img/game/numbers/' + key + '.jpg';
-            content.footer.contents.push(this._getFooterContent('選擇號碼', 'number' + key, $isUnSelected));
+            content.footer.contents.push(this._getFooterContent($isUnSelected, 'number' + key));
             contents.push(content);
         }
 
