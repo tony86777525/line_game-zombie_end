@@ -98,16 +98,27 @@ class Message
         };
     }
 
-    _getFooterContent($style = 'primary', $actionLabel = '', $actionValue)
+    _getFooterContent($style = 'primary', $actionLabel = '', $actionValue, $type = 'postback')
     {
-        return {
-            "type": "button",
-            "style": $style,
-            "action": {
+        let action = {};
+        if ('postback' === $type) {
+            action = {
                 "type": "postback",
                 "label": $actionLabel,
                 "data": $actionValue
-            },
+            };
+        } else if ('uri' === $type) {
+            action = {
+                "type": "uri",
+                "label": $actionLabel,
+                "uri": $actionValue
+            };
+        }
+
+        return {
+            "type": "button",
+            "style": $style,
+            "action": action,
             "margin": "md"
         };
     }
@@ -153,6 +164,19 @@ class Message
                 , false === $isUnSelected ? ' ' : `selectNumber=${key}`));
             contents.push(content);
         }
+
+        return contents;
+    }
+
+    getLiffContents($uri)
+    {
+        this.isContentTemplateBody = false;
+        this.isContentTemplateHero = false;
+        let contents = [];
+        const content = this._getContentTemplate();
+
+        content.footer.contents.push(this._getFooterContent('primary', '開啟LIFF', $uri, 'uri'));
+        contents.push(content);
 
         return contents;
     }

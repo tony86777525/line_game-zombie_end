@@ -204,15 +204,12 @@ async function setSelectedNumber(context) {
             $roles = $roleService.setUsers($users).getRoles();
             console.log($roles);
 
-            //
-            // for (let $number of $numbers) {
-            //     $roles.push({id: $number.id, role: 'a'});
-            // }
-            // if ($roles) {
-            //     $roles.push({id: 'robot', number: ($users.length + i)});
-            // }
-
-            return context.replyText('check role');
+            return context.replyFlex('123', {
+                    "type": "carousel",
+                    "contents": $messageService
+                        .getLiffContents(`https://liff.line.me/${process.env.LINE_LIFF_ID}`)
+                }
+            );
         } else {
             return context.replyFlex('123', {
                     "type": "carousel",
