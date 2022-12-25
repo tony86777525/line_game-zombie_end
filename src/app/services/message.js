@@ -5,6 +5,9 @@ class Message
         this.imagePath = undefined;
         this.selectNumber = undefined;
         this.selectedNumber = undefined;
+        this.isContentTemplateHeader = false;
+        this.isContentTemplateHero = false;
+        this.isContentTemplateBody = false;
     }
 
     setImagePath($imagePath)
@@ -30,27 +33,44 @@ class Message
 
     _getContentTemplate()
     {
-        return {
+        let $template = {
             "type": "bubble",
             "direction": "ltr",
-            "header": {
+        };
+
+        if (true === this.isContentTemplateHeader) {
+            $template['header'] = {
                 "type": "box",
-                "layout": "horizontal",
+                "layout": "vertical",
                 "contents": []
-            },
-            "hero": {
+            };
+        }
+
+        if (true === this.isContentTemplateBody) {
+            $template['body'] = {
+                "type": "box",
+                "layout": "vertical",
+                "contents": []
+            };
+        }
+
+        if (true === this.isContentTemplateHero) {
+            $template['hero'] = {
                 "type": "image",
                 "url": '',
                 "size": "full",
                 "aspectRatio": "20:13",
                 "aspectMode": "fit",
-            },
-            "footer": {
-                "type": "box",
-                "layout": "horizontal",
-                "contents": []
-            }
+            };
+        }
+
+        $template['footer'] = {
+            "type": "box",
+            "layout": "vertical",
+            "contents": []
         };
+
+        return $template;
     }
 
     _getHeaderContent($titleText)
@@ -66,38 +86,71 @@ class Message
         };
     }
 
-    _getFooterContent($style = true, $actionValue)
+    _getBodyContent($text)
+    {
+        return {
+            "type": "text",
+            "text": $text,
+            "weight": "bold",
+            "size": "md",
+            "align": "center",
+            "wrap": true
+        };
+    }
+
+    _getFooterContent($style = 'primary', $actionLabel = '', $actionValue)
     {
         return {
             "type": "button",
-            "style": false === $style ? 'secondary' : 'primary',
+            "style": $style,
             "action": {
                 "type": "postback",
-                "label": false === $style ? '已選擇號碼' : '選擇號碼',
+                "label": $actionLabel,
                 "data": $actionValue
-            }
+            },
+            "margin": "md"
         };
+    }
+
+    getNewGameContents($text)
+    {
+        this.isContentTemplateBody = true;
+        this.isContentTemplateHero = false;
+        let contents = [];
+        const content = this._getContentTemplate();
+
+        content.body.contents.push(this._getBodyContent($text));
+        content.footer.contents.push(this._getFooterContent('primary', '加入遊戲', 'join game'));
+        content.footer.contents.push(this._getFooterContent('primary', '開始遊戲', 'start game'));
+        contents.push(content);
+
+        return contents;
     }
 
     getSelectNumberContents()
     {
+        this.isContentTemplateHeader = true;
+        this.isContentTemplateHero = true;
+        this.isContentTemplateBody = false;
         let contents = [];
 
         if (undefined === this.selectNumber
             || undefined === this.imagePath) return contents;
-        const { find } = require('lodash');
 
         for (let key in this.selectNumber) {
             let value = this.selectNumber[key];
             let $isUnSelected = true;
-            const content = this._getContentTemplate()
+            const content = this._getContentTemplate(true);
 
             const { find } = require('lodash');
-            if (undefined !== find(this.selectedNumber, ['number', ('number' + key)])) $isUnSelected = false;
+            if (undefined !== find(this.selectedNumber, ['number', (`${key}`)])) $isUnSelected = false;
 
-            content.header.contents.push(this._getHeaderContent("數字" + value));
-            content.hero.url = this.imagePath + 'src/public/assets/img/game/numbers/' + key + '.jpg';
-            content.footer.contents.push(this._getFooterContent($isUnSelected, 'number' + key));
+            content.header.contents.push(this._getHeaderContent(`數字${value}`));
+            content.hero.url = `${this.imagePath}src/public/assets/img/game/numbers/${key}.jpg`;
+            content.footer.contents.push(this._getFooterContent(
+                false === $isUnSelected ? 'secondary' : 'primary'
+                , false === $isUnSelected ? '已選擇號碼' : '選擇號碼'
+                , false === $isUnSelected ? ' ' : `selectNumber=${key}`));
             contents.push(content);
         }
 

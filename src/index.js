@@ -1,17 +1,19 @@
-const { router, line} = require('bottender/router');
+const { router, line, text} = require('bottender/router');
 const IndexController = require('./app/controllers/IndexController');
 
 module.exports = async function App(context)
 {
     return router([
         line.postback((context) => {
-            return IndexController.setSelectedNumber
+            console.log(context.event.payload);
+            if ('join game' === context.event.payload) return IndexController.joinGame;
+            else if('start game' === context.event.payload) return IndexController.startGame;
+            else if(/^selectNumber=([\d]+)$/.test(context.event.payload)) return IndexController.setSelectedNumber;
         }),
         line.message((context) => {
-
             switch (context.event.text) {
-                case 'start game':
-                    return IndexController.getSelectNumber;
+                case 'new game':
+                    return IndexController.newGame;
                 case 'reset game':
                     return IndexController.resetGame;
                 case 'call db':
