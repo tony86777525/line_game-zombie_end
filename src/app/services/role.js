@@ -209,7 +209,7 @@ class Role
 
     getRoles()
     {
-        let $roles = [], $result = [];
+        let $roles = [];
 
         $roles = $roles.concat(this._getPeopleTemplate());
         $roles = $roles.concat(this._getInfectedTemplate());
@@ -217,13 +217,13 @@ class Role
 
         $roles = this._shuffle($roles);
 
-        for (let user of this.users) {
-            let $role = $roles.pop();
-            $role.id = user.id;
-            $result.push($role);
-        }
+        // for (let user of this.users) {
+        //     let $role = $roles.pop();
+        //     $role.id = user.id;
+        //     $result.push($role);
+        // }
 
-        return $result;
+        return $roles;
     }
 }
 

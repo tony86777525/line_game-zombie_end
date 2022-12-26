@@ -1,6 +1,3 @@
-<html>
-
-</html>
 <body>
 <button id="button">send test message</button>
 <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
@@ -39,6 +36,15 @@
         });
     }
 
+    // liff.getProfile().then(function (profile) {
+    //     const userId = profile.userId;
+    //     const name = profile.displayName;
+    //     const pictureUrl = profile.pictureUrl;
+    //     const statusMessage = profile.statusMessage;
+    // }).catch(function (error) {
+    //     console.log('error', err);
+    // });
+
     document.addEventListener('DOMContentLoaded', () => {
         fetch(`/send-id`)
             .then(reqResponse => reqResponse.json())
@@ -52,3 +58,4 @@
     });
 </script>
 </body>
+</html>

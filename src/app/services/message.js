@@ -4,10 +4,11 @@ class Message
     {
         this.imagePath = undefined;
         this.selectNumber = undefined;
-        this.selectedNumber = undefined;
+        this.roles = undefined;
         this.isContentTemplateHeader = false;
         this.isContentTemplateHero = false;
         this.isContentTemplateBody = false;
+        this.liffUri = `https://liff.line.me/${process.env.LINE_LIFF_ID}`;
     }
 
     setImagePath($imagePath)
@@ -27,6 +28,13 @@ class Message
     setSelectNumber($selectNumber)
     {
         this.selectNumber = $selectNumber;
+
+        return this;
+    }
+
+    setRoles($roles)
+    {
+        this.roles = $roles;
 
         return this;
     }
@@ -138,7 +146,7 @@ class Message
         return contents;
     }
 
-    getSelectNumberContents()
+    getJoinGameContents()
     {
         this.isContentTemplateHeader = true;
         this.isContentTemplateHero = true;
@@ -146,36 +154,54 @@ class Message
         let contents = [];
 
         if (undefined === this.selectNumber
-            || undefined === this.imagePath) return contents;
+            || undefined === this.imagePath
+            || undefined === this.roles) return contents;
 
-        for (let key in this.selectNumber) {
-            let value = this.selectNumber[key];
-            let $isUnSelected = true;
+        for (let key in this.roles) {
             const content = this._getContentTemplate(true);
-
+            let title = `數字${this.selectNumber[key]}`;
+            let $isUnSelected = true;
             const { find } = require('lodash');
-            if (undefined !== find(this.selectedNumber, ['number', (`${key}`)])) $isUnSelected = false;
+            if (undefined !== find(this.user, ['role_id', (`${key}`)])) $isUnSelected = false;
 
-            content.header.contents.push(this._getHeaderContent(`數字${value}`));
-            content.hero.url = `${this.imagePath}src/public/assets/img/game/numbers/${key}.jpg`;
+            content.header.contents.push(this._getHeaderContent(title));
+            content.hero.url = `${this.imagePath}src/public/assets/img/game/numbers/${parseInt(key) + 1}.jpg`;
             content.footer.contents.push(this._getFooterContent(
                 false === $isUnSelected ? 'secondary' : 'primary'
                 , false === $isUnSelected ? '已選擇號碼' : '選擇號碼'
-                , false === $isUnSelected ? ' ' : `selectNumber=${key}`));
+                , false === $isUnSelected ? `${this.liffUri}` : `${this.liffUri}?type=role&role=${key}`
+                , 'uri'));
+
             contents.push(content);
         }
+        // for (let key in this.selectNumber) {
+        //     let value = this.selectNumber[key];
+        //     let $isUnSelected = true;
+        //     const content = this._getContentTemplate(true);
+        //
+        //     const { find } = require('lodash');
+        //     if (undefined !== find(this.selectedNumber, ['number', (`${key}`)])) $isUnSelected = false;
+        //
+        //     content.header.contents.push(this._getHeaderContent(`數字${value}`));
+        //     content.hero.url = `${this.imagePath}src/public/assets/img/game/numbers/${key}.jpg`;
+        //     content.footer.contents.push(this._getFooterContent(
+        //         false === $isUnSelected ? 'secondary' : 'primary'
+        //         , false === $isUnSelected ? '已選擇號碼' : '選擇號碼'
+        //         , false === $isUnSelected ? ' ' : `selectNumber=${key}`));
+        //     contents.push(content);
+        // }
 
         return contents;
     }
 
-    getLiffContents($uri)
+    getLiffContents()
     {
         this.isContentTemplateBody = false;
         this.isContentTemplateHero = false;
         let contents = [];
         const content = this._getContentTemplate();
 
-        content.footer.contents.push(this._getFooterContent('primary', '開啟LIFF', $uri, 'uri'));
+        content.footer.contents.push(this._getFooterContent('primary', '開啟LIFF', this.liffUri, 'uri'));
         contents.push(content);
 
         return contents;

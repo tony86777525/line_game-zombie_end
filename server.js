@@ -28,8 +28,12 @@ app.prepare().then(() => {
     });
 
     server.get('/liff', (req, res) => {
-        const filename = path.join(`${__dirname}/liff.html`);
-        res.sendFile(filename);
+        if ('role' === req.query.type) {
+            res.sendFile(path.join(`${__dirname}/src/liff/role.html`));
+        } else {
+            res.sendFile(path.join(`${__dirname}/src/liff/index.html`));
+        }
+
     });
 
     // delegate other requests to bottender
