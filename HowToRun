@@ -1,11 +1,15 @@
 ngrok authtoken 271RkV6s4ir6KHpTTkLuBuSqknF_6WoXLhQZbctxzd2bcHztb
 ngrok authtoken 2JAMGwLuLKk3zmTycwXw4ISMzmA_2kdWkSjJbWjW97aorQ2Xx
 
+公司
+ngrok authtoken 2JTi4AHyKiNmXkzPaLV94bsHVEO_7Dn8nTLbot17GsD4P5uSn
+https://ecaa-61-216-67-131.ngrok.io
+
 
 LINE_ACCESS_TOKEN=tOgpxTd2rrzhk1YjjPoIuTF6WYSLyI/UNbtO+HTs+76Up0olgwRFIM9A0ltFSUtCjdIdNYh2EMhNRmiu1Dr7NBBzWEQnwkLo/7+bCB/6X9j7xu9O4W4H3L96HeaxvdLf4ZcZYW1UcT/TPsWV43xx6wdB04t89/1O/w1cDnyilFU=
 LINE_CHANNEL_SECRET=476b41306ca8f8c9b4c5342b01ddfcd1
 LINE_LIFF_ID=1657767763-EAy7jRKP
-
+ROOT_PATH=https://6570-61-216-67-131.ngrok.io
 
 npm run dev
 npx ngrok http 5000

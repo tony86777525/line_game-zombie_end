@@ -1,118 +1,54 @@
 <!DOCTYPE html>
 <html lang="zh-Hant-TW">
 <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>末日危機</title>
-    <style>
-        .role {
-            width: 100vw;
-            height: 100vh;
-        }
-        .role__image {
-            position: relative;
-            width: 100%;
-            display: flex;
-            display: -webkit-box;
-            display: -ms-flexbox;
-            display: flex;
-            -webkit-box-orient: horizontal;
-            -webkit-box-direction: normal;
-            -ms-flex-direction: row;
-            flex-direction: row;
-            -webkit-box-align: start;
-            -ms-flex-align: start;
-            align-items: flex-start;
-            -ms-flex-wrap: wrap;
-            flex-wrap: wrap;
-        }
-        .role__image:after {
-            background: rgba(0, 0, 0, 0.7);
-            content: '';
-            width: 100%;
-            height: 100%;
-            position: absolute;
-        }
-        .role__image__number {
-            width: calc(100% / 5);
-        }
-        .role__image__role {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 1;
-            width: auto;
-            height: 100%;
-        }
-        img {
-            display: block;
-            width: 100%;
-            height: 100%;
-            -o-object-fit: cover;
-            object-fit: cover;
-        }
+    <link rel="stylesheet" href="/assets/css/role.css">
 
-        .role__description__text {
-            font-size: 3rem;
-            font-weight: bold;
-        }
-        .role__action {
-            width: 100%;
-            position: absolute;
-            bottom: 0;
-            display: flex;
-        }
-        .role__action__button {
-            font-size: 5rem;
-            line-height: 30rem;
-            color: #000000;
-            font-weight: bold;
-            display: table;
-            width: 100%;
-            border-radius: 0px;
-            text-align: center;
-            -webkit-transition: all 0.3s;
-            transition: all 0.3s;
-            -webkit-box-shadow: 0 0px 10px #000;
-            box-shadow: 0 0px 10px #000;
-        }
-    </style>
+    <script>
+        const params = <%- JSON.stringify(params) %>;
+        const rootPath = '<%- rootPath %>';
+        console.log(params);
+        console.log(rootPath);
+    </script>
 </head>
 <body>
 <section class="role">
     <div class="role__image">
         <div class="role__image__number">
-            <img src="https://db2a-218-35-166-9.ngrok.io/src/public/assets/img/game/numbers/1.jpg">
+            <img src="/assets/img/game/numbers/1.jpg">
         </div>
         <div class="role__image__number">
-            <img src="https://db2a-218-35-166-9.ngrok.io/src/public/assets/img/game/numbers/2.jpg">
+            <img src="/assets/img/game/numbers/2.jpg">
         </div>
         <div class="role__image__number">
-            <img src="https://db2a-218-35-166-9.ngrok.io/src/public/assets/img/game/numbers/3.jpg">
+            <img src="/assets/img/game/numbers/3.jpg">
         </div>
         <div class="role__image__number">
-            <img src="https://db2a-218-35-166-9.ngrok.io/src/public/assets/img/game/numbers/4.jpg">
+            <img src="/assets/img/game/numbers/4.jpg">
         </div>
         <div class="role__image__number">
-            <img src="https://db2a-218-35-166-9.ngrok.io/src/public/assets/img/game/numbers/5.jpg">
+            <img src="/assets/img/game/numbers/5.jpg">
         </div>
         <div class="role__image__number">
-            <img src="https://db2a-218-35-166-9.ngrok.io/src/public/assets/img/game/numbers/6.jpg">
+            <img src="/assets/img/game/numbers/6.jpg">
         </div>
         <div class="role__image__number">
-            <img src="https://db2a-218-35-166-9.ngrok.io/src/public/assets/img/game/numbers/7.jpg">
+            <img src="/assets/img/game/numbers/7.jpg">
         </div>
         <div class="role__image__number">
-            <img src="https://db2a-218-35-166-9.ngrok.io/src/public/assets/img/game/numbers/8.jpg">
+            <img src="/assets/img/game/numbers/8.jpg">
         </div>
         <div class="role__image__number">
-            <img src="https://db2a-218-35-166-9.ngrok.io/src/public/assets/img/game/numbers/9.jpg">
+            <img src="/assets/img/game/numbers/9.jpg">
         </div>
         <div class="role__image__number">
-            <img src="https://db2a-218-35-166-9.ngrok.io/src/public/assets/img/game/numbers/0.jpg">
+            <img src="/assets/img/game/numbers/0.jpg">
         </div>
-        
+
         <div class="role__image__role">
-            <img src="https://db2a-218-35-166-9.ngrok.io/src/public/assets/img/game/roles/doctor.png">
+            <img src="/assets/img/game/roles/doctor.png">
         </div>
     </div>
     <div class="role__description">
@@ -126,72 +62,6 @@
 </section>
 
 <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
-<script>
-    function initializeLiff(myLiffId) {
-        liff.init({
-            liffId: myLiffId,
-        }).then(() => {
-            if (!liff.isLoggedIn()) {
-                alert("用戶未登入");
-                liff.login();
-            } else {
-                alert("用戶已登入");
-                liff.getProfile()
-                    .then(profile => {
-                        const name = profile.displayName
-                    })
-                    .catch((err) => {
-                        console.log('error', err);
-                    });
-            }
-            setButtonHandler();
-        }).catch(err => {
-            console.log('初始化失敗')
-        });
-
-        // liff.getProfile().then(function (profile) {
-        //     const userId = profile.userId;
-        //     const name = profile.displayName;
-        //     const pictureUrl = profile.pictureUrl;
-        //     const statusMessage = profile.statusMessage;
-        //     console.log(userId);
-        // }).catch(function (error) {
-        //     console.log('error', err);
-        // });
-    }
-
-    function setButtonHandler() {
-        let button = document.getElementById('button');
-        button.addEventListener('click', () => {
-            window.alert('clicked: sendMessages');
-            liff
-                .sendMessages([
-                    {
-                        type: 'text',
-                        text: 'Hello, LIFF!',
-                    },
-                ])
-                .then(() => {
-                    alert('message sent');
-                    liff.closeWindow();
-                })
-                .catch(err => {
-                    window.alert('Error sending message: ' + err);
-                });
-        });
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        fetch(`/send-id`)
-            .then(reqResponse => reqResponse.json())
-            .then(jsonResponse => {
-                let myLiffId = jsonResponse.id;
-                initializeLiff(myLiffId);
-            })
-            .catch(err => {
-                alert(`error: ${JSON.stringify(err)}`);
-            });
-    });
-</script>
+<script src="/assets/js/role.js"></script>
 </body>
 </html>

@@ -128,7 +128,6 @@ async function startGame(context) {
 //             return context.replyFlex('123', {
 //                     "type": "carousel",
 //                     "contents": $messageService
-//                         .setImagePath(gameConfig.imagePath)
 //                         .setSelectNumber(Object.keys(gameConfig.selectNumber)
 //                             .filter(number => number <= $users.length)
 //                             .reduce((obj, key) => {
@@ -245,7 +244,6 @@ function _startGame(context) {
         context.replyFlex('123', {
             "type": "carousel",
             "contents": $messageService
-                .setImagePath(gameConfig.imagePath)
                 .setSelectNumber(Object.keys(gameConfig.selectNumber)
                     .filter(number => number <= $users.length)
                     .reduce((obj, key) => {

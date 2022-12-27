@@ -2,20 +2,13 @@ class Message
 {
     constructor()
     {
-        this.imagePath = undefined;
+        this.imagePath = `${process.env.ROOT_PATH}`;
         this.selectNumber = undefined;
         this.roles = undefined;
         this.isContentTemplateHeader = false;
         this.isContentTemplateHero = false;
         this.isContentTemplateBody = false;
         this.liffUri = `https://liff.line.me/${process.env.LINE_LIFF_ID}`;
-    }
-
-    setImagePath($imagePath)
-    {
-        this.imagePath = $imagePath;
-
-        return this;
     }
 
     setSelectedNumber($selectedNumber)
@@ -152,9 +145,7 @@ class Message
         this.isContentTemplateHero = true;
         this.isContentTemplateBody = false;
         let contents = [];
-
         if (undefined === this.selectNumber
-            || undefined === this.imagePath
             || undefined === this.roles) return contents;
 
         for (let key in this.roles) {
@@ -165,7 +156,7 @@ class Message
             if (undefined !== find(this.user, ['role_id', (`${key}`)])) $isUnSelected = false;
 
             content.header.contents.push(this._getHeaderContent(title));
-            content.hero.url = `${this.imagePath}src/public/assets/img/game/numbers/${parseInt(key) + 1}.jpg`;
+            content.hero.url = `${this.imagePath}/assets/img/game/numbers/${parseInt(key) + 1}.jpg`;
             content.footer.contents.push(this._getFooterContent(
                 false === $isUnSelected ? 'secondary' : 'primary'
                 , false === $isUnSelected ? '已選擇號碼' : '選擇號碼'
