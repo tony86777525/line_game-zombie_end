@@ -8,7 +8,7 @@ module.exports = async function App(context)
             console.log(context.event.payload);
             if ('join game' === context.event.payload) return IndexController.joinGame;
             else if('start game' === context.event.payload) return IndexController.startGame;
-            // else if(/^role=([\d]+)$/.test(context.event.payload)) return IndexController.setSelectedNumber;
+            else if(/^role=([\d]+)$/.test(context.event.payload)) return IndexController.setRole;
         }),
         line.message((context) => {
             switch (context.event.text) {

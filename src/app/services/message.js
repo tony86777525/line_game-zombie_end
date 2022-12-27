@@ -11,13 +11,6 @@ class Message
         this.liffUri = `https://liff.line.me/${process.env.LINE_LIFF_ID}`;
     }
 
-    setSelectedNumber($selectedNumber)
-    {
-        this.selectedNumber = $selectedNumber;
-
-        return this;
-    }
-
     setSelectNumber($selectNumber)
     {
         this.selectNumber = $selectNumber;
@@ -160,39 +153,24 @@ class Message
             content.footer.contents.push(this._getFooterContent(
                 false === $isUnSelected ? 'secondary' : 'primary'
                 , false === $isUnSelected ? '已選擇號碼' : '選擇號碼'
-                , false === $isUnSelected ? `${this.liffUri}` : `${this.liffUri}?type=role&role=${key}`
-                , 'uri'));
+                , false === $isUnSelected ? ' ' : `role=${key}`));
 
             contents.push(content);
         }
-        // for (let key in this.selectNumber) {
-        //     let value = this.selectNumber[key];
-        //     let $isUnSelected = true;
-        //     const content = this._getContentTemplate(true);
-        //
-        //     const { find } = require('lodash');
-        //     if (undefined !== find(this.selectedNumber, ['number', (`${key}`)])) $isUnSelected = false;
-        //
-        //     content.header.contents.push(this._getHeaderContent(`數字${value}`));
-        //     content.hero.url = `${this.imagePath}src/public/assets/img/game/numbers/${key}.jpg`;
-        //     content.footer.contents.push(this._getFooterContent(
-        //         false === $isUnSelected ? 'secondary' : 'primary'
-        //         , false === $isUnSelected ? '已選擇號碼' : '選擇號碼'
-        //         , false === $isUnSelected ? ' ' : `selectNumber=${key}`));
-        //     contents.push(content);
-        // }
 
         return contents;
     }
 
-    getLiffContents()
+    getRoleLiffContents()
     {
         this.isContentTemplateBody = false;
         this.isContentTemplateHero = false;
         let contents = [];
         const content = this._getContentTemplate();
 
-        content.footer.contents.push(this._getFooterContent('primary', '開啟LIFF', this.liffUri, 'uri'));
+        content.footer.contents.push(this._getFooterContent('primary', '開啟LIFF'
+            , `${this.liffUri}?type=role`
+            , 'uri'));
         contents.push(content);
 
         return contents;

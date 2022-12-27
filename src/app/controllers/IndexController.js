@@ -17,6 +17,7 @@ module.exports = {
     newGame: newGame,
     joinGame: joinGame,
     startGame: startGame,
+    setRole: setRole,
     resetGame: resetGame,
     callDB: callDB,
     index: index,
@@ -55,8 +56,7 @@ async function joinGame(context) {
     let $mappings = find($users, ['id', userId]);
 
     if (undefined !== $mappings)return context.replyText(`${displayName}已加入，請稍待遊戲開始！`);
-    //
-    if (undefined === $mappings) {
+    else {
         $users.push({
             id: userId,
             type: gameConfig.user.type.user,
@@ -89,58 +89,61 @@ async function startGame(context) {
     return _startGame(context);
 }
 
-// async function setSelectedNumber(context) {
-//     const { find } = require('lodash');
-//     const $data = context.event.payload;
-//     const [, $role] = $data.split('=');
-//     const $userId = context.session.user.id;
-//     let $messageService = new messageService;
-//     let $getSelectedNumbersTarget = db.map[tableNameSelectedNumber].groups;
-//     let $targetId;
-//
-//     if (undefined !== context.session.group) {
-//         // group message
-//         $targetId = context.session.group.id;
-//     } else if (undefined !== context.session.user) {
-//         // user message
-//         $targetId = context.session.user.id;
-//     }
-//
-//     let $users = $getSelectedNumbersTarget[$targetId].users;
-//     let $mappings = find($users, ($user) => {
-//         if (($user.id === $userId && $user.role_id !== '') || $user.role_id === $role) {
-//             return true;
-//         }
-//     });
-//
-//     // 如果曾經有任何關於這個關鍵字的紀錄
-//     if (undefined !== $mappings) return context.replyText('已選擇過數字，請稍待遊戲開始！');
-//     else {
-//         // start game
-//         if ($users.filter($user => $user.type === gameConfig.user.type.user && $user.role !== '').length > 0) {
-//             return context.replyFlex('123', {
-//                     "type": "carousel",
-//                     "contents": $messageService
-//                         .getLiffContents(`https://liff.line.me/${process.env.LINE_LIFF_ID}`)
-//                 }
-//             );
-//         } else {
-//             return context.replyFlex('123', {
-//                     "type": "carousel",
-//                     "contents": $messageService
-//                         .setSelectNumber(Object.keys(gameConfig.selectNumber)
-//                             .filter(number => number <= $users.length)
-//                             .reduce((obj, key) => {
-//                                 obj[key] = gameConfig.selectNumber[key];
-//                                 return obj;
-//                             }, {}))
-//                         .setSelectedNumber($users)
-//                         .getJoinGameContents()
-//                 }
-//             );
-//         }
-//     }
-// }
+async function setRole(context) {
+    const $data = context.event.payload;
+    const [, $roleId] = $data.split('=');
+    const $userId = context.session.user.id;
+    let $messageService = new messageService;
+    let $getGroup = db.map[tableNameSelectedNumber].groups;
+    let $targetId;
+
+    if (undefined !== context.session.group) {
+        // group message
+        $targetId = context.session.group.id;
+    } else if (undefined !== context.session.user) {
+        // user message
+        $targetId = context.session.user.id;
+    }
+
+    let $users = $getGroup[$targetId].users;
+
+    let $mappings = find($users, ($user) => {
+        if (($user.id === $userId && $user.role_id !== '') || $user.role_id === $roleId) {
+            return true;
+        }
+    });
+
+    // 如果曾經有任何關於這個關鍵字的紀錄
+    if (undefined !== $mappings) return context.replyText('已選擇過數字，請稍待遊戲開始！');
+    else {
+        const $userKey = findKey($users, ['id', $userId]);
+        $users[$userKey].role_id = $roleId;
+
+        // start game
+        if ($users.filter($user => $user.type === gameConfig.user.type.user && $user.role !== '').length > 0) {
+            return context.replyFlex('123', {
+                    "type": "carousel",
+                    "contents": $messageService.getRoleLiffContents()
+                }
+            );
+        } else {
+            let $roles = $getGroup[$targetId].roles;
+            return context.replyFlex('123', {
+                    "type": "carousel",
+                    "contents": $messageService
+                        .setSelectNumber(Object.keys(gameConfig.selectNumber)
+                            .filter(number => number <= $users.length)
+                            .reduce((obj, key) => {
+                                obj[key] = gameConfig.selectNumber[key];
+                                return obj;
+                            }, {}))
+                        .setRoles($roles)
+                        .getJoinGameContents()
+                }
+            );
+        }
+    }
+}
 
 async function getCheckRole(context) {
     const { getClient } = require('bottender');
