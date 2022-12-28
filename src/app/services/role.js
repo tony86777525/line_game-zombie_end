@@ -1,16 +1,15 @@
 class Role
 {
     constructor() {
-        this.imagePath = undefined;
         this.users = [];
         this.userCount = 5;
-    }
-
-    setImagePath($imagePath)
-    {
-        this.imagePath = $imagePath;
-
-        return this;
+        this.dogId = 12;
+        this.doctorId = 13;
+        this.policeId = 14;
+        this.immunityId = 15;
+        this.infectedId = [7, 8, 9, 10];
+        this.pathogenId = 11;
+        this.peopleId = [1, 2, 3, 4, 5, 6];
     }
 
     setUsers($users)
@@ -46,43 +45,17 @@ class Role
         };
         let getCount = getCountByUserCount[this.userCount] - 1;
         let template = [];
-        template.push({
-            name: 'dog',
-            type: 1,
-            group: 1,
-            image: 'infected1.png',
-        });
+        template.push(this.dogId);
         if (8 <= this.userCount){
-            template.push(
-                {
-                    name: 'doctor',
-                    type: 1,
-                    group: 1,
-                    image: 'doctor.png',
-                }
-            );
+            template.push(this.doctorId);
         }
         if (10 <= this.userCount){
-            template.push(
-                {
-                    name: 'police',
-                    type: 1,
-                    group: 1,
-                    image: 'police.png',
-                }
-            );
+            template.push(this.policeId);
         }
 
         template = this._shuffle(template);
 
-        let result = [
-            {
-                name: 'immunity',
-                type: 1,
-                group: 0,
-                image: 'immunity.png',
-            }
-        ];
+        let result = [this.immunityId];
 
         for (let i = 0; i < getCount; i++) {
             result.push(template.pop());
@@ -102,43 +75,11 @@ class Role
             10: 4
         };
         let getCount = getCountByUserCount[this.userCount] - 1;
-        let template = [
-            {
-                name: 'pathogen1',
-                type: -1,
-                group: -1,
-                image: 'pathogen1.png',
-            },
-            {
-                name: 'pathogen2',
-                type: -1,
-                group: -1,
-                image: 'pathogen2.png',
-            },
-            {
-                name: 'pathogen3',
-                type: -1,
-                group: -1,
-                image: 'pathogen3.png',
-            },
-            {
-                name: 'pathogen4',
-                type: -1,
-                group: -1,
-                image: 'pathogen4.png',
-            },
-        ];
+        let template = this.infectedId;
 
         template = this._shuffle(template);
 
-        let result = [
-            {
-                name: 'pathogen',
-                type: -1,
-                group: -1,
-                image: 'pathogen.png',
-            },
-        ];
+        let result = [this.pathogenId];
 
         for (let i = 0; i < getCount; i++) {
             result.push(template.pop());
@@ -158,43 +99,7 @@ class Role
             10: 3
         };
         let getCount = getCountByUserCount[this.userCount];
-        let template = [
-            {
-                name: 'neutral1',
-                type: 1,
-                image: 'neutral1.png',
-            },
-            {
-                name: 'neutral2',
-                type: 1,
-                group: 1,
-                image: 'neutral2.png',
-            },
-            {
-                name: 'neutral3',
-                type: 1,
-                group: 1,
-                image: 'neutral3.png',
-            },
-            {
-                name: 'neutral4',
-                type: 1,
-                group: 1,
-                image: 'neutral4.png',
-            },
-            {
-                name: 'neutral5',
-                type: 1,
-                group: 1,
-                image: 'neutral5.png',
-            },
-            {
-                name: 'neutral6',
-                type: 1,
-                group: 1,
-                image: 'neutral6.png',
-            },
-        ];
+        let template = this.peopleId;
 
         template = this._shuffle(template);
 

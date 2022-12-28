@@ -53,9 +53,9 @@ img {
 .role__action {
     width: 100%;
     margin-top: 3rem;
-    /*position: absolute;*/
-    /*bottom: 0;*/
-    /*display: flex;*/
+    position: absolute;
+    bottom: 0;
+    display: flex;
 }
 .role__action__button {
     font-size: 2rem;

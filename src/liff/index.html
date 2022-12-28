@@ -1,5 +1,5 @@
 <body>
-<button id="button">send test message</button>
+<h1>等候跳轉中</h1>
 <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
 <script>
     function initializeLiff(myLiffId) {
@@ -8,42 +8,14 @@
                 liffId: myLiffId,
             })
             .then(() => {
-                setButtonHandler();
+                if (!liff.isLoggedIn()) {
+                    liff.login();
+                }
             })
             .catch(err => {
                 alert(`error: ${JSON.stringify(err)}`);
             });
     }
-
-    function setButtonHandler() {
-        let button = document.getElementById('button');
-        button.addEventListener('click', () => {
-            window.alert('clicked: sendMessages');
-            liff
-                .sendMessages([
-                    {
-                        type: 'text',
-                        text: 'Hello, LIFF!',
-                    },
-                ])
-                .then(() => {
-                    alert('message sent');
-                    liff.closeWindow();
-                })
-                .catch(err => {
-                    window.alert('Error sending message: ' + err);
-                });
-        });
-    }
-
-    // liff.getProfile().then(function (profile) {
-    //     const userId = profile.userId;
-    //     const name = profile.displayName;
-    //     const pictureUrl = profile.pictureUrl;
-    //     const statusMessage = profile.statusMessage;
-    // }).catch(function (error) {
-    //     console.log('error', err);
-    // });
 
     document.addEventListener('DOMContentLoaded', () => {
         fetch(`/send-id`)
@@ -58,4 +30,3 @@
     });
 </script>
 </body>
-</html>

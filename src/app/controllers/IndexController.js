@@ -123,7 +123,7 @@ async function setRole(context) {
         if ($users.filter($user => $user.type === gameConfig.user.type.user && $user.role !== '').length > 0) {
             return context.replyFlex('123', {
                     "type": "carousel",
-                    "contents": $messageService.getRoleLiffContents()
+                    "contents": $messageService.getRoleLiffContents($roleId)
                 }
             );
         } else {
@@ -137,6 +137,7 @@ async function setRole(context) {
                                 obj[key] = gameConfig.selectNumber[key];
                                 return obj;
                             }, {}))
+                        .setUsers($users)
                         .setRoles($roles)
                         .getJoinGameContents()
                 }

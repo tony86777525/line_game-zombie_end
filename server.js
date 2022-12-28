@@ -4,6 +4,7 @@ const { bottender } = require('bottender');
 const path = require('path');
 const querystring = require('querystring');
 const ejs = require('ejs');
+const gameConfig = require('./src/config/game');
 
 const app = bottender({
     dev: process.env.NODE_ENV !== 'production',
@@ -29,39 +30,45 @@ app.prepare().then(() => {
         res.json({ id: process.env.LINE_LIFF_ID });
     });
 
-    server.get('/liff', (req, res) => {
+    server.get('/liff2', (req, res) => {
+        // const params = getParams(req);
+        const filename = path.join(__dirname + `/src/liff/index.html`);
+        const data = {}, options = {};
+
+        ejs.renderFile(filename, data, options, function(err, str) {
+            res.send(str);
+            if (err) {
+                console.log(`error: ${JSON.stringify(err)}`);
+            }
+        });
+    });
+    server.get('/liff2/liff2/role', (req, res) => {
         const params = getParams(req);
         // const version = params.type || 'index';
         const page = params.type;
-        if ('role' === page) {
-            const filename = path.join(__dirname + `/src/liff/${page}.html`);
-            const data = {
-                params,
-                rootPath: process.env.ROOT_PATH
-            }
-            const options = {};
+        const filename = path.join(__dirname + `/src/liff/role.html`);
 
-            ejs.renderFile(filename, data, options, function(err, str) {
-                res.send(str);
-                if (err) {
-                    console.log(`error: ${JSON.stringify(err)}`);
-                }
-            });
-        } else {
-            const filename = path.join(__dirname + `/src/liff/index.html`);
-            const data = {
-                params,
-                rootPath: process.env.ROOT_PATH
-            }
-            const options = {};
+        const roles = gameConfig.role;
+        const role = params.role;
+        const card = roles.card[role];
 
-            ejs.renderFile(filename, data, options, function(err, str) {
-                res.send(str);
-                if (err) {
-                    console.log(`error: ${JSON.stringify(err)}`);
-                }
-            });
-        }
+        const data = {
+            role: {
+                name: card.name,
+                image: card.image,
+                type: roles.type[card.type].name,
+                power: roles.power[card.power].name,
+                winner: roles.winner[card.winner].name,
+            },
+        };
+        const options = {};
+
+        ejs.renderFile(filename, data, options, function(err, str) {
+            res.send(str);
+            if (err) {
+                console.log(`error: ${JSON.stringify(err)}`);
+            }
+        });
     });
 
     // delegate other requests to bottender

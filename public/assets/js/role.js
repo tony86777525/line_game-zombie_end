@@ -4,32 +4,27 @@ function initializeLiff(myLiffId) {
     }).then(() => {
         if (!liff.isLoggedIn()) {
             console.log("用戶未登入");
-            liff.login();
+            liff.login({redirectUri: document.URL});
         } else {
+            // liff.logout();
             console.log("用戶已登入");
-            liff.getProfile()
-            .then(profile => {
-                const name = profile.displayName
-                alert(profile);
+            liff.getProfile().then(profile => {
+                userId = profile.userId;
+                console.log(userId);
+
+                document.querySelector('[data-js-role="card"]').innerHTML = `<img src="/assets/img/game/roles/${role.image}">`;
+                document.querySelector('[data-js-role="type"]').innerHTML = `${role.type}`;
+                document.querySelector('[data-js-role="power"]').innerHTML = `${role.power}`;
+                document.querySelector('[data-js-role="winner"]').innerHTML = `${role.winner}`;
             })
             .catch((err) => {
                 console.log('error', err);
             });
         }
-        setButtonHandler();
+        // setButtonHandler();
     }).catch(err => {
         console.log('初始化失敗')
     });
-
-    // liff.getProfile().then(function (profile) {
-    //     const userId = profile.userId;
-    //     const name = profile.displayName;
-    //     const pictureUrl = profile.pictureUrl;
-    //     const statusMessage = profile.statusMessage;
-    //     console.log(userId);
-    // }).catch(function (error) {
-    //     console.log('error', err);
-    // });
 }
 
 function setButtonHandler() {

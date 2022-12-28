@@ -5,15 +5,24 @@ class Message
         this.imagePath = `${process.env.ROOT_PATH}`;
         this.selectNumber = undefined;
         this.roles = undefined;
+        this.users = undefined;
         this.isContentTemplateHeader = false;
         this.isContentTemplateHero = false;
         this.isContentTemplateBody = false;
-        this.liffUri = `https://liff.line.me/${process.env.LINE_LIFF_ID}`;
+        this.liffUri = `https://liff.line.me/${process.env.LINE_LIFF_ID}/liff2`;
     }
 
     setSelectNumber($selectNumber)
     {
         this.selectNumber = $selectNumber;
+
+        return this;
+    }
+
+
+    setUsers($users)
+    {
+        this.users = $users;
 
         return this;
     }
@@ -141,15 +150,18 @@ class Message
         if (undefined === this.selectNumber
             || undefined === this.roles) return contents;
 
-        for (let key in this.roles) {
+        let imgNumber = 0;
+        for (let key of this.roles) {
+            imgNumber++;
             const content = this._getContentTemplate(true);
-            let title = `數字${this.selectNumber[key]}`;
+            let title = `數字${this.selectNumber[imgNumber]}`;
             let $isUnSelected = true;
             const { find } = require('lodash');
-            if (undefined !== find(this.user, ['role_id', (`${key}`)])) $isUnSelected = false;
+
+            if (undefined !== find(this.users, ['role_id', (`${key}`)])) $isUnSelected = false;
 
             content.header.contents.push(this._getHeaderContent(title));
-            content.hero.url = `${this.imagePath}/assets/img/game/numbers/${parseInt(key) + 1}.jpg`;
+            content.hero.url = `${this.imagePath}/assets/img/game/numbers/${imgNumber}.jpg`;
             content.footer.contents.push(this._getFooterContent(
                 false === $isUnSelected ? 'secondary' : 'primary'
                 , false === $isUnSelected ? '已選擇號碼' : '選擇號碼'
@@ -161,7 +173,7 @@ class Message
         return contents;
     }
 
-    getRoleLiffContents()
+    getRoleLiffContents($roleId)
     {
         this.isContentTemplateBody = false;
         this.isContentTemplateHero = false;
@@ -169,7 +181,7 @@ class Message
         const content = this._getContentTemplate();
 
         content.footer.contents.push(this._getFooterContent('primary', '開啟LIFF'
-            , `${this.liffUri}?type=role`
+            , `${this.liffUri}/role?role=${$roleId}`
             , 'uri'));
         contents.push(content);
 

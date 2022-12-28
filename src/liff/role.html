@@ -7,10 +7,7 @@
     <link rel="stylesheet" href="/assets/css/role.css">
 
     <script>
-        const params = <%- JSON.stringify(params) %>;
-        const rootPath = '<%- rootPath %>';
-        console.log(params);
-        console.log(rootPath);
+        const role = <%- JSON.stringify(role) %>;
     </script>
 </head>
 <body>
@@ -47,14 +44,13 @@
             <img src="/assets/img/game/numbers/0.jpg">
         </div>
 
-        <div class="role__image__role">
-            <img src="/assets/img/game/roles/doctor.png">
+        <div class="role__image__role" data-js-role="card">
         </div>
     </div>
     <div class="role__description">
-        <div class="role__description__text">陣營身分：人類方 醫生</div>
-        <div class="role__description__text">角色能力：能得知是否有人類被感染</div>
-        <div class="role__description__text">獲勝方式：完成３次物資搜索</div>
+        <div class="role__description__text">陣營身分：<span data-js-role="type"></span></div>
+        <div class="role__description__text">角色能力：<span data-js-role="power"></span></div>
+        <div class="role__description__text">獲勝方式：<span data-js-role="winner"></span></div>
     </div>
     <div class="role__action">
         <button class="role__action__button" data-js-button="changeToStartGame">確認</button>
