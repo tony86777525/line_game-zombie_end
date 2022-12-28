@@ -33,24 +33,35 @@ app.prepare().then(() => {
         const params = getParams(req);
         // const version = params.type || 'index';
         const page = params.type;
-        const filename = path.join(__dirname + `/src/liff/${page}.html`);
-        const data = {
-            params,
-            rootPath: process.env.ROOT_PATH
-        }
-        const options = {};
-        ejs.renderFile(filename, data, options, function(err, str) {
-            res.send(str);
-            if (err) {
-                console.log(`error: ${JSON.stringify(err)}`);
+        if ('role' === page) {
+            const filename = path.join(__dirname + `/src/liff/${page}.html`);
+            const data = {
+                params,
+                rootPath: process.env.ROOT_PATH
             }
-        });
-        // if ('role' === req.query.type) {
-        //     res.sendFile(path.join(`${__dirname}/src/liff/role.html`));
-        // } else {
-        //     res.sendFile(path.join(`${__dirname}/src/liff/index.html`));
-        // }
+            const options = {};
 
+            ejs.renderFile(filename, data, options, function(err, str) {
+                res.send(str);
+                if (err) {
+                    console.log(`error: ${JSON.stringify(err)}`);
+                }
+            });
+        } else {
+            const filename = path.join(__dirname + `/src/liff/index.html`);
+            const data = {
+                params,
+                rootPath: process.env.ROOT_PATH
+            }
+            const options = {};
+
+            ejs.renderFile(filename, data, options, function(err, str) {
+                res.send(str);
+                if (err) {
+                    console.log(`error: ${JSON.stringify(err)}`);
+                }
+            });
+        }
     });
 
     // delegate other requests to bottender
