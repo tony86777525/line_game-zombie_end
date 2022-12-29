@@ -1,4 +1,5 @@
 const { router, line, text} = require('bottender/router');
+const querystring = require('querystring');
 const IndexController = require('./app/controllers/IndexController');
 
 module.exports = async function App(context)
@@ -10,6 +11,7 @@ module.exports = async function App(context)
             else if('start game' === context.event.payload) return IndexController.startGame;
             else if(/^role=([\d]+)$/.test(context.event.payload)) return IndexController.setRole;
         }),
+        // line.
         line.message((context) => {
             switch (context.event.text) {
                 case 'new game':
@@ -19,6 +21,13 @@ module.exports = async function App(context)
                 case 'call db':
                     return IndexController.callDB;
             }
+
+            if (true === context.event.isImage) {
+                const $imageUrl = context.event.image.contentProvider.originalContentUrl;
+                const params = getParams($imageUrl);
+
+                return IndexController.liffToSendMessage(context, params);
+            }
         }),
         line.any(HandleLine),
         // messenger.postback(indexController.setSelectedNumber),
@@ -27,12 +36,20 @@ module.exports = async function App(context)
     ]);
 };
 
-async function HandlePostback(context) {
-
-    return IndexController.setSelectedNumber;
-}
-
 async function HandleLine(context)
 {
     return IndexController.index;
+}
+
+
+function getParams(url) {
+    const state = url;
+    if (state) {
+        const array = state.split('?');
+        if (array.length == 2) {
+            return querystring.parse(array[1]);
+        }
+    }
+
+    return url || {};
 }

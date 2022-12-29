@@ -1,3 +1,17 @@
+document.addEventListener('DOMContentLoaded', () => {
+    fetch(`/send-id`)
+        .then(reqResponse => reqResponse.json())
+        .then(jsonResponse => {
+            let myLiffId = jsonResponse.id;
+            initializeLiff(myLiffId);
+        })
+        .catch(err => {
+            alert(`error: ${JSON.stringify(err)}`);
+        });
+
+    changeToStartGame();
+});
+
 function initializeLiff(myLiffId) {
     liff.init({
         liffId: myLiffId,
@@ -13,6 +27,7 @@ function initializeLiff(myLiffId) {
                 console.log(userId);
 
                 document.querySelector('[data-js-role="card"]').innerHTML = `<img src="/assets/img/game/roles/${role.image}">`;
+                document.querySelector('[data-js-role="name"]').innerHTML = `${role.name}`;
                 document.querySelector('[data-js-role="type"]').innerHTML = `${role.type}`;
                 document.querySelector('[data-js-role="power"]').innerHTML = `${role.power}`;
                 document.querySelector('[data-js-role="winner"]').innerHTML = `${role.winner}`;
@@ -27,35 +42,18 @@ function initializeLiff(myLiffId) {
     });
 }
 
-function setButtonHandler() {
-    let button = document.getElementById('button');
+function changeToStartGame() {
+    let button = document.querySelector('[data-js-button="changeToStartGame"]');
     button.addEventListener('click', () => {
-        window.alert('clicked: sendMessages');
-        liff
-        .sendMessages([
-            {
-                type: 'text',
-                text: 'Hello, LIFF!',
-            },
-        ])
+        // liff.logout();
+        // liff.closeWindow();
+
+        liff.sendMessages(message.story)
         .then(() => {
-            alert('message sent');
-            liff.closeWindow();
+            console.log('message sent');
         })
         .catch(err => {
             window.alert('Error sending message: ' + err);
         });
     });
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    fetch(`/send-id`)
-    .then(reqResponse => reqResponse.json())
-    .then(jsonResponse => {
-        let myLiffId = jsonResponse.id;
-        initializeLiff(myLiffId);
-    })
-    .catch(err => {
-        alert(`error: ${JSON.stringify(err)}`);
-    });
-});

@@ -8,6 +8,7 @@
 
     <script>
         const role = <%- JSON.stringify(role) %>;
+        const message = <%- JSON.stringify(message) %>;
     </script>
 </head>
 <body>
@@ -48,7 +49,7 @@
         </div>
     </div>
     <div class="role__description">
-        <div class="role__description__text">陣營身分：<span data-js-role="type"></span></div>
+        <div class="role__description__text">陣營身分：<span data-js-role="type"></span> <span data-js-role="name"></span></div>
         <div class="role__description__text">角色能力：<span data-js-role="power"></span></div>
         <div class="role__description__text">獲勝方式：<span data-js-role="winner"></span></div>
     </div>

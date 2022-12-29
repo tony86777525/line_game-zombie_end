@@ -5,6 +5,8 @@ const path = require('path');
 const querystring = require('querystring');
 const ejs = require('ejs');
 const gameConfig = require('./src/config/game');
+const lang = require(`./resources/lang/${process.env.ROOT_LANG}/index`);
+const messageService = require('./src/app/services/message');
 
 const app = bottender({
     dev: process.env.NODE_ENV !== 'production',
@@ -32,7 +34,7 @@ app.prepare().then(() => {
 
     server.get('/liff2', (req, res) => {
         // const params = getParams(req);
-        const filename = path.join(__dirname + `/src/liff/index.html`);
+        const filename = path.join(__dirname + `/resources/view/liff/index.html`);
         const data = {}, options = {};
 
         ejs.renderFile(filename, data, options, function(err, str) {
@@ -46,7 +48,7 @@ app.prepare().then(() => {
         const params = getParams(req);
         // const version = params.type || 'index';
         const page = params.type;
-        const filename = path.join(__dirname + `/src/liff/role.html`);
+        const filename = path.join(__dirname + `/resources/view/liff/role.html`);
 
         const roles = gameConfig.role;
         const role = params.role;
@@ -54,12 +56,15 @@ app.prepare().then(() => {
 
         const data = {
             role: {
-                name: card.name,
+                name: lang.roleCard[role],
                 image: card.image,
-                type: roles.type[card.type].name,
-                power: roles.power[card.power].name,
-                winner: roles.winner[card.winner].name,
+                type: lang.roleType[card.type],
+                power: lang.rolePower[card.power],
+                winner: lang.roleWinner[card.winner],
             },
+            message: {
+                story: (new messageService).getStoryHandleContents()
+            }
         };
         const options = {};
 

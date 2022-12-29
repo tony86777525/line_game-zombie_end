@@ -3,6 +3,7 @@ const gameConfig = require(common.route.config + 'game');
 const messageService = require(common.route.service + 'message');
 const roleService = require(common.route.service + 'role');
 const {find, findKey} = require("lodash");
+const querystring = require('querystring');
 
 const tableNameSelectedNumber = 'selected_number';
 const db = {
@@ -18,6 +19,7 @@ module.exports = {
     joinGame: joinGame,
     startGame: startGame,
     setRole: setRole,
+    liffToSendMessage: liffToSendMessage,
     resetGame: resetGame,
     callDB: callDB,
     index: index,
@@ -91,7 +93,8 @@ async function startGame(context) {
 
 async function setRole(context) {
     const $data = context.event.payload;
-    const [, $roleId] = $data.split('=');
+    let [, $roleId] = $data.split('=');
+    $roleId = parseInt($roleId);
     const $userId = context.session.user.id;
     let $messageService = new messageService;
     let $getGroup = db.map[tableNameSelectedNumber].groups;
@@ -106,6 +109,7 @@ async function setRole(context) {
     }
 
     let $users = $getGroup[$targetId].users;
+    let $roles = $getGroup[$targetId].roles;
 
     let $mappings = find($users, ($user) => {
         if (($user.id === $userId && $user.role_id !== '') || $user.role_id === $roleId) {
@@ -118,9 +122,17 @@ async function setRole(context) {
     else {
         const $userKey = findKey($users, ['id', $userId]);
         $users[$userKey].role_id = $roleId;
+        $getGroup[$targetId].roles = $getGroup[$targetId].roles.filter($role => $role !== $roleId);
 
         // start game
         if ($users.filter($user => $user.type === gameConfig.user.type.user && $user.role !== '').length > 0) {
+            for (let $user of $users) {
+                if ('' === $user.role_id) {
+                    let newRoleId = $getGroup[$targetId].roles.pop();
+                    $user.role_id = newRoleId;
+                }
+            }
+
             return context.replyFlex('123', {
                     "type": "carousel",
                     "contents": $messageService.getRoleLiffContents($roleId)
@@ -144,6 +156,12 @@ async function setRole(context) {
             );
         }
     }
+}
+
+async function liffToSendMessage(context, params) {
+    const $messageService = new messageService;
+
+    return context.replyText($messageService.sendContents(params.sender));
 }
 
 async function getCheckRole(context) {
@@ -174,7 +192,7 @@ async function callDB(context) {
         $targetId = context.session.user.id;
     }
     console.log(db.map.selected_number.groups[$targetId].users);
-
+    console.log(db.map.selected_number.groups[$targetId].roles);
     return context.replyText('Call DB OK');
 }
 
