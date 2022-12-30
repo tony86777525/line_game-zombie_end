@@ -4,9 +4,9 @@ const { bottender } = require('bottender');
 const path = require('path');
 const querystring = require('querystring');
 const ejs = require('ejs');
-const gameConfig = require('./src/config/game');
-const lang = require(`./resources/lang/${process.env.ROOT_LANG}/index`);
-const messageService = require('./src/app/services/message');
+const gameConfig = require(`./src/model/game4/config/game`);
+const lang = require(`${gameConfig.route}/resources/lang/${process.env.ROOT_LANG}/index`);
+const messageService = require(`${gameConfig.route}/app/services/message`);
 
 const app = bottender({
     dev: process.env.NODE_ENV !== 'production',
@@ -34,7 +34,7 @@ app.prepare().then(() => {
 
     server.get('/liff2', (req, res) => {
         // const params = getParams(req);
-        const filename = path.join(__dirname + `/resources/view/liff/index.html`);
+        const filename = path.join(`${__dirname}/${gameConfig.route}/resources/view/liff/index.html`);
         const data = {}, options = {};
 
         ejs.renderFile(filename, data, options, function(err, str) {
@@ -46,15 +46,17 @@ app.prepare().then(() => {
     });
     server.get('/liff2/liff2/role', (req, res) => {
         const params = getParams(req);
+        console.log(1);
         // const version = params.type || 'index';
         const page = params.type;
-        const filename = path.join(__dirname + `/resources/view/liff/role.html`);
+        const filename = path.join(`${__dirname}/${gameConfig.route}/resources/view/liff/role.html`);
 
         const roles = gameConfig.role;
         const role = params.role;
         const card = roles.card[role];
-
+        console.log(2);
         const data = {
+            url: `${gameConfig.route}`,
             role: {
                 name: lang.roleCard[role],
                 image: card.image,
@@ -67,7 +69,7 @@ app.prepare().then(() => {
             }
         };
         const options = {};
-
+        console.log(filename);
         ejs.renderFile(filename, data, options, function(err, str) {
             res.send(str);
             if (err) {

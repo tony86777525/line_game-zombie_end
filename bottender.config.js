@@ -20,7 +20,10 @@ module.exports = {
       },
     },
   },
-  initialState: {},
+  initialState: {
+      lobby_mode: 4,
+      gameStates: [{}, {}, {}, {}],
+  },
   channels: {
     messenger: {
       enabled: false,

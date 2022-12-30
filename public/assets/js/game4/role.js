@@ -26,7 +26,7 @@ function initializeLiff(myLiffId) {
                 userId = profile.userId;
                 console.log(userId);
 
-                document.querySelector('[data-js-role="card"]').innerHTML = `<img src="/assets/img/game/roles/${role.image}">`;
+                document.querySelector('[data-js-role="card"]').innerHTML = `<img src="/assets/img/game4/roles/${role.image}">`;
                 document.querySelector('[data-js-role="name"]').innerHTML = `${role.name}`;
                 document.querySelector('[data-js-role="type"]').innerHTML = `${role.type}`;
                 document.querySelector('[data-js-role="power"]').innerHTML = `${role.power}`;

@@ -1,9 +1,8 @@
-const common = require('./CommonController');
-const gameConfig = require(common.route.config + 'game');
-const messageService = require(common.route.service + 'message');
-const roleService = require(common.route.service + 'role');
+const base = require('./BaseController');
+const gameConfig = require(base.route.config + 'game');
+const messageService = require(base.route.service + 'message');
+const roleService = require(base.route.service + 'role');
 const {find, findKey} = require("lodash");
-const querystring = require('querystring');
 
 const tableNameSelectedNumber = 'selected_number';
 const db = {
@@ -28,8 +27,8 @@ module.exports = {
 async function newGame(context) {
     _resetGame(context);
     const $messageService = new messageService;
-
-    return context.replyFlex('123', {
+    console.log('12');
+    await context.replyFlex('123', {
             "type": "carousel",
             "contents": $messageService
                 .getNewGameContents('歡迎來到《末日危機》的桌遊世界\n請點擊開始遊戲！')
