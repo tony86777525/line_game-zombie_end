@@ -1,6 +1,7 @@
 class Role
 {
     constructor() {
+        this.Lang = require(`./../../resources/lang/${process.env.ROOT_LANG}/index`);
         this.users = [];
         this.userCount = 5;
         this.dogId = 12;
@@ -10,18 +11,49 @@ class Role
         this.infectedId = [7, 8, 9, 10];
         this.pathogenId = 11;
         this.peopleId = [1, 2, 3, 4, 5, 6];
+
+        this.roles = {
+            1: {type: 1, power: 1, winner: 1, image: 'people1.png', group: 1},
+            2: {type: 1, power: 1, winner: 1, image: 'people2.png', group: 1},
+            3: {type: 1, power: 1, winner: 1, image: 'people3.png', group: 1},
+            4: {type: 1, power: 1, winner: 1, image: 'people4.png', group: 1},
+            5: {type: 1, power: 1, winner: 1, image: 'people5.png', group: 1},
+            6: {type: 1, power: 1, winner: 1, image: 'people6.png', group: 1},
+            7: {type: 2, power: 2, winner: 2, image: 'infected1.png', group: 2},
+            8: {type: 2, power: 2, winner: 2, image: 'infected2.png', group: 2},
+            9: {type: 2, power: 2, winner: 2, image: 'infected3.png', group: 2},
+            10: {type: 2, power: 2, winner: 2, image: 'infected4.png', group: 2},
+            11: {type: 2, power: 3, winner: 3, image: 'pathogen.png', group: 4},
+            12: {type: 3, power: 4, winner: 4, image: 'dog.png', group: 1},
+            13: {type: 3, power: 5, winner: 5, image: 'doctor.png', group: 1},
+            14: {type: 3, power: 6, winner: 6, image: 'police.png', group: 1},
+            15: {type: 3, power: 7, winner: 7, image: 'immunity.png', group: 3}
+        };
+
+        this.roleGroups = {
+            1: {image: 'people.png', value: 1, change: 1},
+            2: {image: 'infected.png', value: -1, change: 0},
+            3: {image: 'immunity.png', value: 1, change: 0},
+            4: {image: 'pathogen.png', value: -1, change: 0},
+        };
     }
 
-    setUsers($users)
-    {
+    getRolesTemplate() {
+        return this.roles;
+    }
+
+    getRoleGroupsTemplate() {
+        return this.roleGroups;
+    }
+
+    setUsers($users) {
         this.users = $users;
         this.userCount = $users.length;
 
         return this;
     }
 
-    _shuffle(sourceArray)
-    {
+    _shuffle(sourceArray) {
         for (let i = 0; i < sourceArray.length - 1; i++) {
             let j = i + Math.floor(Math.random() * (sourceArray.length - i));
 
@@ -33,8 +65,7 @@ class Role
         return sourceArray;
     }
 
-    _getPeopleTemplate()
-    {
+    _getPeopleTemplate() {
         let getCountByUserCount = {
             5: 2,
             6: 2,
@@ -64,8 +95,7 @@ class Role
         return result;
     }
 
-    _getInfectedTemplate()
-    {
+    _getInfectedTemplate() {
         let getCountByUserCount = {
             5: 2,
             6: 2,
@@ -88,8 +118,7 @@ class Role
         return result;
     }
 
-    _getNeutralTemplate()
-    {
+    _getNeutralTemplate() {
         let getCountByUserCount = {
             5: 1,
             6: 2,
@@ -112,8 +141,7 @@ class Role
         return result;
     }
 
-    getRoles()
-    {
+    getRoles() {
         let $roles = [];
 
         $roles = $roles.concat(this._getPeopleTemplate());
@@ -122,13 +150,29 @@ class Role
 
         $roles = this._shuffle($roles);
 
-        // for (let user of this.users) {
-        //     let $role = $roles.pop();
-        //     $role.id = user.id;
-        //     $result.push($role);
-        // }
-
         return $roles;
+    }
+
+    getLiffRoles() {
+        const roleCards = this.roles;
+        const roleGroups = this.roleGroups;
+        let roles = {};
+
+        for (let key in roleCards) {
+            let roleCard = roleCards[key];
+            let roleGroup = roleGroups[roleCard.group];
+
+            roles[key] = {
+                name: this.Lang.roleCard[key],
+                image: roleCard.image,
+                type: this.Lang.roleType[roleCard.type],
+                power: this.Lang.rolePower[roleCard.power],
+                winner: this.Lang.roleWinner[roleCard.winner],
+                groupImage: roleGroup.image,
+            };
+        }
+
+        return roles;
     }
 }
 

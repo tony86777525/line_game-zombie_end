@@ -7,7 +7,6 @@ body {
 }
 .role__image {
     width: 100%;
-    height: fit-content;
     position: relative;
 }
 .role__image__number {
@@ -27,7 +26,14 @@ body {
 .role__image__number__item {
     position: relative;
     width: calc(100% / 5);
-    height: fit-content;
+}
+.role__image__number__item.active .group {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50%;
+    height: auto;
 }
 .role__image__number__item:not(.active):after {
     background: rgba(0, 0, 0, 0.7);
@@ -36,15 +42,6 @@ body {
     height: 100%;
     position: absolute;
     top: 0;
-}
-.role__image__role {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1;
-    width: auto;
-    height: 100%;
 }
 img {
     display: block;
@@ -79,4 +76,7 @@ img {
     -webkit-box-shadow: 0 0px 10px #000;
     box-shadow: 0 0px 10px #000;
     background: transparent;
+}
+.role__action__button__text {
+    font-size: 1rem;
 }

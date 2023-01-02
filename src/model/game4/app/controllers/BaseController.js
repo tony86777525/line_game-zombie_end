@@ -2,6 +2,7 @@ module.exports = {
     route: {
         config: './../../config/',
         service: './../../app/services/',
-        model: './../../models/',
+        model: './../../app/models/',
+        lang: './../../resources/lang/',
     },
 };

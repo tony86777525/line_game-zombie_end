@@ -1,299 +1,244 @@
 const base = require('./BaseController');
-const gameConfig = require(base.route.config + 'game');
-const messageService = require(base.route.service + 'message');
-const roleService = require(base.route.service + 'role');
-const {find, findKey} = require("lodash");
+const Config = require(base.route.config + 'game');
+const GameStateModel = require(base.route.model + 'GameState');
+const MessageService = require(base.route.service + 'Message');
+const Lang = require(`${base.route.lang}/${process.env.ROOT_LANG}/index`);
+const roleService = require(base.route.service + 'Role');
+const SceneService = require(base.route.service + 'Scene');
 
-const tableNameSelectedNumber = 'selected_number';
-const db = {
-    map: {
-        selected_number: {
-            groups: [],
-        },
-    },
-};
+const GameState = new GameStateModel(Config.gameStatesId);
+const Message = new MessageService();
+const Scene = new SceneService();
 
 module.exports = {
-    newGame: newGame,
-    joinGame: joinGame,
-    startGame: startGame,
-    setRole: setRole,
-    liffToSendMessage: liffToSendMessage,
-    resetGame: resetGame,
-    callDB: callDB,
-    index: index,
+    newGame: NewGame,
+    joinGame: JoinGame,
+    SelectNumber: SelectNumber,
+    SetRole: SetRole,
+    StartGame: StartGame,
+    SelectScene: SelectScene,
+    // resetGame: resetGame,
+    callDB: CallDB,
+    // index: index,
 };
 
-async function newGame(context) {
-    _resetGame(context);
-    const $messageService = new messageService;
-    console.log('12');
-    await context.replyFlex('123', {
-            "type": "carousel",
-            "contents": $messageService
-                .getNewGameContents('歡迎來到《末日危機》的桌遊世界\n請點擊開始遊戲！')
-        }
-    );
+async function NewGame(context) {
+    GameState.init(context);
+    const isChangeState = GameState.setStateJoinGame(context);
+
+    if (false === isChangeState) {
+        await Message.getErrorContents(context);
+        return;
+    }
+
+    await Message.getNewGameContents(context);
 }
 
-async function joinGame(context) {
+async function JoinGame(context) {
+    const isStateJoinGame = GameState.isStateJoinGame(context);
+
+    if (false === isStateJoinGame) {
+        await Message.getErrorContents(context);
+        return;
+    }
+
     const { userId, displayName } = await context.getUserProfile();
-    let $getSelectedNumbersTarget = db.map[tableNameSelectedNumber].groups;
-    let $targetId;
 
-    if (undefined !== context.session.group) {
-        // group message
-        $targetId = context.session.group.id;
-    } else if (undefined !== context.session.user) {
-        // user message
-        $targetId = context.session.user.id;
-    }
+    const isJoinUser = GameState.setUserJoin(context, userId, displayName);
 
-    // new group
-    if (undefined === $getSelectedNumbersTarget[$targetId])
-        $getSelectedNumbersTarget[$targetId] = {id: $targetId, step: gameConfig.step.join_game, users: [], roles: []};
+    if (false === isJoinUser) {
+        await Message.getJoinGameAlreadyContents(context, displayName);
+    } else {
+        let returnMessage = [];
+        const { userCount } = GameState.getUsers(context);
 
-    let $users = $getSelectedNumbersTarget[$targetId].users;
-    let $mappings = find($users, ['id', userId]);
+        returnMessage.push(Message.getJoinGameContents(context, displayName, userCount));
 
-    if (undefined !== $mappings)return context.replyText(`${displayName}已加入，請稍待遊戲開始！`);
-    else {
-        $users.push({
-            id: userId,
-            type: gameConfig.user.type.user,
-            role_id: ''
-        });
-    }
+        // 人數10人 || 單人
+        if (true === GameState.isFullUsers(context)) {
+            const isChangeState = GameState.setStateSelectNumber(context);
 
-    const $messageService = new messageService;
-    let $returnMessage = [];
-
-    // send join game message
-    $returnMessage.push(
-        context.replyFlex('123', {
-                "type": "carousel",
-                "contents": $messageService
-                    .getNewGameContents(`${displayName}  加入遊戲桌！\n目前人數： ${$users.length}人\n\n其他玩家請加入`)
-            }
-        )
-    );
-
-    // 人數10人 || 單人
-    if (gameConfig.user.max_count === $users.length || undefined === context.session.group) {
-        $returnMessage = $returnMessage.concat(_startGame(context));
-    }
-
-    return $returnMessage;
-}
-
-async function startGame(context) {
-    return _startGame(context);
-}
-
-async function setRole(context) {
-    const $data = context.event.payload;
-    let [, $roleId] = $data.split('=');
-    $roleId = parseInt($roleId);
-    const $userId = context.session.user.id;
-    let $messageService = new messageService;
-    let $getGroup = db.map[tableNameSelectedNumber].groups;
-    let $targetId;
-
-    if (undefined !== context.session.group) {
-        // group message
-        $targetId = context.session.group.id;
-    } else if (undefined !== context.session.user) {
-        // user message
-        $targetId = context.session.user.id;
-    }
-
-    let $users = $getGroup[$targetId].users;
-    let $roles = $getGroup[$targetId].roles;
-
-    let $mappings = find($users, ($user) => {
-        if (($user.id === $userId && $user.role_id !== '') || $user.role_id === $roleId) {
-            return true;
-        }
-    });
-
-    // 如果曾經有任何關於這個關鍵字的紀錄
-    if (undefined !== $mappings) return context.replyText('已選擇過數字，請稍待遊戲開始！');
-    else {
-        const $userKey = findKey($users, ['id', $userId]);
-        $users[$userKey].role_id = $roleId;
-        $getGroup[$targetId].roles = $getGroup[$targetId].roles.filter($role => $role !== $roleId);
-
-        // start game
-        if ($users.filter($user => $user.type === gameConfig.user.type.user && $user.role !== '').length > 0) {
-            for (let $user of $users) {
-                if ('' === $user.role_id) {
-                    let newRoleId = $getGroup[$targetId].roles.pop();
-                    $user.role_id = newRoleId;
-                }
+            if (false === isChangeState) {
+                await Message.getErrorContents(context);
+                return;
             }
 
-            return context.replyFlex('123', {
-                    "type": "carousel",
-                    "contents": $messageService.getRoleLiffContents($roleId)
-                }
-            );
-        } else {
-            let $roles = $getGroup[$targetId].roles;
-            return context.replyFlex('123', {
-                    "type": "carousel",
-                    "contents": $messageService
-                        .setSelectNumber(Object.keys(gameConfig.selectNumber)
-                            .filter(number => number <= $users.length)
-                            .reduce((obj, key) => {
-                                obj[key] = gameConfig.selectNumber[key];
-                                return obj;
-                            }, {}))
-                        .setUsers($users)
-                        .setRoles($roles)
-                        .getJoinGameContents()
-                }
-            );
+            _startToSelectNumber(context);
+            const { users, userCount, robotCount } = GameState.getUsers(context);
+            const roles = GameState.getRoles(context);
+
+            returnMessage.push(Message.getStartToSelectNumberContents(context, userCount, robotCount));
+            returnMessage.push(Message.getSelectNumberContents(context, roles, users));
         }
+
+        await returnMessage;
     }
 }
 
-async function liffToSendMessage(context, params) {
-    const $messageService = new messageService;
+async function SelectNumber(context) {
+    const isChangeState = GameState.setStateSelectNumber(context);
 
-    return context.replyText($messageService.sendContents(params.sender));
-}
-
-async function getCheckRole(context) {
-    const { getClient } = require('bottender');
-
-    // get group number
-    if (undefined !== context.session.group) {
-        $targetId = context.session.group.id;
-        console.log(getClient.getAllGroupMemberIds($targetId).length);
+    if (false === isChangeState) {
+        await Message.getErrorContents(context);
+        return;
     }
 
-    // console.log($users);
-}
-
-async function resetGame(context) {
-    _resetGame(context);
-
-    return context.replyText('Game Reset OK!!');
-}
-
-async function callDB(context) {
-    let $targetId;
-    if (undefined !== context.session.group) {
-        // group message
-        $targetId = context.session.group.id;
-    } else if (undefined !== context.session.user) {
-        // user message
-        $targetId = context.session.user.id;
-    }
-    console.log(db.map.selected_number.groups[$targetId].users);
-    console.log(db.map.selected_number.groups[$targetId].roles);
-    return context.replyText('Call DB OK');
-}
-
-async function index(context) {
-    const { text } = context.event;
-
-    return context.replyText('123');
-}
-
-function _resetGame(context) {
-    let $getSelectedNumbersTarget = db.map[tableNameSelectedNumber].groups;
-    let $targetId;
-
-    if (undefined !== context.session.group) {
-        // group message
-        $targetId = context.session.group.id;
-    } else if (undefined !== context.session.user) {
-        // user message
-        $targetId = context.session.user.id;
-    }
-
-    delete $getSelectedNumbersTarget[$targetId];
-}
-
-function _startGame(context) {
     let returnMessage = [];
-    let $getSelectedNumbersTarget = db.map[tableNameSelectedNumber].groups;
-    let $targetId;
-    if (undefined !== context.session.group) {
-        // group message
-        $targetId = context.session.group.id;
-    } else if (undefined !== context.session.user) {
-        // user message
-        $targetId = context.session.user.id;
-    }
-    $getSelectedNumbersTarget[$targetId].step = gameConfig.step.select_number;
 
-    let $users = _getContextData(context);
+    _startToSelectNumber(context);
+    const { users, userCount, robotCount } = GameState.getUsers(context);
+    const roles = GameState.getRoles(context);
 
-    const $messageService = new messageService;
-    // set robot
-    let $i = 0;
-    while(gameConfig.user.min_count > $users.length) {
-        $i++;
-        let $name = `robot${$i}`;
-        $users.push({
-            id: $name,
-            type: gameConfig.user.type.robot,
-            role_id: ''
-        });
+    returnMessage.push(Message.getStartToSelectNumberContents(context, userCount, robotCount));
+
+    returnMessage.push(Message.getSelectNumberContents(context, roles, users));
+
+    await returnMessage;
+}
+
+async function SetRole(context) {
+    const isChangeState = GameState.isStateSelectNumber(context);
+
+    if (false === isChangeState) {
+        await Message.getErrorContents(context);
+        return;
     }
 
-    // set roles
+    const $data = context.event.payload;
+    let [, roleId] = $data.split('=');
+    roleId = Number(roleId);
+    const userId = context.session.user.id;
     const $roleService = new roleService;
-    let $roles = $roleService.setUsers($users).getRoles();
-    $getSelectedNumbersTarget[$targetId].roles = $roles;
+    const rolesTemplate = $roleService.getRolesTemplate();
+    const isSetRoleToUser = GameState.setRoleToUser(context, userId, roleId, rolesTemplate);
 
-    // send select number message
-    let $usersCount = $users.filter($user => $user.type === gameConfig.user.type.user).length;
-    let $robotCount = $users.filter($user => $user.type === gameConfig.user.type.robot).length;
+    if (false === isSetRoleToUser) {
+        await Message.getSelectNumberAlreadyContents(context);
+    } else {
+        const isStartToCheckRole = GameState.isStartToCheckRole(context, rolesTemplate);
 
-    returnMessage.push(
-        context.replyText(
-            `共有${$usersCount}名玩家，`
-            + ($robotCount > 0 ? `由系統操作另外${$robotCount}位角色，` : '')
-                + `參與遊戲。\n\n請選擇喜歡的數字：\n※已選擇的數字無法二次選擇。`
-        )
-    );
+        if (false === isStartToCheckRole) {
+            const { users } = GameState.getUsers(context);
+            const roles = GameState.getRoles(context);
 
-    returnMessage.push(
-        context.replyFlex('123', {
-            "type": "carousel",
-            "contents": $messageService
-                .setSelectNumber(Object.keys(gameConfig.selectNumber)
-                    .filter(number => number <= $users.length)
-                    .reduce((obj, key) => {
-                        obj[key] = gameConfig.selectNumber[key];
-                        return obj;
-                    }, {}))
-                .setRoles($roles)
-                .getJoinGameContents()
-        })
-    );
+            await Message.getSelectNumberContents(context, roles, users);
+        } else {
+            const isChangeState = GameState.setStateCheckRole(context);
 
-    return returnMessage;
+            if (false === isChangeState) {
+                await Message.getErrorContents(context);
+                return;
+            }
+
+            const checkRoleUsers = GameState.getCheckRoleUsers(context);
+
+            // open liff
+            await Message.getCheckRoleContents(context, checkRoleUsers);
+        }
+    }
 }
 
-function _getContextData(context) {
-    let $getSelectedNumbersTarget = db.map[tableNameSelectedNumber].groups;
-    let $targetId;
+async function StartGame(context) {
+    const isChangeState = GameState.setStateStartGame(context);
 
-    if (undefined !== context.session.group) {
-        // group message
-        $targetId = context.session.group.id;
-    } else if (undefined !== context.session.user) {
-        // user message
-        $targetId = context.session.user.id;
+    if (false === isChangeState) {
+        await Message.getErrorContents(context);
+        return;
     }
 
-    // new group
-    if (undefined === $getSelectedNumbersTarget[$targetId])
-        $getSelectedNumbersTarget[$targetId] = {id: $targetId, step: gameConfig.step.select_number, users: []};
+    const sceneIds = Scene.getSceneIds();
 
-    return $getSelectedNumbersTarget[$targetId].users;
+    GameState.setScenes(context, sceneIds);
+
+    const checkRoleUsers = GameState.getCheckRoleUsers(context);
+    const newSceneIds = GameState.getNowScenes(context);
+
+    await Message.getStartGameContents(context, checkRoleUsers, newSceneIds);
 }
+
+async function SelectScene() {
+    // const isChangeState = GameState.setStateStartGame(context);
+    //
+    // if (false === isChangeState) {
+    //     await Message.getErrorContents(context);
+    //     return;
+    // }
+console.log('SelectScene');
+    // await Message.getStartGameContents(context, checkRoleUsers, newSceneIds);
+}
+
+async function CallDB(context) {
+    let result = JSON.stringify(GameState.dumpAll(context));
+    console.log(result);
+    await context.replyText(result);
+}
+
+// async function getCheckRole(context) {
+//     const { getClient } = require('bottender');
+//
+//     // get group number
+//     if (undefined !== context.session.group) {
+//         $targetId = context.session.group.id;
+//         console.log(getClient.getAllGroupMemberIds($targetId).length);
+//     }
+//
+//     // console.log($users);
+// }
+//
+// async function resetGame(context) {
+//     _resetGame(context);
+//
+//     return context.replyText('Game Reset OK!!');
+// }
+//
+
+//
+// async function index(context) {
+//     const { text } = context.event;
+//
+//     return context.replyText('123');
+// }
+//
+// function _resetGame(context) {
+//     let $getSelectedNumbersTarget = db.map[tableNameSelectedNumber].groups;
+//     let $targetId;
+//
+//     if (undefined !== context.session.group) {
+//         // group message
+//         $targetId = context.session.group.id;
+//     } else if (undefined !== context.session.user) {
+//         // user message
+//         $targetId = context.session.user.id;
+//     }
+//
+//     delete $getSelectedNumbersTarget[$targetId];
+// }
+//
+function _startToSelectNumber(context) {
+    GameState.setRobot(context);
+    const { users } = GameState.getUsers(context);
+
+    const $roleService = new roleService;
+    let roles = $roleService.setUsers(users).getRoles();
+    GameState.setRoles(context, roles);
+}
+
+//
+// function _getContextData(context) {
+//     let $getSelectedNumbersTarget = db.map[tableNameSelectedNumber].groups;
+//     let $targetId;
+//
+//     if (undefined !== context.session.group) {
+//         // group message
+//         $targetId = context.session.group.id;
+//     } else if (undefined !== context.session.user) {
+//         // user message
+//         $targetId = context.session.user.id;
+//     }
+//
+//     // new group
+//     if (undefined === $getSelectedNumbersTarget[$targetId])
+//         $getSelectedNumbersTarget[$targetId] = {id: $targetId, step: gameConfig.step.select_number, users: []};
+//
+//     return $getSelectedNumbersTarget[$targetId].users;
+// }
