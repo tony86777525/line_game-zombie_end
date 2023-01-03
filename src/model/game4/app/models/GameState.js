@@ -1,3 +1,5 @@
+const {findKey} = require("lodash");
+
 class GameState
 {
     constructor(gameStatesId) {
@@ -237,6 +239,23 @@ class GameState
         const scenes = context.state.gameStates[this.gameStatesId].scenes;
 
         return scenes[scenes.length - 1];
+    }
+
+    setRoundUserScene(context, round, userId, sceneId) {
+        const { find } = require("lodash");
+        const users = context.state.gameStates[this.gameStatesId].users;
+        const sceneKey = `scene${round}`;
+        const user = find(users, (user) => {
+            return user.id === userId && undefined === user[sceneKey]
+        });
+        let result = false;
+
+        if (undefined !== user) {
+            user[sceneKey] = sceneId;
+            result = true;
+        }
+
+        return result;
     }
 
     dumpAll(context) {

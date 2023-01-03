@@ -4,12 +4,12 @@ class Scene
         this.Lang = require(`./../../resources/lang/${process.env.ROOT_LANG}/index`);
         this.selectSceneCount = 2;
         this.scenes = {
-            1: {maxUserCount: 2, image: '1.jpg'},
-            2: {maxUserCount: 2, image: '2.jpg'},
-            3: {maxUserCount: 3, image: '3.jpg'},
-            4: {maxUserCount: 3, image: '4.jpg'},
-            5: {maxUserCount: 4, image: '5.jpg'},
-            6: {maxUserCount: 5, image: '6.jpg'},
+            1: {maxUserCount: 2, image: '1'},
+            2: {maxUserCount: 2, image: '2'},
+            3: {maxUserCount: 3, image: '3'},
+            4: {maxUserCount: 3, image: '4'},
+            5: {maxUserCount: 4, image: '5'},
+            6: {maxUserCount: 5, image: '6'},
         };
     }
 
@@ -37,15 +37,16 @@ class Scene
     getLiffScenes(scenesIds) {
         const scenes = this.scenes;
 
-        let getScenes = {};
+        let getScenes = [];
 
         for (let scenesId of scenesIds) {
             let scene = scenes[Number(scenesId)];
 
-            getScenes[scenesId] = {
+            getScenes.push({
+                id: scenesId,
                 name: this.Lang.scenes[scenesId],
                 image: scene.image,
-            };
+            });
         }
 
         return getScenes;

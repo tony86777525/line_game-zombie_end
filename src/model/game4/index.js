@@ -19,7 +19,7 @@ module.exports = async function App(context) {
                 return IndexController.StartGame(context);
             }
             if ('selectScene' === params.sender) {
-                return IndexController.SelectScene(context);
+                return IndexController.SelectScene(context, params.round, params.sceneId);
             }
         }
 

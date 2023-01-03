@@ -152,18 +152,33 @@ async function StartGame(context) {
 
     const checkRoleUsers = GameState.getCheckRoleUsers(context);
     const newSceneIds = GameState.getNowScenes(context);
+    const round = 1;
 
-    await Message.getStartGameContents(context, checkRoleUsers, newSceneIds);
+    await Message.getStartGameContents(context, round, checkRoleUsers, newSceneIds);
 }
 
-async function SelectScene() {
+async function SelectScene(context, round, sceneId) {
     // const isChangeState = GameState.setStateStartGame(context);
     //
     // if (false === isChangeState) {
     //     await Message.getErrorContents(context);
     //     return;
     // }
+    console.log(round);
+    console.log(sceneId);
+    const userId = context.session.user.id;
+    GameState.setRoundUserScene(context, round, userId, sceneId)
 console.log('SelectScene');
+
+    // const sceneIds = Scene.getSceneIds();
+    //
+    // GameState.setScenes(context, sceneIds);
+    //
+    // const checkRoleUsers = GameState.getCheckRoleUsers(context);
+    // const newSceneIds = GameState.getNowScenes(context);
+    // const round = 1;
+    //
+    // await Message.getStartGameContents(context, round, checkRoleUsers, newSceneIds);
     // await Message.getStartGameContents(context, checkRoleUsers, newSceneIds);
 }
 

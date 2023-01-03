@@ -34,13 +34,35 @@ body {
     width: 50%;
     height: auto;
 }
-.role__image__number__item:not(.active):after {
-    background: rgba(0, 0, 0, 0.7);
+.role__image__number__item:after {
     content: '';
     width: 100%;
     height: 100%;
     position: absolute;
-    top: 0;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-repeat: no-repeat;
+    background-position: 50%;
+    background-size: 50%;
+}
+.role__image__number__item[data-group=""]:after {
+    background: rgba(0, 0, 0, 0.7);
+}
+.role__image__number__item[data-group="me"]:after {
+    background-image: url("/assets/img/game4/groups/me.png");
+}
+.role__image__number__item[data-group="immunity"]:after {
+    background-image: url("/assets/img/game4/groups/immunity.png");
+}
+.role__image__number__item[data-group="infected"]:after {
+    background-image: url("/assets/img/game4/groups/infected.png");
+}
+.role__image__number__item[data-group="pathogen"]:after {
+    background-image: url("/assets/img/game4/groups/pathogen.png");
+}
+.role__image__number__item[data-group="people"]:after {
+    background-image: url("/assets/img/game4/groups/people.png");
 }
 .role__image__role {
     position: absolute;
@@ -48,61 +70,59 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 1;
-    height: 100%;
-    width: auto;
 }
 .role__image__role:before {
     content: '';
     display: block;
     padding-top: calc(250 / 166 * 100%);
-    width: 166px;
+    width: 44vw;
     background-repeat: no-repeat;
     background-size: 100%;
 }
 .role__image__role[data-role="doctor"]:before {
-    background-image: url(/assets/img/game4/roles/doctor.png);
+    background-image: url("/assets/img/game4/roles/doctor.png");
 }
 .role__image__role[data-role="dog"]:before {
-    background-image: url(/assets/img/game4/roles/dog.png);
+    background-image: url("/assets/img/game4/roles/dog.png");
 }
 .role__image__role[data-role="immunity"]:before {
-    background-image: url(/assets/img/game4/roles/immunity.png);
+    background-image: url("/assets/img/game4/roles/immunity.png");
 }
 .role__image__role[data-role="infected1"]:before {
-    background-image: url(/assets/img/game4/roles/infected1.png);
+    background-image: url("/assets/img/game4/roles/infected1.png");
 }
 .role__image__role[data-role="infected2"]:before {
-    background-image: url(/assets/img/game4/roles/infected2.png);
+    background-image: url("/assets/img/game4/roles/infected2.png");
 }
 .role__image__role[data-role="infected3"]:before {
-    background-image: url(/assets/img/game4/roles/infected3.png);
+    background-image: url("/assets/img/game4/roles/infected3.png");
 }
 .role__image__role[data-role="infected4"]:before {
-    background-image: url(/assets/img/game4/roles/infected4.png);
+    background-image: url("/assets/img/game4/roles/infected4.png");
 }
 .role__image__role[data-role="pathogen"]:before {
-    background-image: url(/assets/img/game4/roles/pathogen.png);
+    background-image: url("/assets/img/game4/roles/pathogen.png");
 }
 .role__image__role[data-role="people1"]:before {
-    background-image: url(/assets/img/game4/roles/people1.png);
+    background-image: url("/assets/img/game4/roles/people1.png");
 }
 .role__image__role[data-role="people2"]:before {
-    background-image: url(/assets/img/game4/roles/people2.png);
+    background-image: url("/assets/img/game4/roles/people2.png");
 }
 .role__image__role[data-role="people3"]:before {
-    background-image: url(/assets/img/game4/roles/people3.png);
+    background-image: url("/assets/img/game4/roles/people3.png");
 }
 .role__image__role[data-role="people4"]:before {
-    background-image: url(/assets/img/game4/roles/people4.png);
+    background-image: url("/assets/img/game4/roles/people4.png");
 }
 .role__image__role[data-role="people5"]:before {
-    background-image: url(/assets/img/game4/roles/people5.png);
+    background-image: url("/assets/img/game4/roles/people5.png");
 }
 .role__image__role[data-role="people6"]:before {
-    background-image: url(/assets/img/game4/roles/people6.png);
+    background-image: url("/assets/img/game4/roles/people6.png");
 }
 .role__image__role[data-role="police"]:before {
-    background-image: url(/assets/img/game4/roles/police.png);
+    background-image: url("/assets/img/game4/roles/police.png");
 }
 img {
     display: block;
@@ -135,11 +155,37 @@ img {
     background: transparent;
 }
 .action__button__item--button {
+    position: relative;
     width: 100%;
     border-width: 2px;
     border-style: outset;
     border-color: buttonborder;
     border-image: initial;
+}
+.action__button__item--button[data-js-button="selectScene"]:after {
+    content: '';
+    display: block;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    padding-top: calc(800 / 800 * 100%);
+}
+.action__button__item--button[data-scene="1"]:after {
+    background-image: url("/assets/img/game4/scenes/1.jpg");
+}
+.action__button__item--button[data-scene="2"]:after {
+    background-image: url("/assets/img/game4/scenes/2.jpg");
+}
+.action__button__item--button[data-scene="3"]:after {
+    background-image: url("/assets/img/game4/scenes/3.jpg");
+}
+.action__button__item--button[data-scene="4"]:after {
+    background-image: url("/assets/img/game4/scenes/4.jpg");
+}
+.action__button__item--button[data-scene="5"]:after {
+    background-image: url("/assets/img/game4/scenes/5.jpg");
+}
+.action__button__item--button[data-scene="6"]:after {
+    background-image: url("/assets/img/game4/scenes/6.jpg");
 }
 .action__button__item--text {
     font-size: 2rem;

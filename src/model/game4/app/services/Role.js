@@ -31,10 +31,10 @@ class Role
         };
 
         this.roleGroups = {
-            1: {image: 'people.png', value: 1, change: 1},
-            2: {image: 'infected.png', value: -1, change: 0},
-            3: {image: 'immunity.png', value: 1, change: 0},
-            4: {image: 'pathogen.png', value: -1, change: 0},
+            1: {image: 'people', value: 1, change: 1},
+            2: {image: 'infected', value: -1, change: 0},
+            3: {image: 'immunity', value: 1, change: 0},
+            4: {image: 'pathogen', value: -1, change: 0},
         };
     }
 
@@ -173,6 +173,19 @@ class Role
         }
 
         return roles;
+    }
+
+    getLiffNumberGroupImages(roles) {
+        const roleGroups = this.roleGroups;
+        let groupImage = {};
+
+        for (let role of roles) {
+            let roleGroup = roleGroups[role.group];
+
+            groupImage[role.number] = roleGroup.image;
+        }
+
+        return groupImage;
     }
 }
 

@@ -232,12 +232,12 @@ class Message
         });
     }
 
-    getStartGameContents(context, users, sceneIds) {
+    getStartGameContents(context, round, users, sceneIds) {
         const contentText = this.Lang.gameStartStory;
         const checkRoundText = this.Lang.checkRound;
 
         let uri = `${this.liffUri}/round?users=${encodeURIComponent(JSON.stringify(users))}`;
-        uri += `&scenes=${encodeURIComponent(JSON.stringify(sceneIds))}`;
+        uri += `&scenes=${encodeURIComponent(JSON.stringify(sceneIds))}&round=${round}`;
 
         return context.replyFlex(`${contentText}`, {
             "type": "bubble",
@@ -288,20 +288,17 @@ class Message
         ];
     }
 
-    getSelectSceneHandleContents(scenes) {
-        let result = [];
+    getSelectSceneHandleContents(scenes, round) {
+        let result = {};
 
-        for (let sceneId in scenes) {
-            let url = `https://i.imgur.com/MwS42AE.png?sender=selectScene&sceneId=${sceneId}`;
+        for (let scene of scenes) {
+            let url = `https://i.imgur.com/MwS42AE.png?sender=selectScene&sceneId=${scene.id}&round=${round}`;
 
-            result.push(
-                {
-                    id: sceneId,
-                    type: 'image',
-                    originalContentUrl: `${url}`,
-                    previewImageUrl: `${url}`,
-                }
-            );
+            result[scene.id] = [{
+                type: 'image',
+                originalContentUrl: `${url}`,
+                previewImageUrl: `${url}`,
+            }];
         }
 
         return result;

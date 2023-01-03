@@ -78,15 +78,16 @@ app.prepare().then(() => {
         const filename = path.join(`${__dirname}/${Config.route}/resources/view/liff/round.html`);
         const roles = Role.getLiffRoles();
         const roleUsers = params.users ? JSON.parse(decodeURIComponent(params.users)) : {};
+        const numberGroupImages = Role.getLiffNumberGroupImages(roleUsers);
         const scenesIds = params.scenes ? JSON.parse(decodeURIComponent(params.scenes)) : {};
         const scenes = Scene.getLiffScenes(scenesIds);
-
         const data = {
             url: `${Config.route}`,
             roles: roles,
             roleUsers: roleUsers,
+            numberGroupImages: numberGroupImages,
             scenes: scenes,
-            buttonMessage: Message.getSelectSceneHandleContents(scenesIds)
+            buttonMessage: Message.getSelectSceneHandleContents(scenes, params.round)
         };
         const options = {};
 
