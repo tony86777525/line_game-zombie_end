@@ -4,7 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>末日危機</title>
-    <link rel="stylesheet" href="/assets/css/game4/round.css">
+    <link rel="stylesheet" href="/assets/css/game4/liff.css">
 
     <script>
         const url = <%- JSON.stringify(url) %>;
@@ -24,7 +24,14 @@
         <div class="role__description__text">角色能力：<span data-js-role="power"></span></div>
         <div class="role__description__text">獲勝方式：<span data-js-role="winner"></span></div>
     </div>
-    <div class="role__action" data-js-button="scenes">
+</section>
+<section class="action">
+    <div class="action__button" data-js-button="scenes">
+        <div class="action__button__item">
+            <button class="action__button__item--button" data-js-button="changeToStartGame">
+                <span class="action__button__item--text">確認</span>
+            </button>
+        </div>
     </div>
 </section>
 

@@ -13,21 +13,21 @@ class Role
         this.peopleId = [1, 2, 3, 4, 5, 6];
 
         this.roles = {
-            1: {type: 1, power: 1, winner: 1, image: 'people1.png', group: 1},
-            2: {type: 1, power: 1, winner: 1, image: 'people2.png', group: 1},
-            3: {type: 1, power: 1, winner: 1, image: 'people3.png', group: 1},
-            4: {type: 1, power: 1, winner: 1, image: 'people4.png', group: 1},
-            5: {type: 1, power: 1, winner: 1, image: 'people5.png', group: 1},
-            6: {type: 1, power: 1, winner: 1, image: 'people6.png', group: 1},
-            7: {type: 2, power: 2, winner: 2, image: 'infected1.png', group: 2},
-            8: {type: 2, power: 2, winner: 2, image: 'infected2.png', group: 2},
-            9: {type: 2, power: 2, winner: 2, image: 'infected3.png', group: 2},
-            10: {type: 2, power: 2, winner: 2, image: 'infected4.png', group: 2},
-            11: {type: 2, power: 3, winner: 3, image: 'pathogen.png', group: 4},
-            12: {type: 3, power: 4, winner: 4, image: 'dog.png', group: 1},
-            13: {type: 3, power: 5, winner: 5, image: 'doctor.png', group: 1},
-            14: {type: 3, power: 6, winner: 6, image: 'police.png', group: 1},
-            15: {type: 3, power: 7, winner: 7, image: 'immunity.png', group: 3}
+            1: {type: 1, power: 1, winner: 1, image: 'people1', group: 1},
+            2: {type: 1, power: 1, winner: 1, image: 'people2', group: 1},
+            3: {type: 1, power: 1, winner: 1, image: 'people3', group: 1},
+            4: {type: 1, power: 1, winner: 1, image: 'people4', group: 1},
+            5: {type: 1, power: 1, winner: 1, image: 'people5', group: 1},
+            6: {type: 1, power: 1, winner: 1, image: 'people6', group: 1},
+            7: {type: 2, power: 2, winner: 2, image: 'infected1', group: 2},
+            8: {type: 2, power: 2, winner: 2, image: 'infected2', group: 2},
+            9: {type: 2, power: 2, winner: 2, image: 'infected3', group: 2},
+            10: {type: 2, power: 2, winner: 2, image: 'infected4', group: 2},
+            11: {type: 2, power: 3, winner: 3, image: 'pathogen', group: 4},
+            12: {type: 3, power: 4, winner: 4, image: 'dog', group: 1},
+            13: {type: 3, power: 5, winner: 5, image: 'doctor', group: 1},
+            14: {type: 3, power: 6, winner: 6, image: 'police', group: 1},
+            15: {type: 3, power: 7, winner: 7, image: 'immunity', group: 3}
         };
 
         this.roleGroups = {

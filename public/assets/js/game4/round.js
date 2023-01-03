@@ -29,8 +29,13 @@ function initializeLiff(myLiffId) {
                     let user = roleUsers.find(roleUser => roleUser.number === number);
                     if (undefined !== user) {
                         let roleCard = roles[user.roleId];
-                        numberHtml += `<div class="role__image__number__item active">`
-                            + `<img class="group" src="/assets/img/game4/groups/${roleCard.groupImage}"><img src="/assets/img/game4/numbers/${number}.jpg"></div>`
+                        if (user.userId === userId) {
+                            numberHtml += `<div class="role__image__number__item active">`
+                                + `<img class="group" src="/assets/img/game4/groups/me.png"><img src="/assets/img/game4/numbers/${number}.jpg"></div>`
+                        } else {
+                            numberHtml += `<div class="role__image__number__item active">`
+                                + `<img class="group" src="/assets/img/game4/groups/${roleCard.groupImage}"><img src="/assets/img/game4/numbers/${number}.jpg"></div>`
+                        }
                     } else {
                         numberHtml += `<div class="role__image__number__item"><img src="/assets/img/game4/numbers/${number}.jpg"></div>`
                     }
@@ -44,7 +49,11 @@ function initializeLiff(myLiffId) {
                 let buttonHtml = '';
                 for (let sceneId in scenes) {
                     let scene = scenes[sceneId];
-                    buttonHtml += `<button class="role__action__button" data-js-button="changeToStartGame" data-js-button-type="${sceneId}"><span class="role__action__button__text">${scene.name}</span><img src="/assets/img/game4/scenes/${scene.image}"></button>`
+                    buttonHtml += `<div class="action__button__item">
+                        <button class="action__button__item--button" data-js-button="changeToStartGame" data-js-button-type="${sceneId}">
+                            <span class="action__button__item--title">${scene.name}</span>
+                            <img src="/assets/img/game4/scenes/${scene.image}">
+                        </button></div>`;
                 }
 
                 document.querySelector('[data-js-button="scenes"]').innerHTML = buttonHtml;

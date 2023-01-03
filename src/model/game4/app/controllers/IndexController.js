@@ -173,47 +173,6 @@ async function CallDB(context) {
     await context.replyText(result);
 }
 
-// async function getCheckRole(context) {
-//     const { getClient } = require('bottender');
-//
-//     // get group number
-//     if (undefined !== context.session.group) {
-//         $targetId = context.session.group.id;
-//         console.log(getClient.getAllGroupMemberIds($targetId).length);
-//     }
-//
-//     // console.log($users);
-// }
-//
-// async function resetGame(context) {
-//     _resetGame(context);
-//
-//     return context.replyText('Game Reset OK!!');
-// }
-//
-
-//
-// async function index(context) {
-//     const { text } = context.event;
-//
-//     return context.replyText('123');
-// }
-//
-// function _resetGame(context) {
-//     let $getSelectedNumbersTarget = db.map[tableNameSelectedNumber].groups;
-//     let $targetId;
-//
-//     if (undefined !== context.session.group) {
-//         // group message
-//         $targetId = context.session.group.id;
-//     } else if (undefined !== context.session.user) {
-//         // user message
-//         $targetId = context.session.user.id;
-//     }
-//
-//     delete $getSelectedNumbersTarget[$targetId];
-// }
-//
 function _startToSelectNumber(context) {
     GameState.setRobot(context);
     const { users } = GameState.getUsers(context);
@@ -222,23 +181,3 @@ function _startToSelectNumber(context) {
     let roles = $roleService.setUsers(users).getRoles();
     GameState.setRoles(context, roles);
 }
-
-//
-// function _getContextData(context) {
-//     let $getSelectedNumbersTarget = db.map[tableNameSelectedNumber].groups;
-//     let $targetId;
-//
-//     if (undefined !== context.session.group) {
-//         // group message
-//         $targetId = context.session.group.id;
-//     } else if (undefined !== context.session.user) {
-//         // user message
-//         $targetId = context.session.user.id;
-//     }
-//
-//     // new group
-//     if (undefined === $getSelectedNumbersTarget[$targetId])
-//         $getSelectedNumbersTarget[$targetId] = {id: $targetId, step: gameConfig.step.select_number, users: []};
-//
-//     return $getSelectedNumbersTarget[$targetId].users;
-// }
