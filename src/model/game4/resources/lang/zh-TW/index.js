@@ -33,6 +33,16 @@ module.exports = {
 
     checkRound: "確認本回合行動",
 
+    gameRoundEnd: "您好！\n收到本次的任務回報，\n{userNumberText}前去{sceneText}搜索，\n{resultText}\n幹得還不錯啊！",
+    gameRoundEndAnd: "、",
+    gameRoundEndResult: {
+        1: "那裡出乎意料的安全，找到了不少物資。",
+        2: "那裡有少量的喪屍，但不影響搜索物資。",
+        3: "那裡有不少喪屍，所有物資都被破壞了。",
+        4: "那裡聚集了許多喪屍，大家只顧著逃命。",
+        5: "那裡什麼也沒有，沒有物資、沒有喪屍。",
+    },
+
     error: "[error]啊，你點慢了一步。",
 
     roleCard: {

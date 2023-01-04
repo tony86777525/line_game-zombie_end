@@ -25,6 +25,10 @@ class Scene
         return sourceArray;
     }
 
+    getScenesTemplate() {
+        return this.scenes;
+    }
+
     getSceneIds() {
         let sceneIds = Object.keys(this.scenes);
         let newSceneIds = this._shuffle(sceneIds);

@@ -2,13 +2,14 @@ const base = require('./BaseController');
 const Config = require(base.route.config + 'game');
 const GameStateModel = require(base.route.model + 'GameState');
 const MessageService = require(base.route.service + 'Message');
-const Lang = require(`${base.route.lang}/${process.env.ROOT_LANG}/index`);
 const roleService = require(base.route.service + 'Role');
 const SceneService = require(base.route.service + 'Scene');
+const GameRoundService = require(base.route.service + 'GameRound');
 
 const GameState = new GameStateModel(Config.gameStatesId);
 const Message = new MessageService();
 const Scene = new SceneService();
+const GameRound = new GameRoundService();
 
 module.exports = {
     newGame: NewGame,
@@ -164,29 +165,38 @@ async function StartGame(context) {
 }
 
 async function SelectScene(context, gameRound, sceneId) {
-    const isStateStartGame = GameState.isStateStartGame(context);
+    // const isStateStartGame = GameState.isStateStartGame(context);
+    //
+    // if (false === isStateStartGame) {
+    //     await Message.getErrorContents(context);
+    //     return;
+    // }
+    //
+    // const userId = context.session.user.id;
+    // const isSetGameRoundScene = GameState.setGameRoundScene(context, gameRound, userId, sceneId)
+    //
+    // if (false === isSetGameRoundScene) {
+    //     await Message.getErrorContents(context);
+    //     return;
+    // }
+    //
+    // const sceneIds = GameState.getNowScenes(context);
+    // const isGameRoundEnd = GameState.isGameRoundEnd(context, gameRound, sceneIds)
 
-    if (false === isStateStartGame) {
-        await Message.getErrorContents(context);
-        return;
-    }
-
-    const userId = context.session.user.id;
-    const isSetGameRoundScene = GameState.setGameRoundScene(context, gameRound, userId, sceneId)
-
-    if (false === isSetGameRoundScene) {
-        await Message.getErrorContents(context);
-        return;
-    }
-
-    const sceneIds = GameState.getNowScenes(context);
-    const isGameRoundEnd = GameState.isGameRoundEnd(context, gameRound, sceneIds)
+    let returnMessage = [];
 
     // 人數10人 || 單人
-    if (true === isGameRoundEnd) {
-        // _startToSelectNumber(context);
-        // const { users, userCount, robotCount } = GameState.getUsers(context);
-        // const roles = GameState.getRoles(context);
+    // if (true === isGameRoundEnd) {
+    if (true) {
+        const { users } = GameState.getUsers(context);
+        const $roleService = new roleService;
+        const roleGroups = $roleService.getRoleGroupsTemplate();
+        const roleGroupsValue = $roleService.getRoleGroupsValueTemplate();
+        const scenes = Scene.getScenesTemplate();
+        const { transformGroupUsers, resultContentTag }
+            = GameRound.getGameRoundResult(gameRound, users, roleGroups, roleGroupsValue, scenes);
+
+        returnMessage = returnMessage.concat(Message.getGameRoundEndContents(context, resultContentTag));
         //
         // returnMessage.push(Message.getStartToSelectNumberContents(context, userCount, robotCount));
         // returnMessage.push(Message.getSelectNumberContents(context, roles, users));
@@ -201,7 +211,7 @@ async function SelectScene(context, gameRound, sceneId) {
     // const round = 1;
     //
     // await Message.getStartGameContents(context, round, checkRoleUsers, newSceneIds);
-    // await Message.getStartGameContents(context, checkRoleUsers, newSceneIds);
+    await returnMessage;
 }
 
 async function CallDB(context) {

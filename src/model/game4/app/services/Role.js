@@ -30,11 +30,16 @@ class Role
             15: {type: 3, power: 7, winner: 7, image: 'immunity', group: 3}
         };
 
+        this.roleGroupsValue = {
+            uninfected: 0,
+            infected: 1
+        }
+
         this.roleGroups = {
-            1: {image: 'people', value: 1, change: 1},
-            2: {image: 'infected', value: -1, change: 0},
-            3: {image: 'immunity', value: 1, change: 0},
-            4: {image: 'pathogen', value: -1, change: 0},
+            1: {image: 'people', value: this.roleGroupsValue.uninfected, change: 1},
+            2: {image: 'infected', value: this.roleGroupsValue.infected, change: 0},
+            3: {image: 'immunity', value: this.roleGroupsValue.uninfected, change: 0},
+            4: {image: 'pathogen', value: this.roleGroupsValue.infected, change: 0},
         };
     }
 
@@ -44,6 +49,10 @@ class Role
 
     getRoleGroupsTemplate() {
         return this.roleGroups;
+    }
+
+    getRoleGroupsValueTemplate() {
+        return this.roleGroupsValue;
     }
 
     setUsers($users) {
