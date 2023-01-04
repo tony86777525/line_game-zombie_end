@@ -1,4 +1,4 @@
-const {findKey} = require("lodash");
+const {findKey, find} = require("lodash");
 
 class GameState
 {
@@ -158,6 +158,14 @@ class GameState
         return this.state.selectNumber === context.state.gameStates[this.gameStatesId].state;
     }
 
+    isStateStartGame(context) {
+        return this.state.startGame === context.state.gameStates[this.gameStatesId].state;
+    }
+
+    isStateSelectSceneRound(context, round) {
+        return this.state.startGame === context.state.gameStates[this.gameStatesId].state;
+    }
+
     setStateStartGame(context) {
         let result = false;
 
@@ -241,10 +249,10 @@ class GameState
         return scenes[scenes.length - 1];
     }
 
-    setRoundUserScene(context, round, userId, sceneId) {
+    setGameRoundScene(context, gameRound, userId, sceneId) {
         const { find } = require("lodash");
         const users = context.state.gameStates[this.gameStatesId].users;
-        const sceneKey = `scene${round}`;
+        const sceneKey = `scene${gameRound}`;
         const user = find(users, (user) => {
             return user.id === userId && undefined === user[sceneKey]
         });
@@ -252,6 +260,27 @@ class GameState
 
         if (undefined !== user) {
             user[sceneKey] = sceneId;
+            result = true;
+        }
+
+        return result;
+    }
+
+    isGameRoundEnd(context, gameRound, sceneIds) {
+        const { find } = require("lodash");
+        const users = context.state.gameStates[this.gameStatesId].users;
+        const scenes = context.state.gameStates[this.gameStatesId].scenes;
+        const sceneKey = `scene${gameRound}`;
+        const mappings = find(users, user => user.type === this.user.type.user && undefined === user[sceneKey]);
+        let result = false;
+
+        if (undefined === mappings) {
+            for (let userKey in users) {
+                if (undefined === users[userKey][sceneKey]) {
+                    let sceneIdsKey = Math.floor(Math.random() * sceneIds.length);
+                    users[userKey][sceneKey] = sceneIds[sceneIdsKey];
+                }
+            }
             result = true;
         }
 

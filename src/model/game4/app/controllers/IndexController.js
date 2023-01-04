@@ -97,9 +97,9 @@ async function SelectNumber(context) {
 }
 
 async function SetRole(context) {
-    const isChangeState = GameState.isStateSelectNumber(context);
+    const isStateSelectNumber = GameState.isStateSelectNumber(context);
 
-    if (false === isChangeState) {
+    if (false === isStateSelectNumber) {
         await Message.getErrorContents(context);
         return;
     }
@@ -145,30 +145,52 @@ async function StartGame(context) {
         await Message.getErrorContents(context);
         return;
     }
+    let returnMessage = [];
 
+    returnMessage.push(Message.getStartGameContents(context));
+
+    const gameRound = 1;
     const sceneIds = Scene.getSceneIds();
 
     GameState.setScenes(context, sceneIds);
 
     const checkRoleUsers = GameState.getCheckRoleUsers(context);
     const newSceneIds = GameState.getNowScenes(context);
-    const round = 1;
+    const newSceneNames = Scene.getSceneNameByIds(sceneIds)
 
-    await Message.getStartGameContents(context, round, checkRoleUsers, newSceneIds);
+    returnMessage.push(Message.getGameRoundContents(context, gameRound, checkRoleUsers, newSceneIds, newSceneNames));
+
+    await returnMessage;
 }
 
-async function SelectScene(context, round, sceneId) {
-    // const isChangeState = GameState.setStateStartGame(context);
-    //
-    // if (false === isChangeState) {
-    //     await Message.getErrorContents(context);
-    //     return;
-    // }
-    console.log(round);
-    console.log(sceneId);
+async function SelectScene(context, gameRound, sceneId) {
+    const isStateStartGame = GameState.isStateStartGame(context);
+
+    if (false === isStateStartGame) {
+        await Message.getErrorContents(context);
+        return;
+    }
+
     const userId = context.session.user.id;
-    GameState.setRoundUserScene(context, round, userId, sceneId)
-console.log('SelectScene');
+    const isSetGameRoundScene = GameState.setGameRoundScene(context, gameRound, userId, sceneId)
+
+    if (false === isSetGameRoundScene) {
+        await Message.getErrorContents(context);
+        return;
+    }
+
+    const sceneIds = GameState.getNowScenes(context);
+    const isGameRoundEnd = GameState.isGameRoundEnd(context, gameRound, sceneIds)
+
+    // 人數10人 || 單人
+    if (true === isGameRoundEnd) {
+        // _startToSelectNumber(context);
+        // const { users, userCount, robotCount } = GameState.getUsers(context);
+        // const roles = GameState.getRoles(context);
+        //
+        // returnMessage.push(Message.getStartToSelectNumberContents(context, userCount, robotCount));
+        // returnMessage.push(Message.getSelectNumberContents(context, roles, users));
+    }
 
     // const sceneIds = Scene.getSceneIds();
     //

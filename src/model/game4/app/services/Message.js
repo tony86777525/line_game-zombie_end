@@ -232,12 +232,40 @@ class Message
         });
     }
 
-    getStartGameContents(context, round, users, sceneIds) {
+    getStartGameContents(context) {
         const contentText = this.Lang.gameStartStory;
+
+        return context.replyFlex(`${contentText}`, {
+            "type": "bubble",
+            "direction": "ltr",
+            "size": "giga",
+            "body": {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                    {
+                        "type": "text",
+                        "text": `${contentText}`,
+                        "weight": "bold",
+                        "size": "md",
+                        "align": "start",
+                        "wrap": true
+                    }
+                ]
+            },
+        });
+    }
+
+    getGameRoundContents(context, gameRound, users, sceneIds, newSceneNames) {
+        let contentText = this.Lang.gameRound;
         const checkRoundText = this.Lang.checkRound;
 
+        while (/{sceneText}/.test(contentText) && newSceneNames.length > 0) {
+            contentText = contentText.replace(/{sceneText}/, newSceneNames.shift())
+        }
+
         let uri = `${this.liffUri}/round?users=${encodeURIComponent(JSON.stringify(users))}`;
-        uri += `&scenes=${encodeURIComponent(JSON.stringify(sceneIds))}&round=${round}`;
+        uri += `&scenes=${encodeURIComponent(JSON.stringify(sceneIds))}&round=${gameRound}`;
 
         return context.replyFlex(`${contentText}`, {
             "type": "bubble",

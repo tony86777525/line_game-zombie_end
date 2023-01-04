@@ -44,7 +44,7 @@ function initializeLiff(myLiffId) {
                 document.querySelectorAll(`[data-scene]`).forEach((el) => {
                     let scene = scenes.shift();
                     el.dataset.scene = scene.image;
-                    el.querySelector(`[data-js-button="title"]`).innerHTML = scene.name;
+                    el.querySelector(`[data-js-button="title"]`).innerHTML = scene.content;
                 });
             }).catch((err) => {
                 console.log('error', err);

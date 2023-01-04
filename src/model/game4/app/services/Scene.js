@@ -34,17 +34,26 @@ class Scene
         return newSceneIds;
     }
 
-    getLiffScenes(scenesIds) {
+    getSceneNameByIds(sceneIds) {
+        let result = [];
+        sceneIds.forEach(sceneId => {
+            result.push(this.Lang.scenes.name[sceneId]);
+        });
+
+        return result;
+    }
+
+    getLiffScenes(sceneIds) {
         const scenes = this.scenes;
 
         let getScenes = [];
 
-        for (let scenesId of scenesIds) {
-            let scene = scenes[Number(scenesId)];
+        for (let sceneId of sceneIds) {
+            let scene = scenes[Number(sceneId)];
 
             getScenes.push({
-                id: scenesId,
-                name: this.Lang.scenes[scenesId],
+                id: sceneId,
+                content: this.Lang.scenes.content[sceneId],
                 image: scene.image,
             });
         }
