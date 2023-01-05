@@ -26,6 +26,7 @@ class GameState
     init(context) {
         context.state.gameStates[this.gameStatesId] = {
             state: this.state.newGame,
+            gameRound: 0,
             users: [],
             roles: [],
             scenes: [],
@@ -60,6 +61,7 @@ class GameState
                 id: userId,
                 name: userName,
                 type: this.user.type.user,
+                number: '',
                 role_id: '',
                 group: ''
             });
@@ -95,6 +97,7 @@ class GameState
                 id: name,
                 name: name,
                 type: this.user.type.robot,
+                number: '',
                 role_id: '',
                 group: ''
             });
@@ -113,14 +116,14 @@ class GameState
 
     getCheckRoleUsers(context) {
         const users = context.state.gameStates[this.gameStatesId].users;
-        const roles = context.state.gameStates[this.gameStatesId].roles;
+
         let result = [];
         for (let user of users) {
             result.push({
                 userId: user.id,
                 roleId: user.role_id,
                 group: user.group,
-                number: Number(roles.indexOf(user.role_id)) + 1,
+                number: Number(user.number),
             });
         }
 
@@ -134,13 +137,6 @@ class GameState
     getRoles(context) {
         return context.state.gameStates[this.gameStatesId].roles;
     }
-
-    // getSelectedRoleNumbers(context) {
-    //     const { find, result } = require("lodash");
-    //     const users = context.state.gameStates[this.gameStatesId].users;
-    //
-    //     return result(find(users, {role_id: role}), 'role_id');
-    // }
 
     setStateSelectNumber(context) {
         let result = false;
@@ -183,6 +179,7 @@ class GameState
         let result = false;
 
         const users = context.state.gameStates[this.gameStatesId].users;
+        const roles = context.state.gameStates[this.gameStatesId].roles;
 
         const mappings = find(users, (user) => {
             return (user.id === userId && user.role_id !== '') || user.role_id === roleId;
@@ -192,6 +189,7 @@ class GameState
             const userKey = findKey(users, {id: userId});
             const roleTemplate = rolesTemplate[roleId];
             users[userKey].role_id = roleId;
+            users[userKey].number = Number(Object.keys(roles).find(key => roles[key] == roleId)) + 1,
             users[userKey].group = roleTemplate.group;
 
             result = true;
@@ -215,8 +213,9 @@ class GameState
                     for (let roleId of roles) {
                         if (undefined === find(users, {role_id: roleId})) {
                             const roleTemplate = rolesTemplate[roleId];
-                            context.state.gameStates[this.gameStatesId].users[userKey].role_id = roleId;
-                            context.state.gameStates[this.gameStatesId].users[userKey].group = roleTemplate.group;
+                            users[userKey].role_id = roleId;
+                            users[userKey].group = roleTemplate.group;
+                            users[userKey].number = Number(Object.keys(roles).find(key => roles[key] == roleId)) + 1;
                         }
                     }
                 }
@@ -237,6 +236,22 @@ class GameState
         }
 
         return result;
+    }
+
+    setGameRound(context, gameRound) {
+        context.state.gameStates[this.gameStatesId].gameRound = gameRound;
+    }
+
+    getGameRound(context) {
+        return context.state.gameStates[this.gameStatesId].gameRound;
+    }
+
+    setUserGroup(context, transformUsers, checkGroup, newGroup) {
+        let users = context.state.gameStates[this.gameStatesId].users;
+        for (let transformUserId of transformUsers) {
+            let userTarget = users.find(user => user.id === transformUserId && user.group === checkGroup);
+            userTarget.group = newGroup;
+        }
     }
 
     setScenes(context, sceneIds) {
@@ -269,7 +284,6 @@ class GameState
     isGameRoundEnd(context, gameRound, sceneIds) {
         const { find } = require("lodash");
         const users = context.state.gameStates[this.gameStatesId].users;
-        const scenes = context.state.gameStates[this.gameStatesId].scenes;
         const sceneKey = `scene${gameRound}`;
         const mappings = find(users, user => user.type === this.user.type.user && undefined === user[sceneKey]);
         let result = false;

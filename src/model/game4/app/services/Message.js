@@ -141,7 +141,7 @@ class Message
         let contentText = 'Select Number';
 
         for (let key in roles) {
-            let contentHeaderText = this.Lang.selectNumber[key];
+            let contentHeaderText = `${this.Lang.selectNumberTitle}${this.Lang.number[key]}`;
             let isUnSelected = true;
             let roleImage = Number(key) + 1;
             let heroUrl = `${this.imagePath}/numbers/${roleImage}.jpg`;
@@ -334,15 +334,23 @@ class Message
 
     getGameRoundEndContents(context, resultContentTags) {
         let contentArray = [];
+
         for (let sceneId in resultContentTags) {
             let resultContentTag = resultContentTags[sceneId];
             let contentText = this.Lang.gameRoundEnd;
-            let contentAndText = this.Lang.gameRoundEndAnd
-            let contentResultText = this.Lang.gameRoundEndResult[resultContentTag];
+            let userNumbers = resultContentTag.userNumbers;
+            for (let key in userNumbers) {
+                console.log(userNumbers[key]);
+                userNumbers[key] = `${this.Lang.number[userNumbers[key]]}${this.Lang.gameRoundEndNumber}`;
+            }
+            let contentUserNumberText = userNumbers.join(this.Lang.gameRoundEndAnd);
+            let contentResultText = this.Lang.gameRoundEndResult[resultContentTag.result];
             let sceneText = this.Lang.scenes.name[sceneId];
 
+            contentText = contentText.replace(/{userNumberText}/, contentUserNumberText);
             contentText = contentText.replace(/{sceneText}/, sceneText);
             contentText = contentText.replace(/{resultText}/, contentResultText);
+
             contentArray.push(contentText);
         }
 

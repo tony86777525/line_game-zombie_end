@@ -8,8 +8,10 @@ module.exports = async function App(context) {
             return IndexController.joinGame(context);
         else if('start game' === context.event.payload)
             return IndexController.SelectNumber(context);
-        else if(/^role=([\d]+)$/.test(context.event.payload))
-            return IndexController.SetRole(context);
+        else if(/^role=([\d]+)$/.test(context.event.payload)) {
+            const params = _getParams(context.event.payload);
+            return IndexController.SetRole(context, params);
+        }
     } else if (context.event.isMessage) {
         if (true === context.event.isImage) {
             const $imageUrl = context.event.image.contentProvider.originalContentUrl;
@@ -42,6 +44,8 @@ function _getParams(url) {
         const array = state.split('?');
         if (array.length == 2) {
             return querystring.parse(array[1]);
+        } else {
+            return querystring.parse(state);
         }
     }
 

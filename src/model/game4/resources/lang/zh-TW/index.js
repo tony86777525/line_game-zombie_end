@@ -8,17 +8,18 @@ module.exports = {
     startToSelectNumber: "共有{userCount}名玩家，{robotCountText}參與遊戲。\n\n請選擇喜歡的數字：\n※已選擇的數字無法二次選擇。",
     startToSelectNumberRobotCount: "由系統操作另外{robotCount}位角色，",
 
-    selectNumber: {
-        0: "數字一",
-        1: "數字二",
-        2: "數字三",
-        3: "數字四",
-        4: "數字五",
-        5: "數字六",
-        6: "數字七",
-        7: "數字八",
-        8: "數字九",
-        9: "數字十"
+    selectNumberTitle: "數字",
+    number: {
+        0: "一",
+        1: "二",
+        2: "三",
+        3: "四",
+        4: "五",
+        5: "六",
+        6: "七",
+        7: "八",
+        8: "九",
+        9: "十"
     },
     unSelectNumber: "選擇號碼",
     selectedNumber: "已選擇號碼",
@@ -42,6 +43,8 @@ module.exports = {
         4: "那裡聚集了許多喪屍，大家只顧著逃命。",
         5: "那裡什麼也沒有，沒有物資、沒有喪屍。",
     },
+
+    gameRoundEndNumber: "號",
 
     error: "[error]啊，你點慢了一步。",
 

@@ -97,7 +97,7 @@ async function SelectNumber(context) {
     await returnMessage;
 }
 
-async function SetRole(context) {
+async function SetRole(context, params) {
     const isStateSelectNumber = GameState.isStateSelectNumber(context);
 
     if (false === isStateSelectNumber) {
@@ -105,9 +105,7 @@ async function SetRole(context) {
         return;
     }
 
-    const $data = context.event.payload;
-    let [, roleId] = $data.split('=');
-    roleId = Number(roleId);
+    const roleId = Number(params.role);
     const userId = context.session.user.id;
     const $roleService = new roleService;
     const rolesTemplate = $roleService.getRolesTemplate();
@@ -151,43 +149,36 @@ async function StartGame(context) {
     returnMessage.push(Message.getStartGameContents(context));
 
     const gameRound = 1;
-    const sceneIds = Scene.getSceneIds();
 
-    GameState.setScenes(context, sceneIds);
-
-    const checkRoleUsers = GameState.getCheckRoleUsers(context);
-    const newSceneIds = GameState.getNowScenes(context);
-    const newSceneNames = Scene.getSceneNameByIds(sceneIds)
-
-    returnMessage.push(Message.getGameRoundContents(context, gameRound, checkRoleUsers, newSceneIds, newSceneNames));
+    returnMessage.push(_startGameRound(context, gameRound));
 
     await returnMessage;
 }
 
 async function SelectScene(context, gameRound, sceneId) {
-    // const isStateStartGame = GameState.isStateStartGame(context);
-    //
-    // if (false === isStateStartGame) {
-    //     await Message.getErrorContents(context);
-    //     return;
-    // }
-    //
-    // const userId = context.session.user.id;
-    // const isSetGameRoundScene = GameState.setGameRoundScene(context, gameRound, userId, sceneId)
-    //
-    // if (false === isSetGameRoundScene) {
-    //     await Message.getErrorContents(context);
-    //     return;
-    // }
-    //
-    // const sceneIds = GameState.getNowScenes(context);
-    // const isGameRoundEnd = GameState.isGameRoundEnd(context, gameRound, sceneIds)
+    const isStateStartGame = GameState.isStateStartGame(context);
+
+    if (false === isStateStartGame) {
+        await Message.getErrorContents(context);
+        return;
+    }
+
+    const userId = context.session.user.id;
+    const isSetGameRoundScene = GameState.setGameRoundScene(context, gameRound, userId, sceneId)
+
+    if (false === isSetGameRoundScene) {
+        await Message.getErrorContents(context);
+        return;
+    }
+
+    const sceneIds = GameState.getNowScenes(context);
+    const isGameRoundEnd = GameState.isGameRoundEnd(context, gameRound, sceneIds)
 
     let returnMessage = [];
-
+console.log(gameRound);
     // 人數10人 || 單人
-    // if (true === isGameRoundEnd) {
-    if (true) {
+    if (true === isGameRoundEnd) {
+    // if (true) {
         const { users } = GameState.getUsers(context);
         const $roleService = new roleService;
         const roleGroups = $roleService.getRoleGroupsTemplate();
@@ -196,10 +187,12 @@ async function SelectScene(context, gameRound, sceneId) {
         const { transformGroupUsers, resultContentTag }
             = GameRound.getGameRoundResult(gameRound, users, roleGroups, roleGroupsValue, scenes);
 
+        GameState.setUserGroup(context, transformGroupUsers, 1, 3);
         returnMessage = returnMessage.concat(Message.getGameRoundEndContents(context, resultContentTag));
-        //
-        // returnMessage.push(Message.getStartToSelectNumberContents(context, userCount, robotCount));
-        // returnMessage.push(Message.getSelectNumberContents(context, roles, users));
+
+        const newGameRound = GameState.getGameRound(context) + 1;
+
+        returnMessage.push(_startGameRound(context, newGameRound));
     }
 
     // const sceneIds = Scene.getSceneIds();
@@ -227,4 +220,17 @@ function _startToSelectNumber(context) {
     const $roleService = new roleService;
     let roles = $roleService.setUsers(users).getRoles();
     GameState.setRoles(context, roles);
+}
+
+function _startGameRound(context, gameRound) {
+    const sceneIds = Scene.getSceneIds();
+
+    GameState.setGameRound(context, gameRound);
+    GameState.setScenes(context, sceneIds);
+
+    const checkRoleUsers = GameState.getCheckRoleUsers(context);
+    const newSceneIds = GameState.getNowScenes(context);
+    const newSceneNames = Scene.getSceneNameByIds(sceneIds)
+
+    return Message.getGameRoundContents(context, gameRound, checkRoleUsers, newSceneIds, newSceneNames);
 }
