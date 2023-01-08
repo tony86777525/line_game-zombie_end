@@ -18,9 +18,10 @@ module.exports = {
     SetRole: SetRole,
     StartGame: StartGame,
     SelectScene: SelectScene,
-    // resetGame: resetGame,
+    resetGame: ResetGame,
     callDB: CallDB,
-    // index: index,
+    callGame: CallGame,
+    index: Index,
 };
 
 async function NewGame(context) {
@@ -148,9 +149,7 @@ async function StartGame(context) {
 
     returnMessage.push(Message.getStartGameContents(context));
 
-    const gameRound = 1;
-
-    returnMessage.push(_startGameRound(context, gameRound));
+    returnMessage.push(_startGameRound(context));
 
     await returnMessage;
 }
@@ -164,53 +163,75 @@ async function SelectScene(context, gameRound, sceneId) {
     }
 
     const userId = context.session.user.id;
-    const isSetGameRoundScene = GameState.setGameRoundScene(context, gameRound, userId, sceneId)
+    const isSetGameRoundScene = GameState.setGameRoundScene(context, gameRound, userId, sceneId);
 
     if (false === isSetGameRoundScene) {
         await Message.getErrorContents(context);
         return;
     }
 
-    const sceneIds = GameState.getNowScenes(context);
+    const sceneIds = GameState.getNowScenes(context, gameRound);
     const isGameRoundEnd = GameState.isGameRoundEnd(context, gameRound, sceneIds)
 
     let returnMessage = [];
-console.log(gameRound);
+
     // 人數10人 || 單人
     if (true === isGameRoundEnd) {
     // if (true) {
         const { users } = GameState.getUsers(context);
+        const { nowGameRound } = GameState.getGameRound(context);
         const $roleService = new roleService;
         const roleGroups = $roleService.getRoleGroupsTemplate();
         const roleGroupsValue = $roleService.getRoleGroupsValueTemplate();
         const scenes = Scene.getScenesTemplate();
-        const { transformGroupUsers, resultContentTag }
-            = GameRound.getGameRoundResult(gameRound, users, roleGroups, roleGroupsValue, scenes);
+        const { transformGroupUsers, resultContentTag, result }
+            = GameRound.getGameRoundResult(users, nowGameRound, roleGroups, roleGroupsValue, scenes);
 
-        GameState.setUserGroup(context, transformGroupUsers, 1, 3);
+        const { targets, valueTarget } = $roleService.getChangeRoleGroupsTarget();
+
+        GameState.setUserGroup(context, transformGroupUsers, targets, valueTarget);
+
         returnMessage = returnMessage.concat(Message.getGameRoundEndContents(context, resultContentTag));
 
-        const newGameRound = GameState.getGameRound(context) + 1;
+        const winCount = GameState.setGameRoundResult(context, result);
+        const resultContentTags = GameRound.getGameResult(winCount, users, roleGroups);
 
-        returnMessage.push(_startGameRound(context, newGameRound));
+        // game end
+        if (resultContentTags.length > 0) {
+            GameState.setStateStartGame(context);
+
+            returnMessage.push(Message.getGameEndContents(context, resultContentTags));
+        } else {
+            const { gameRoundNumber } = GameState.getGameRound(context);
+            const newGameRound = gameRoundNumber;
+
+            returnMessage.push(_startGameRound(context, newGameRound));
+        }
     }
 
-    // const sceneIds = Scene.getSceneIds();
-    //
-    // GameState.setScenes(context, sceneIds);
-    //
-    // const checkRoleUsers = GameState.getCheckRoleUsers(context);
-    // const newSceneIds = GameState.getNowScenes(context);
-    // const round = 1;
-    //
-    // await Message.getStartGameContents(context, round, checkRoleUsers, newSceneIds);
     await returnMessage;
 }
+
+async function ResetGame(context) {
+
+    await Message.getResetGameContents(context);
+}
+
+async function Index(context) {}
 
 async function CallDB(context) {
     let result = JSON.stringify(GameState.dumpAll(context));
     console.log(result);
-    await context.replyText(result);
+    // await context.replyText(result);
+}
+
+async function CallGame(context) {
+    const $roleService = new roleService;
+    const roles = $roleService.getRolesTemplate();
+
+    let result = GameState.dumpGame(context, roles);
+    console.log(result);
+    // await context.replyText(result);
 }
 
 function _startToSelectNumber(context) {
@@ -222,14 +243,14 @@ function _startToSelectNumber(context) {
     GameState.setRoles(context, roles);
 }
 
-function _startGameRound(context, gameRound) {
+function _startGameRound(context, gameRound = 0) {
     const sceneIds = Scene.getSceneIds();
 
     GameState.setGameRound(context, gameRound);
-    GameState.setScenes(context, sceneIds);
+    GameState.setScenes(context, gameRound, sceneIds);
 
     const checkRoleUsers = GameState.getCheckRoleUsers(context);
-    const newSceneIds = GameState.getNowScenes(context);
+    const newSceneIds = GameState.getNowScenes(context, gameRound);
     const newSceneNames = Scene.getSceneNameByIds(sceneIds)
 
     return Message.getGameRoundContents(context, gameRound, checkRoleUsers, newSceneIds, newSceneNames);

@@ -37,6 +37,10 @@ app.prepare().then(() => {
         res.json({ id: process.env.LINE_LIFF_ID });
     });
 
+    // server.post('/getUser', (req, res) => {
+    //
+    // });
+
     server.get('/liff2', (req, res) => {
         // const params = getParams(req);
         const filename = path.join(`${__dirname}/${Config.route}/resources/view/liff/index.html`);
@@ -77,6 +81,9 @@ app.prepare().then(() => {
         const params = getParams(req);
         const filename = path.join(`${__dirname}/${Config.route}/resources/view/liff/round.html`);
         const roles = Role.getLiffRoles();
+        const canSeeAnyoneRoleId = Role.getCanSeeAnyoneRole();
+        const canSeeImmunityRoleId = Role.getCanSeeImmunityRole();
+        const immunityRoleId = Role.getImmunityRole();
         const roleUsers = params.users ? JSON.parse(decodeURIComponent(params.users)) : {};
         const numberGroupImages = Role.getLiffNumberGroupImages(roleUsers);
         const scenesIds = params.scenes ? JSON.parse(decodeURIComponent(params.scenes)) : {};
@@ -84,6 +91,9 @@ app.prepare().then(() => {
         const data = {
             url: `${Config.route}`,
             roles: roles,
+            canSeeAnyoneRoleId: canSeeAnyoneRoleId,
+            canSeeImmunityRoleId: canSeeImmunityRoleId,
+            immunityRoleId: immunityRoleId,
             roleUsers: roleUsers,
             numberGroupImages: numberGroupImages,
             scenes: scenes,

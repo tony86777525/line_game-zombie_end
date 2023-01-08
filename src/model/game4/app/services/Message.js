@@ -143,7 +143,7 @@ class Message
         for (let key in roles) {
             let contentHeaderText = `${this.Lang.selectNumberTitle}${this.Lang.number[key]}`;
             let isUnSelected = true;
-            let roleImage = Number(key) + 1;
+            let roleImage = Number(key);
             let heroUrl = `${this.imagePath}/numbers/${roleImage}.jpg`;
             let data = `role=${roles[key]}`;
 
@@ -340,7 +340,6 @@ class Message
             let contentText = this.Lang.gameRoundEnd;
             let userNumbers = resultContentTag.userNumbers;
             for (let key in userNumbers) {
-                console.log(userNumbers[key]);
                 userNumbers[key] = `${this.Lang.number[userNumbers[key]]}${this.Lang.gameRoundEndNumber}`;
             }
             let contentUserNumberText = userNumbers.join(this.Lang.gameRoundEndAnd);
@@ -396,6 +395,129 @@ class Message
             //         }
             //     ]
             // }
+        });
+    }
+
+    getGameEndContents(context, resultContentTags) {
+        let contentArray = [];
+
+        for (let resultContentTag of resultContentTags) {
+            let contentText = this.Lang.gameEnd;
+            let userNumbers = [];
+
+            for (let user of resultContentTag.users) {
+                userNumbers.push(`${this.Lang.number[user.number]}${this.Lang.gameEndNumber}`);
+            }
+
+            let contentUserNumberText = this.Lang.gameEndResult[resultContentTag.result]
+                + userNumbers.join(this.Lang.gameEndAnd);
+
+            contentText = contentText.replace(/{resultText}/, contentUserNumberText);
+
+            contentArray.push(contentText);
+        }
+
+        let contentText = contentArray.join("\n\n");
+        let buttonTextYes = this.Lang.yes;
+        let buttonTextNo = this.Lang.no;
+
+        return context.replyFlex(`${contentText}`, {
+            "type": "bubble",
+            "direction": "ltr",
+            "size": "giga",
+            "body": {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                    {
+                        "type": "text",
+                        "text": `${contentText}`,
+                        "weight": "bold",
+                        "size": "md",
+                        "align": "start",
+                        "wrap": true
+                    }
+                ]
+            },
+            "footer": {
+                "type": "box",
+                "layout": "horizontal",
+                "contents": [
+                    {
+                        "type": "button",
+                        "style": "link",
+                        "action": {
+                            "type": "postback",
+                            "label": `${buttonTextYes}`,
+                            "data": "new game"
+                        },
+                        "margin": "md"
+                    },
+                    {
+                        "type": "button",
+                        "style": "link",
+                        "action": {
+                            "type": "postback",
+                            "label": `${buttonTextNo}`,
+                            "data": "."
+                        },
+                        "margin": "md"
+                    }
+                ]
+            }
+        });
+    }
+
+
+    getResetGameContents(context) {
+        let contentText = this.Lang.resetGame;
+        let buttonTextYes = this.Lang.yes;
+        let buttonTextNo = this.Lang.no;
+
+        return context.replyFlex(`${contentText}`, {
+            "type": "bubble",
+            "direction": "ltr",
+            "size": "mega",
+            "body": {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                    {
+                        "type": "text",
+                        "text": `${contentText}`,
+                        "weight": "bold",
+                        "size": "md",
+                        "align": "start",
+                        "wrap": true
+                    }
+                ]
+            },
+            "footer": {
+                "type": "box",
+                "layout": "horizontal",
+                "contents": [
+                    {
+                        "type": "button",
+                        "style": "link",
+                        "action": {
+                            "type": "postback",
+                            "label": `${buttonTextYes}`,
+                            "data": "new game"
+                        },
+                        "margin": "md"
+                    },
+                    {
+                        "type": "button",
+                        "style": "link",
+                        "action": {
+                            "type": "postback",
+                            "label": `${buttonTextNo}`,
+                            "data": "."
+                        },
+                        "margin": "md"
+                    }
+                ]
+            }
         });
     }
 

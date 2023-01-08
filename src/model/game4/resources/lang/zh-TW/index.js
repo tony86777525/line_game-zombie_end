@@ -2,6 +2,8 @@ module.exports = {
     newGame: "歡迎來到《末日危機》的桌遊世界\n請點擊開始遊戲！",
     joinGame: "加入遊戲",
     startGame: "開始遊戲",
+    yes: "是",
+    no: "否",
 
     joinGameAlready: "{name}已加入，請稍待遊戲開始！",
     joinGameState: "{name}  加入遊戲桌！\n目前人數： {userCount}人\n\n其他玩家請加入",
@@ -34,17 +36,26 @@ module.exports = {
 
     checkRound: "確認本回合行動",
 
-    gameRoundEnd: "您好！\n收到本次的任務回報，\n{userNumberText}前去{sceneText}搜索，\n{resultText}\n幹得還不錯啊！",
+    gameRoundEnd: "您好！\n收到本次的任務回報，\n{userNumberText}前去{sceneText}搜索，\n{resultText}",
     gameRoundEndAnd: "、",
+    gameRoundEndNumber: "號",
     gameRoundEndResult: {
-        1: "那裡出乎意料的安全，找到了不少物資。",
-        2: "那裡有少量的喪屍，但不影響搜索物資。",
+        1: "那裡出乎意料的安全，找到了不少物資。\n幹得還不錯啊！",
+        2: "那裡有少量的喪屍，但不影響搜索物資。\n幹得還不錯啊！",
         3: "那裡有不少喪屍，所有物資都被破壞了。",
         4: "那裡聚集了許多喪屍，大家只顧著逃命。",
         5: "那裡什麼也沒有，沒有物資、沒有喪屍。",
     },
 
-    gameRoundEndNumber: "號",
+    gameEnd: "遊戲結束！\n由{resultText}獲勝\n\n本輪遊戲已結束是否要開啟新局？",
+    gameEndAnd: "、",
+    gameEndNumber: "號",
+    gameEndResult: {
+        1: "人類方：",
+        2: "異變方：",
+    },
+
+    resetGame: "確定要重新開始遊戲嗎?",
 
     error: "[error]啊，你點慢了一步。",
 
@@ -67,8 +78,9 @@ module.exports = {
     },
     roleType: {
         1: "中立方",
-        2: "變異方",
+        2: "異變方",
         3: "人類方",
+        4: "宿主",
     },
     rolePower: {
         1: "初始皆與「人類方」立場相同，但搜索物資若是異變人數＞人類人數時，會被病毒感染轉變成「異變方」",

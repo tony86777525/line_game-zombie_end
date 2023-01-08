@@ -31,10 +31,12 @@ function initializeLiff(myLiffId) {
 
                     if (Number(number) === roleUser.number) {
                         document.querySelector(`[data-js-role-number="${number}"]`).dataset.group = `me`
-                    } else {
+                    } else if (canSeeAnyoneRoleId === roleUser.roleId
+                            || canSeeImmunityRoleId === roleUser.roleId && "immunity" === image) {
                         document.querySelector(`[data-js-role-number="${number}"]`).dataset.group = `${image}`
                     }
                 }
+
 
                 document.querySelector('[data-js-role="name"]').innerHTML = `${userRoleCard.name}`;
                 document.querySelector('[data-js-role="type"]').innerHTML = `${userRoleCard.type}`;

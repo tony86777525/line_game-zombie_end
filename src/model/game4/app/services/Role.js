@@ -41,6 +41,8 @@ class Role
             3: {image: 'immunity', value: this.roleGroupsValue.uninfected, change: 0},
             4: {image: 'pathogen', value: this.roleGroupsValue.infected, change: 0},
         };
+
+
     }
 
     getRolesTemplate() {
@@ -53,6 +55,30 @@ class Role
 
     getRoleGroupsValueTemplate() {
         return this.roleGroupsValue;
+    }
+
+    getCanSeeAnyoneRole() {
+        return this.dogId;
+    }
+
+    getCanSeeImmunityRole() {
+        return this.policeId;
+    }
+
+    getImmunityRole() {
+        return this.immunityId;
+    }
+
+    getChangeRoleGroupsTarget() {
+        let targets = [];
+
+        for (let groupId in this.roleGroups) {
+            if (1 === this.roleGroups[groupId].change) {
+                targets.push(Number(groupId));
+            }
+        }
+
+        return {targets: targets, valueTarget: 2};
     }
 
     setUsers($users) {

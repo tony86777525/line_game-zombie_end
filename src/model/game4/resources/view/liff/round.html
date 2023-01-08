@@ -9,6 +9,9 @@
     <script>
         const url = <%- JSON.stringify(url) %>;
         const roles = <%- JSON.stringify(roles) %>;
+        const canSeeAnyoneRoleId = <%- JSON.stringify(canSeeAnyoneRoleId) %>;
+        const canSeeImmunityRoleId = <%- JSON.stringify(canSeeImmunityRoleId) %>;
+        const immunityRoleId = <%- JSON.stringify(immunityRoleId) %>;
         const roleUsers = <%- JSON.stringify(roleUsers) %>;
         const numberGroupImages = <%- JSON.stringify(numberGroupImages) %>;
         const scenes = <%- JSON.stringify(scenes) %>;
@@ -19,6 +22,9 @@
 <section class="role">
     <div class="role__image">
         <div class="role__image__number" data-js-role="number">
+            <div class="role__image__number__item" data-js-role-number="0" data-group="">
+                <img src="/assets/img/game4/numbers/0.jpg">
+            </div>
             <div class="role__image__number__item" data-js-role-number="1" data-group="">
                 <img src="/assets/img/game4/numbers/1.jpg">
             </div>
@@ -45,9 +51,6 @@
             </div>
             <div class="role__image__number__item" data-js-role-number="9" data-group="">
                 <img src="/assets/img/game4/numbers/9.jpg">
-            </div>
-            <div class="role__image__number__item" data-js-role-number="10" data-group="">
-                <img src="/assets/img/game4/numbers/10.jpg">
             </div>
         </div>
     </div>

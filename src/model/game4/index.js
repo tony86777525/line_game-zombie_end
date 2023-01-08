@@ -4,7 +4,9 @@ const IndexController = require('./app/controllers/IndexController');
 
 module.exports = async function App(context) {
     if (context.event.isPostback) {
-        if ('join game' === context.event.payload)
+        if ("new game" === context.event.payload)
+            return IndexController.newGame(context);
+        else if ('join game' === context.event.payload)
             return IndexController.joinGame(context);
         else if('start game' === context.event.payload)
             return IndexController.SelectNumber(context);
@@ -26,12 +28,14 @@ module.exports = async function App(context) {
         }
 
         switch (context.event.text) {
-            case 'new game':
-                return IndexController.newGame(context);
+            case 'reset game':
+                return IndexController.resetGame(context);
             // case 'reset game':
             //     return IndexController.resetGame(context);
             case 'call db':
                 return IndexController.callDB(context);
+            case 'call game':
+                return IndexController.callGame(context);
         }
     }
 
