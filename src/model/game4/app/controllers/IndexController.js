@@ -130,10 +130,8 @@ async function SetRole(context, params) {
                 return;
             }
 
-            const checkRoleUsers = GameState.getCheckRoleUsers(context);
-
             // open liff
-            await Message.getCheckRoleContents(context, checkRoleUsers);
+            await Message.getCheckRoleContents(context);
         }
     }
 }
@@ -249,9 +247,9 @@ function _startGameRound(context, gameRound = 0) {
     GameState.setGameRound(context, gameRound);
     GameState.setScenes(context, gameRound, sceneIds);
 
-    const checkRoleUsers = GameState.getCheckRoleUsers(context);
-    const newSceneIds = GameState.getNowScenes(context, gameRound);
+    // const checkRoleUsers = GameState.getCheckRoleUsers(context);
+    // const newSceneIds = GameState.getNowScenes(context, gameRound);
     const newSceneNames = Scene.getSceneNameByIds(sceneIds)
 
-    return Message.getGameRoundContents(context, gameRound, checkRoleUsers, newSceneIds, newSceneNames);
+    return Message.getGameRoundContents(context, gameRound, newSceneNames);
 }

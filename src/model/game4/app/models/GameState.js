@@ -1,6 +1,3 @@
-const {findKey, find} = require("lodash");
-const {number} = require("../../resources/lang/zh-TW");
-
 class GameState
 {
     constructor(gameStatesId) {
@@ -118,25 +115,6 @@ class GameState
             userCount: users.filter($user => $user.type === this.user.type.user).length,
             robotCount: users.filter($user => $user.type === this.user.type.robot).length,
         };
-    }
-
-    getCheckRoleUsers(context) {
-        const users = context.state.gameStates[this.gameStatesId].users;
-
-        let result = [];
-        for (let userTableId in users) {
-            let user = users[userTableId];
-
-            result.push({
-                // userTableId: userTableId,
-                userId: user.id,
-                roleId: user.role_id,
-                group: user.group,
-                number: Number(user.number),
-            });
-        }
-
-        return result;
     }
 
     setRoles(context, roles) {
@@ -447,6 +425,38 @@ class GameState
         }
 
         return result;
+    }
+
+    getLiffCheckRoleUsers(gameData) {
+        const users = gameData.users;
+
+        let result = [];
+        for (let userTableId in users) {
+            let user = users[userTableId];
+
+            result.push({
+                // userTableId: userTableId,
+                userId: user.id,
+                roleId: user.role_id,
+                group: user.group,
+                number: Number(user.number),
+            });
+        }
+
+        return result;
+    }
+
+    getLiffNowScenes(gameData, gameRound) {
+        const scenes = gameData.scenes;
+        const gameRoundScene = scenes.find(scene => scene.round === Number(gameRound));
+
+        let nowScenes = [];
+
+        if (undefined !== gameRoundScene) {
+            nowScenes = gameRoundScene.scenes;
+        }
+
+        return nowScenes;
     }
 }
 

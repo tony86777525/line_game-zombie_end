@@ -17,13 +17,12 @@ document.addEventListener('DOMContentLoaded', () => {
     //         'Content-Type': 'application/json',
     //         'Accept': 'application/json'
     //     },
-    //     body: JSON.stringify({message: 'POST資料是否成功'})
-    // }).then(function(response){
-    //     console.log(response);
-    //     return response.json();
-    // }).then(function(data){
-    //         console.log(data);
-    // }).catch(function(err){
+    //     body: JSON.stringify({key: `${userId}`})
+    // }).then(reqResponse => reqResponse.json())
+    //     .then(jsonResponse => {
+    //         console.log(123);
+    //         console.log(jsonResponse.data);
+    //     }).catch(function(err){
     //     console.log(err);
     // });
 });
@@ -39,16 +38,15 @@ function initializeLiff(myLiffId) {
             // liff.logout();
             console.log("用戶已登入");
             liff.getProfile().then(profile => {
-                let userId = profile.userId;
-                console.log(userId);
+                const userId = profile.userId;
                 const roleUser = roleUsers.find(roleUser => roleUser.userId === userId);
-                const userRoleCard = roles[roleUser.roleId];
+                const roleData = roles[roleUser.roleId];
 
-                document.querySelector('[data-js-role="card"]').dataset.role = userRoleCard.image;
-                document.querySelector('[data-js-role="name"]').innerHTML = `${userRoleCard.name}`;
-                document.querySelector('[data-js-role="type"]').innerHTML = `${userRoleCard.type}`;
-                document.querySelector('[data-js-role="power"]').innerHTML = `${userRoleCard.power}`;
-                document.querySelector('[data-js-role="winner"]').innerHTML = `${userRoleCard.winner}`;
+                document.querySelector('[data-js-role="card"]').dataset.role = roleData.image;
+                document.querySelector('[data-js-role="name"]').innerHTML = `${roleData.name}`;
+                document.querySelector('[data-js-role="type"]').innerHTML = `${roleData.type}`;
+                document.querySelector('[data-js-role="power"]').innerHTML = `${roleData.power}`;
+                document.querySelector('[data-js-role="winner"]').innerHTML = `${roleData.winner}`;
             })
             .catch((err) => {
                 console.log('error', err);

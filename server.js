@@ -1,6 +1,6 @@
 const bodyParser = require('body-parser');
 const express = require('express');
-const { bottender } = require('bottender');
+const { bottender, FileSessionStore } = require('bottender');
 const path = require('path');
 const querystring = require('querystring');
 const ejs = require('ejs');
@@ -8,10 +8,12 @@ const Config = require(`./src/model/game4/config/game`);
 const MessageService = require(`${Config.route}/app/services/Message`);
 const RoleService = require(`${Config.route}/app/services/Role`);
 const SceneService = require(`${Config.route}/app/services/Scene`);
+const GameStateService = require(`${Config.route}/app/models/GameState`);
 
 const Message = new MessageService();
 const Role = new RoleService();
 const Scene = new SceneService();
+const GameState = new GameStateService;
 
 const app = bottender({
     dev: process.env.NODE_ENV !== 'production',
@@ -37,11 +39,20 @@ app.prepare().then(() => {
         res.json({ id: process.env.LINE_LIFF_ID });
     });
 
-    // server.post('/getUser', (req, res) => {
+    // server.post('/getUser', async (req, res) => {
+    //     try {
+    //         const key = req.body.key;
+    //         const sessionStore = new RedisSessionStore();
+    //         const allData = await sessionStore.read(`line:${key}`);
+    //         const data = allData._state.gameStates[Config.gameStatesId];
     //
+    //         res.json({data: data});
+    //     } catch (e) {
+    //         res.end(e.message || e.toString());
+    //     }
     // });
 
-    server.get('/liff2', (req, res) => {
+    server.get('/liff2', async (req, res) => {
         // const params = getParams(req);
         const filename = path.join(`${__dirname}/${Config.route}/resources/view/liff/index.html`);
         const data = {}, options = {};
@@ -54,18 +65,22 @@ app.prepare().then(() => {
         });
     });
 
-    server.get('/liff2/liff2/role', (req, res) => {
+    server.get('/liff2/liff2/role', async (req, res) => {
         const params = getParams(req);
         // const version = params.type || 'index';
         const filename = path.join(`${__dirname}/${Config.route}/resources/view/liff/role.html`);
         const roles = Role.getLiffRoles();
-        const roleUsers = params.data ? JSON.parse(decodeURIComponent(params.data)) : {};
+        const key = params.data;
+        const sessionStore = new FileSessionStore();
+        const allData = await sessionStore.read(`line:${key}`);
+        const gameData = allData._state.gameStates[Config.gameStatesId];
+        const roleUsers = GameState.getLiffCheckRoleUsers(gameData);
 
         const data = {
-                url: `${Config.route}`,
-                roles: roles,
-                roleUsers: roleUsers,
-                buttonMessage: Message.getStoryHandleContents()
+            // url: `${Config.route}`,
+            roles: roles,
+            roleUsers: roleUsers,
+            buttonMessage: Message.getStoryHandleContents()
         };
         const options = {};
 
@@ -77,19 +92,26 @@ app.prepare().then(() => {
         });
     });
 
-    server.get('/liff2/liff2/round', (req, res) => {
+    server.get('/liff2/liff2/round', async (req, res) => {
         const params = getParams(req);
+        const key = params.data;
+        const gameRound = params.round;
+        const sessionStore = new FileSessionStore();
+        const allData = await sessionStore.read(`line:${key}`);
+        const gameData = allData._state.gameStates[Config.gameStatesId];
+        const roleUsers = GameState.getLiffCheckRoleUsers(gameData);
+        const numberGroupImages = Role.getLiffNumberGroupImages(roleUsers);
+
         const filename = path.join(`${__dirname}/${Config.route}/resources/view/liff/round.html`);
         const roles = Role.getLiffRoles();
         const canSeeAnyoneRoleId = Role.getCanSeeAnyoneRole();
         const canSeeImmunityRoleId = Role.getCanSeeImmunityRole();
         const immunityRoleId = Role.getImmunityRole();
-        const roleUsers = params.users ? JSON.parse(decodeURIComponent(params.users)) : {};
-        const numberGroupImages = Role.getLiffNumberGroupImages(roleUsers);
-        const scenesIds = params.scenes ? JSON.parse(decodeURIComponent(params.scenes)) : {};
+        const scenesIds = GameState.getLiffNowScenes(gameData, gameRound)
         const scenes = Scene.getLiffScenes(scenesIds);
+
         const data = {
-            url: `${Config.route}`,
+            // url: `${Config.route}`,
             roles: roles,
             canSeeAnyoneRoleId: canSeeAnyoneRoleId,
             canSeeImmunityRoleId: canSeeImmunityRoleId,

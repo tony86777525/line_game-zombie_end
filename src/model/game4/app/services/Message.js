@@ -206,10 +206,18 @@ class Message
     }
 
     // open liff
-    getCheckRoleContents(context, users) {
+    getCheckRoleContents(context) {
         const contentText = this.Lang.checkRole;
-        const data = `${this.liffUri}/role?data=${encodeURIComponent(JSON.stringify(users))}`;
+        let groupId = "";
 
+        if (undefined !== context.session.group) {
+            groupId = context.session.group.id;
+        } else if (undefined !== context.session.user) {
+            groupId = context.session.user.id;
+        }
+
+        const uri = `${this.liffUri}/role?data=${groupId}`;
+console.log(uri);
         return context.replyFlex(`${contentText}`, {
             "type": "bubble",
             "direction": "ltr",
@@ -223,7 +231,7 @@ class Message
                         "action": {
                             "type": "uri",
                             "label": `${contentText}`,
-                            "uri": `${data}`
+                            "uri": `${uri}`
                         },
                         "margin": "md"
                     }
@@ -256,16 +264,23 @@ class Message
         });
     }
 
-    getGameRoundContents(context, gameRound, users, sceneIds, newSceneNames) {
+    getGameRoundContents(context, gameRound, newSceneNames) {
         let contentText = this.Lang.gameRound;
         const checkRoundText = this.Lang.checkRound;
+
+        let groupId = "";
+
+        if (undefined !== context.session.group) {
+            groupId = context.session.group.id;
+        } else if (undefined !== context.session.user) {
+            groupId = context.session.user.id;
+        }
 
         while (/{sceneText}/.test(contentText) && newSceneNames.length > 0) {
             contentText = contentText.replace(/{sceneText}/, newSceneNames.shift())
         }
 
-        let uri = `${this.liffUri}/round?users=${encodeURIComponent(JSON.stringify(users))}`;
-        uri += `&scenes=${encodeURIComponent(JSON.stringify(sceneIds))}&round=${gameRound}`;
+        let uri = `${this.liffUri}/round?data=${groupId}&round=${gameRound}`;
 
         return context.replyFlex(`${contentText}`, {
             "type": "bubble",
