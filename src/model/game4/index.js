@@ -25,6 +25,9 @@ module.exports = async function App(context) {
             if ('selectScene' === params.sender) {
                 return IndexController.SelectScene(context, params.round, params.sceneId);
             }
+            if ('selectRoleNumber' === params.sender) {
+                return IndexController.SelectRoleNumber(context, params.number);
+            }
         }
 
         switch (context.event.text) {

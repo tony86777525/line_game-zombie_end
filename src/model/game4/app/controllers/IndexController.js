@@ -18,6 +18,7 @@ module.exports = {
     SetRole: SetRole,
     StartGame: StartGame,
     SelectScene: SelectScene,
+    SelectRoleNumber: SelectRoleNumber,
     resetGame: ResetGame,
     callDB: CallDB,
     callGame: CallGame,
@@ -154,47 +155,47 @@ async function StartGame(context) {
 }
 
 async function SelectScene(context, gameRound, sceneId) {
-    const isStateStartGame = GameState.isStateStartGame(context);
-
-    if (false === isStateStartGame) {
-        await Message.getErrorContents(context);
-        return;
-    }
-
-    const userId = context.session.user.id;
-    const isSetGameRoundScene = GameState.setGameRoundScene(context, gameRound, userId, sceneId);
-
-    if (false === isSetGameRoundScene) {
-        await Message.getErrorContents(context);
-        return;
-    }
-
-    const sceneIds = GameState.getNowScenes(context, gameRound);
-    const isGameRoundEnd = GameState.isGameRoundEnd(context, gameRound, sceneIds)
+    // const isStateStartGame = GameState.isStateStartGame(context);
+    //
+    // if (false === isStateStartGame) {
+    //     await Message.getErrorContents(context);
+    //     return;
+    // }
+    //
+    // const userId = context.session.user.id;
+    // const isSetGameRoundScene = GameState.setGameRoundScene(context, gameRound, userId, sceneId);
+    //
+    // if (false === isSetGameRoundScene) {
+    //     await Message.getErrorContents(context);
+    //     return;
+    // }
+    //
+    // const sceneIds = GameState.getNowScenes(context, gameRound);
+    // const isGameRoundEnd = GameState.isGameRoundEnd(context, gameRound, sceneIds)
 
     let returnMessage = [];
 
     // 人數10人 || 單人
-    if (true === isGameRoundEnd) {
-    // if (true) {
+    // if (true === isGameRoundEnd) {
+    if (true) {
         const { users } = GameState.getUsers(context);
-        const { nowGameRound } = GameState.getGameRound(context);
+        // const { nowGameRound } = GameState.getGameRound(context);
         const $roleService = new roleService;
         const roleGroups = $roleService.getRoleGroupsTemplate();
-        const roleGroupsValue = $roleService.getRoleGroupsValueTemplate();
-        const scenes = Scene.getScenesTemplate();
-        const { transformGroupUsers, resultContentTag, result }
-            = GameRound.getGameRoundResult(users, nowGameRound, roleGroups, roleGroupsValue, scenes);
-
-        const { targets, valueTarget } = $roleService.getChangeRoleGroupsTarget();
-
-        GameState.setTransformUser(context, gameRound, transformGroupUsers);
-        GameState.setUserGroup(context, transformGroupUsers, targets, valueTarget);
-
-        returnMessage = returnMessage.concat(Message.getGameRoundEndContents(context, resultContentTag));
-
-        const winCount = GameState.setGameRoundResult(context, result);
-        // const winCount = GameState.getGameRoundResult(context);
+        // const roleGroupsValue = $roleService.getRoleGroupsValueTemplate();
+        // const scenes = Scene.getScenesTemplate();
+        // const { transformGroupUsers, resultContentTag, result }
+        //     = GameRound.getGameRoundResult(users, nowGameRound, roleGroups, roleGroupsValue, scenes);
+        //
+        // const { targets, valueTarget } = $roleService.getChangeRoleGroupsTarget();
+        //
+        // GameState.setTransformUser(context, gameRound, transformGroupUsers);
+        // GameState.setUserGroup(context, transformGroupUsers, targets, valueTarget);
+        //
+        // returnMessage = returnMessage.concat(Message.getGameRoundEndContents(context, resultContentTag));
+        //
+        // const winCount = GameState.setGameRoundResult(context, result);
+        const winCount = GameState.getGameRoundResult(context);
         const gameResultContentTag = GameRound.getGameResult(winCount, users, roleGroups);
 
         // game end
@@ -209,12 +210,39 @@ async function SelectScene(context, gameRound, sceneId) {
                 returnMessage.push(Message.getGameFinaleContent(context, gameResultContentTag));
             }
         } else {
-            const { gameRoundNumber } = GameState.getGameRound(context);
-            const newGameRound = gameRoundNumber;
-
-            returnMessage.push(_startGameRound(context, newGameRound));
+            // const { gameRoundNumber } = GameState.getGameRound(context);
+            // const newGameRound = gameRoundNumber;
+            //
+            // returnMessage.push(_startGameRound(context, newGameRound));
         }
     }
+
+    await returnMessage;
+}
+
+async function SelectRoleNumber(context, selectRoleNumber) {
+    const isStateFinaleGame = GameState.isStateFinaleGame(context);
+
+    if (false === isStateFinaleGame) {
+        await Message.getErrorContents(context);
+        return;
+    }
+
+    let returnMessage = [];
+
+    const { users } = GameState.getUsers(context);
+    const $roleService = new roleService;
+    const roleGroups = $roleService.getRoleGroupsTemplate();
+    const immunityRoleId = $roleService.getImmunityRole();
+    const mapping = users.find(user => user.number === selectRoleNumber && immunityRoleId === user.role_id);
+
+    const winCount = GameState.getGameRoundResult(context);
+    returnMessage.push(Message.getSelectRoleNumberResultContent(context, undefined !== mapping));
+    const gameResultContentTag = GameRound.getGameResult(winCount, users, roleGroups, undefined !== mapping);
+
+    GameState.setStateEndGame(context);
+
+    returnMessage.push(Message.getGameEndContent(context, gameResultContentTag));
 
     await returnMessage;
 }

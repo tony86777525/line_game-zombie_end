@@ -147,8 +147,9 @@ class GameState
         return this.state.startGame === context.state.gameStates[this.gameStatesId].state;
     }
 
-    isStateSelectSceneRound(context, round) {
-        return this.state.startGame === context.state.gameStates[this.gameStatesId].state;
+    isStateFinaleGame(context) {
+        console.log(context.state.gameStates[this.gameStatesId].state);
+        return this.state.finaleGame === context.state.gameStates[this.gameStatesId].state;
     }
 
     setStateStartGame(context) {

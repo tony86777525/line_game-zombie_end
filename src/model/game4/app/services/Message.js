@@ -490,6 +490,35 @@ class Message
         });
     }
 
+    getSelectRoleNumberResultContent(context, isRight) {
+        let contentText = "";
+        if (true === isRight) {
+            contentText = this.Lang.selectRoleNumberRight;
+        } else {
+            contentText = this.Lang.selectRoleNumberWrong;
+        }
+
+        return context.replyFlex(`${contentText}`, {
+            "type": "bubble",
+            "direction": "ltr",
+            "size": "giga",
+            "body": {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                    {
+                        "type": "text",
+                        "text": `${contentText}`,
+                        "weight": "bold",
+                        "size": "md",
+                        "align": "start",
+                        "wrap": true
+                    }
+                ]
+            }
+        });
+    }
+
     getGameEndContent(context, resultContentTag) {
         let contentText = this.Lang.gameEnd;
         let userNumbers = [];

@@ -50,6 +50,8 @@ module.exports = {
     gameFinale: "遊戲終盤\n目前由{resultText}獲勝\n\n宿主玩家請選擇免疫者。",
     gameFinaleButton: "請宿主選擇免疫者",
 
+    selectRoleNumberRight: "宿主猜對免疫者！",
+    selectRoleNumberWrong: "宿主猜錯免疫者！",
     gameEnd: "遊戲結束！\n由{resultText}獲勝\n\n本輪遊戲已結束是否要開啟新局？",
     gameEndAnd: "、",
     gameEndNumber: "號",

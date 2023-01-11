@@ -87,10 +87,10 @@ class GameRound
         return result;
     }
 
-    getGameResult(winCount, users) {
+    getGameResult(winCount, users, isImmunityWin = false) {
         let resultContentTags = undefined;
 
-        if (winCount.immunity >= 3) {
+        if (winCount.immunity >= 3 || true === isImmunityWin) {
             let groupIds = [2, 4];
             let resultContent = this.gameResultContent.result2;
             const winUsers = users.filter(user => groupIds.includes(user.group));
@@ -109,8 +109,8 @@ class GameRound
             resultContentTags = {
                 result: resultContent,
                 users: winUsers.sort((a, b) => {return a - b}),
-                type: undefined !== pathogenUser ? true : false
-                // type: false
+                // type: undefined !== pathogenUser ? true : false
+                type: false
             };
         }
 
