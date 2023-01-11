@@ -47,6 +47,9 @@ module.exports = {
         5: "那裡什麼也沒有，沒有物資、沒有喪屍。",
     },
 
+    gameFinale: "遊戲終盤\n目前由{resultText}獲勝\n\n宿主玩家請選擇免疫者。",
+    gameFinaleButton: "請宿主選擇免疫者",
+
     gameEnd: "遊戲結束！\n由{resultText}獲勝\n\n本輪遊戲已結束是否要開啟新局？",
     gameEndAnd: "、",
     gameEndNumber: "號",

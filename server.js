@@ -135,30 +135,14 @@ app.prepare().then(() => {
         const params = getParams(req);
         const filename = path.join(`${__dirname}/${Config.route}/resources/view/liff/checkImmunity.html`);
         const key = params.data;
-        const gameRound = params.round;
         const sessionStore = new FileSessionStore();
         const allData = await sessionStore.read(`line:${key}`);
         const gameData = allData._state.gameStates[Config.gameStatesId];
         const roleUsers = GameState.getLiffCheckRoleUsers(gameData);
-        const numberGroupImages = Role.getLiffNumberGroupImages(roleUsers);
-        const roles = Message.getLiffRoles(Role.getRolesTemplate(), Role.getRoleGroupsTemplate());
-        const canSeeAnyoneRoleId = Role.getCanSeeAnyoneRole();
-        const canSeeImmunityRoleId = Role.getCanSeeImmunityRole();
-        const immunityRoleId = Role.getImmunityRole();
-        const scenes = Scene.getLiffScenes(GameState.getLiffNowScenes(gameData, gameRound));
-        const roundMessages = Message.getLiffRoundMessage(gameData, gameRound, Role.getDoctorRole())
 
         const data = {
-            // url: `${Config.route}`,
-            roles: roles,
-            canSeeAnyoneRoleId: canSeeAnyoneRoleId,
-            canSeeImmunityRoleId: canSeeImmunityRoleId,
-            immunityRoleId: immunityRoleId,
             roleUsers: roleUsers,
-            numberGroupImages: numberGroupImages,
-            scenes: scenes,
-            buttonMessage: Message.getSelectSceneHandleContents(scenes, params.round),
-            roundMessages: roundMessages
+            buttonMessage: Message.getSelectRoleNumberHandleContents(roleUsers),
         };
         const options = {};
 

@@ -194,13 +194,20 @@ async function SelectScene(context, gameRound, sceneId) {
         returnMessage = returnMessage.concat(Message.getGameRoundEndContents(context, resultContentTag));
 
         const winCount = GameState.setGameRoundResult(context, result);
-        const resultContentTags = GameRound.getGameResult(winCount, users, roleGroups);
+        // const winCount = GameState.getGameRoundResult(context);
+        const gameResultContentTag = GameRound.getGameResult(winCount, users, roleGroups);
 
         // game end
-        if (resultContentTags.length > 0) {
-            GameState.setStateStartGame(context);
+        if (undefined !== gameResultContentTag) {
+            if (true === gameResultContentTag.type) {
+                GameState.setStateEndGame(context);
 
-            returnMessage.push(Message.getGameEndContents(context, resultContentTags));
+                returnMessage.push(Message.getGameEndContent(context, gameResultContentTag));
+            } else {
+                GameState.setStateFinaleGame(context);
+
+                returnMessage.push(Message.getGameFinaleContent(context, gameResultContentTag));
+            }
         } else {
             const { gameRoundNumber } = GameState.getGameRound(context);
             const newGameRound = gameRoundNumber;

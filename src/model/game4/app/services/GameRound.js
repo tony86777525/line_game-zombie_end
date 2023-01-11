@@ -88,28 +88,30 @@ class GameRound
     }
 
     getGameResult(winCount, users) {
-        let resultContentTags = [];
-
-        if (winCount.people >= 3) {
-            let groupIds = [1, 3];
-            let resultContent = this.gameResultContent.result1;
-            const winUsers = users.filter(user => groupIds.includes(user.group));
-
-            resultContentTags.push({
-                result: resultContent,
-                users: winUsers.sort((a, b) => {return a - b}),
-            });
-        }
+        let resultContentTags = undefined;
 
         if (winCount.immunity >= 3) {
             let groupIds = [2, 4];
             let resultContent = this.gameResultContent.result2;
             const winUsers = users.filter(user => groupIds.includes(user.group));
 
-            resultContentTags.push({
+            resultContentTags = {
                 result: resultContent,
                 users: winUsers.sort((a, b) => {return a.number - b.number}),
-            });
+                type: true
+            };
+        } else if (winCount.people >= 3) {
+            let groupIds = [1, 3];
+            let resultContent = this.gameResultContent.result1;
+            const winUsers = users.filter(user => groupIds.includes(user.group));
+            const pathogenUser = users.find(user => 11 === user.role_id && 1 === user.type);
+
+            resultContentTags = {
+                result: resultContent,
+                users: winUsers.sort((a, b) => {return a - b}),
+                type: undefined !== pathogenUser ? true : false
+                // type: false
+            };
         }
 
         return resultContentTags;

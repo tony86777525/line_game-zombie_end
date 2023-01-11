@@ -64,6 +64,9 @@ body {
 .role__image__number__item[data-group="people"]:after {
     background-image: url("/assets/img/game4/groups/people.png");
 }
+.role__image__number__item[data-group="selectRoleNumber"] {
+    cursor: pointer;
+}
 .role__image__role {
     position: absolute;
     top: 50%;

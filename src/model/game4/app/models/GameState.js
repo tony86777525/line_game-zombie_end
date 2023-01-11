@@ -9,7 +9,8 @@ class GameState
             selectNumber: 2,
             checkRole: 3,
             startGame: 4,
-            endGame: 5,
+            finaleGame: 5,
+            endGame: 6,
         };
 
         this.user = {
@@ -226,6 +227,18 @@ class GameState
         return result;
     }
 
+    setStateFinaleGame(context) {
+        let result = false;
+
+        if (true === this._isChangeState(context, this.state.finaleGame)) {
+            context.state.gameStates[this.gameStatesId].state = this.state.finaleGame;
+
+            result = true;
+        }
+
+        return result;
+    }
+
     setStateEndGame(context) {
         let result = false;
 
@@ -237,7 +250,6 @@ class GameState
 
         return result;
     }
-
 
     setGameRound(context, nowGameRound) {
         let gameRounds = context.state.gameStates[this.gameStatesId].gameRounds;
@@ -277,6 +289,10 @@ class GameState
                 userTarget.group = newGroup;
             }
         }
+    }
+
+    getGameRoundResult(context) {
+        return context.state.gameStates[this.gameStatesId].gameRoundResult;
     }
 
     setGameRoundResult(context, result) {
@@ -425,6 +441,8 @@ class GameState
             || (this.state.selectNumber === nowState && this.state.checkRole === newState)
             || (this.state.checkRole === nowState && this.state.startGame === newState)
             || (this.state.startGame === nowState && this.state.endGame === newState)
+            || (this.state.startGame === nowState && this.state.finaleGame === newState)
+            || (this.state.finaleGame === nowState && this.state.endGame === newState)
         ) {
             result = true;
         }

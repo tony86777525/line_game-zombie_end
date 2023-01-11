@@ -7,15 +7,8 @@
     <link rel="stylesheet" href="/assets/css/game4/liff.css">
 
     <script>
-        const roles = <%- JSON.stringify(roles) %>;
-        const canSeeAnyoneRoleId = <%- JSON.stringify(canSeeAnyoneRoleId) %>;
-        const canSeeImmunityRoleId = <%- JSON.stringify(canSeeImmunityRoleId) %>;
-        const immunityRoleId = <%- JSON.stringify(immunityRoleId) %>;
         const roleUsers = <%- JSON.stringify(roleUsers) %>;
-        const numberGroupImages = <%- JSON.stringify(numberGroupImages) %>;
-        const scenes = <%- JSON.stringify(scenes) %>;
         const buttonMessage = <%- JSON.stringify(buttonMessage) %>;
-        const roundMessages = <%- JSON.stringify(roundMessages) %>;
     </script>
 </head>
 <body>
@@ -55,28 +48,11 @@
         </div>
     </div>
     <div class="role__description">
-        <div class="role__description__text"><span data-js-role="name"></span></div>
-        <div class="role__description__text"><span data-js-role="power"></span></div>
-        <div class="role__description__text"><span data-js-role="winner"></span></div>
         <div class="role__description__text"><span data-js-target="roundMessage"></span></div>
-    </div>
-</section>
-<section class="action">
-    <div class="action__button">
-        <div class="action__button__item">
-            <button class="action__button__item--button" data-js-button="selectScene" data-scene="">
-                <span class="action__button__item--title" data-js-button="title"></span>
-            </button>
-        </div>
-        <div class="action__button__item">
-            <button class="action__button__item--button" data-js-button="selectScene" data-scene="">
-                <span class="action__button__item--title" data-js-button="title"></span>
-            </button>
-        </div>
     </div>
 </section>
 
 <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
-<script src="/assets/js/game4/round.js"></script>
+<script src="/assets/js/game4/checkImmunity.js"></script>
 </body>
 </html>
