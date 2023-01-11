@@ -135,6 +135,9 @@ img {
     font-size: 1rem;
     font-weight: bold;
 }
+.role__description__text.unactivated {
+    display: none;
+}
 .action {
     margin: 3rem 0 0;
     width: 100%;

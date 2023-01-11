@@ -69,7 +69,7 @@ app.prepare().then(() => {
         const params = getParams(req);
         // const version = params.type || 'index';
         const filename = path.join(`${__dirname}/${Config.route}/resources/view/liff/role.html`);
-        const roles = Role.getLiffRoles();
+        const roles = Message.getLiffRoles(Role.getRolesTemplate(), Role.getRoleGroupsTemplate());
         const key = params.data;
         const sessionStore = new FileSessionStore();
         const allData = await sessionStore.read(`line:${key}`);
@@ -94,6 +94,7 @@ app.prepare().then(() => {
 
     server.get('/liff2/liff2/round', async (req, res) => {
         const params = getParams(req);
+        const filename = path.join(`${__dirname}/${Config.route}/resources/view/liff/round.html`);
         const key = params.data;
         const gameRound = params.round;
         const sessionStore = new FileSessionStore();
@@ -101,14 +102,12 @@ app.prepare().then(() => {
         const gameData = allData._state.gameStates[Config.gameStatesId];
         const roleUsers = GameState.getLiffCheckRoleUsers(gameData);
         const numberGroupImages = Role.getLiffNumberGroupImages(roleUsers);
-
-        const filename = path.join(`${__dirname}/${Config.route}/resources/view/liff/round.html`);
-        const roles = Role.getLiffRoles();
+        const roles = Message.getLiffRoles(Role.getRolesTemplate(), Role.getRoleGroupsTemplate());
         const canSeeAnyoneRoleId = Role.getCanSeeAnyoneRole();
         const canSeeImmunityRoleId = Role.getCanSeeImmunityRole();
         const immunityRoleId = Role.getImmunityRole();
-        const scenesIds = GameState.getLiffNowScenes(gameData, gameRound)
-        const scenes = Scene.getLiffScenes(scenesIds);
+        const scenes = Scene.getLiffScenes(GameState.getLiffNowScenes(gameData, gameRound));
+        const roundMessages = Message.getLiffRoundMessage(gameData, gameRound, Role.getDoctorRole())
 
         const data = {
             // url: `${Config.route}`,
@@ -119,7 +118,47 @@ app.prepare().then(() => {
             roleUsers: roleUsers,
             numberGroupImages: numberGroupImages,
             scenes: scenes,
-            buttonMessage: Message.getSelectSceneHandleContents(scenes, params.round)
+            buttonMessage: Message.getSelectSceneHandleContents(scenes, params.round),
+            roundMessages: roundMessages
+        };
+        const options = {};
+
+        ejs.renderFile(filename, data, options, function(err, str) {
+            res.send(str);
+            if (err) {
+                console.log(`error: ${JSON.stringify(err)}`);
+            }
+        });
+    });
+
+    server.get('/liff2/liff2/checkImmunity', async (req, res) => {
+        const params = getParams(req);
+        const filename = path.join(`${__dirname}/${Config.route}/resources/view/liff/checkImmunity.html`);
+        const key = params.data;
+        const gameRound = params.round;
+        const sessionStore = new FileSessionStore();
+        const allData = await sessionStore.read(`line:${key}`);
+        const gameData = allData._state.gameStates[Config.gameStatesId];
+        const roleUsers = GameState.getLiffCheckRoleUsers(gameData);
+        const numberGroupImages = Role.getLiffNumberGroupImages(roleUsers);
+        const roles = Message.getLiffRoles(Role.getRolesTemplate(), Role.getRoleGroupsTemplate());
+        const canSeeAnyoneRoleId = Role.getCanSeeAnyoneRole();
+        const canSeeImmunityRoleId = Role.getCanSeeImmunityRole();
+        const immunityRoleId = Role.getImmunityRole();
+        const scenes = Scene.getLiffScenes(GameState.getLiffNowScenes(gameData, gameRound));
+        const roundMessages = Message.getLiffRoundMessage(gameData, gameRound, Role.getDoctorRole())
+
+        const data = {
+            // url: `${Config.route}`,
+            roles: roles,
+            canSeeAnyoneRoleId: canSeeAnyoneRoleId,
+            canSeeImmunityRoleId: canSeeImmunityRoleId,
+            immunityRoleId: immunityRoleId,
+            roleUsers: roleUsers,
+            numberGroupImages: numberGroupImages,
+            scenes: scenes,
+            buttonMessage: Message.getSelectSceneHandleContents(scenes, params.round),
+            roundMessages: roundMessages
         };
         const options = {};
 

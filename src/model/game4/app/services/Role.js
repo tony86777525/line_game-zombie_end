@@ -69,6 +69,10 @@ class Role
         return this.immunityId;
     }
 
+    getDoctorRole() {
+        return this.doctorId;
+    }
+
     getChangeRoleGroupsTarget() {
         let targets = [];
 
@@ -198,11 +202,10 @@ class Role
             let roleGroup = roleGroups[roleCard.group];
 
             roles[key] = {
-                name: this.Lang.roleCard[key],
+                name: `${this.Lang.liff.role.name}${this.Lang.roleType[roleCard.type]}${this.Lang.roleCard[key]}`,
                 image: roleCard.image,
-                type: this.Lang.roleType[roleCard.type],
-                power: this.Lang.rolePower[roleCard.power],
-                winner: this.Lang.roleWinner[roleCard.winner],
+                power: `${this.Lang.liff.role.power}${this.Lang.rolePower[roleCard.power]}`,
+                winner: `${this.Lang.liff.role.winner}${this.Lang.roleWinner[roleCard.winner]}`,
                 groupImage: roleGroup.image,
             };
         }

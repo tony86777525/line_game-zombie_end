@@ -44,7 +44,6 @@ function initializeLiff(myLiffId) {
 
                 document.querySelector('[data-js-role="card"]').dataset.role = roleData.image;
                 document.querySelector('[data-js-role="name"]').innerHTML = `${roleData.name}`;
-                document.querySelector('[data-js-role="type"]').innerHTML = `${roleData.type}`;
                 document.querySelector('[data-js-role="power"]').innerHTML = `${roleData.power}`;
                 document.querySelector('[data-js-role="winner"]').innerHTML = `${roleData.winner}`;
             })

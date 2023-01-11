@@ -541,6 +541,39 @@ console.log(uri);
 
         return context.replyText(contentText);
     }
+
+    getLiffRoles(roleCards, roleGroups) {
+        let roles = {};
+
+        for (let key in roleCards) {
+            let roleCard = roleCards[key];
+            let roleGroup = roleGroups[roleCard.group];
+
+            roles[key] = {
+                name: `${this.Lang.liff.role.name}${this.Lang.roleType[roleCard.type]}${this.Lang.roleCard[key]}`,
+                image: roleCard.image,
+                power: `${this.Lang.liff.role.power}${this.Lang.rolePower[roleCard.power]}`,
+                winner: `${this.Lang.liff.role.winner}${this.Lang.roleWinner[roleCard.winner]}`,
+                groupImage: roleGroup.image,
+            };
+        }
+
+        return roles;
+    }
+
+    getLiffRoundMessage(gameData, gameRound, doctorRoleId) {
+        let contentText = this.Lang.liff.role.doctorMessage;
+        const users = gameData.transformUser.filter(transformUser => transformUser.round === Number(gameRound));
+        let result = [];
+
+        if (undefined !== users) {
+            contentText = contentText.replace(/{userCount}/, users.length);
+
+            result.push({roleId: doctorRoleId, message: contentText});
+        }
+
+        return result;
+    }
 }
 
 module.exports = Message;

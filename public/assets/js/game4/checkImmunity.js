@@ -5,8 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
             let myLiffId = jsonResponse.id;
             initializeLiff(myLiffId);
         }).catch(err => {
-            alert(`error: ${JSON.stringify(err)}`);
-        });
+        alert(`error: ${JSON.stringify(err)}`);
+    });
 
     changeToStartGame();
 });
@@ -32,7 +32,7 @@ function initializeLiff(myLiffId) {
                     if (Number(number) === roleUser.number) {
                         document.querySelector(`[data-js-role-number="${number}"]`).dataset.group = `me`
                     } else if (canSeeAnyoneRoleId === roleUser.roleId
-                            || canSeeImmunityRoleId === roleUser.roleId && "immunity" === image) {
+                        || canSeeImmunityRoleId === roleUser.roleId && "immunity" === image) {
                         document.querySelector(`[data-js-role-number="${number}"]`).dataset.group = `${image}`
                     }
                 }

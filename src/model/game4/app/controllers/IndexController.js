@@ -143,6 +143,7 @@ async function StartGame(context) {
         await Message.getErrorContents(context);
         return;
     }
+
     let returnMessage = [];
 
     returnMessage.push(Message.getStartGameContents(context));
@@ -187,6 +188,7 @@ async function SelectScene(context, gameRound, sceneId) {
 
         const { targets, valueTarget } = $roleService.getChangeRoleGroupsTarget();
 
+        GameState.setTransformUser(context, gameRound, transformGroupUsers);
         GameState.setUserGroup(context, transformGroupUsers, targets, valueTarget);
 
         returnMessage = returnMessage.concat(Message.getGameRoundEndContents(context, resultContentTag));

@@ -10,6 +10,7 @@ class Scene
             4: {maxUserCount: 3, image: '4'},
             5: {maxUserCount: 4, image: '5'},
             6: {maxUserCount: 5, image: '6'},
+            7: {maxUserCount: 5, image: '7'},
         };
     }
 

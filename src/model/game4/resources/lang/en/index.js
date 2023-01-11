@@ -119,4 +119,13 @@ module.exports = {
             6: "搜索人數5人",
         }
     },
+
+    liff: {
+        role: {
+            name: "陣營身分：",
+            power: "角色能力：",
+            winner: "獲勝方式：",
+            doctorMessage: "醫生的通報：本次搜索導致{userCount}名人類遭受感染。"
+        },
+    }
 };

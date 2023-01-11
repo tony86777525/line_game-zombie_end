@@ -33,6 +33,7 @@ class GameState
                 immunity: 0,
                 people: 0,
             },
+            transformUser: [],
         };
 
         return this;
@@ -261,6 +262,10 @@ class GameState
             gameRoundNumber: gameRoundNumber,
             nowGameRound: gameRounds[gameRoundNumber - 1],
         };
+    }
+
+    setTransformUser(context, nowGameRound, transformUsers) {
+        context.state.gameStates[this.gameStatesId].transformUser.push({round: Number(nowGameRound), users: transformUsers});
     }
 
     setUserGroup(context, transformUsers, checkGroup, newGroup) {
