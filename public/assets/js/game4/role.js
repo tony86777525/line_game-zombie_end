@@ -9,8 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
             alert(`error: ${JSON.stringify(err)}`);
         });
 
-    changeToStartGame();
-
     // fetch('/getUser',{
     //     method: 'POST',
     //     headers: {
@@ -35,7 +33,6 @@ function initializeLiff(myLiffId) {
             console.log("用戶未登入");
             liff.login({redirectUri: document.URL});
         } else {
-            // liff.logout();
             console.log("用戶已登入");
             liff.getProfile().then(profile => {
                 const userId = profile.userId;
@@ -46,6 +43,8 @@ function initializeLiff(myLiffId) {
                 document.querySelector('[data-js-role="name"]').innerHTML = `${roleData.name}`;
                 document.querySelector('[data-js-role="power"]').innerHTML = `${roleData.power}`;
                 document.querySelector('[data-js-role="winner"]').innerHTML = `${roleData.winner}`;
+
+                changeToStartGame();
             })
             .catch((err) => {
                 console.log('error', err);

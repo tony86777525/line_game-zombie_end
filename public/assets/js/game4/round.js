@@ -7,8 +7,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }).catch(err => {
             alert(`error: ${JSON.stringify(err)}`);
         });
-
-    changeToStartGame();
 });
 
 function initializeLiff(myLiffId) {
@@ -56,6 +54,8 @@ function initializeLiff(myLiffId) {
                     el.dataset.scene = scene.image;
                     el.querySelector(`[data-js-button="title"]`).innerHTML = scene.content;
                 });
+
+                changeToStartGame();
             }).catch((err) => {
                 console.log('error', err);
             });

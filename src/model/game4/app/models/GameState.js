@@ -119,6 +119,14 @@ class GameState
         };
     }
 
+    isJoinUser(context, userId) {
+        const users = context.state.gameStates[this.gameStatesId].users;
+        const user = users.find(user => user.id === userId);
+
+        return undefined === user ? false : true;
+    }
+
+
     setRoles(context, roles) {
         context.state.gameStates[this.gameStatesId].roles = roles;
     }

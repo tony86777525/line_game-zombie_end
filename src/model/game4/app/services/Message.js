@@ -626,13 +626,49 @@ class Message
                         "action": {
                             "type": "postback",
                             "label": `${buttonTextNo}`,
-                            "data": "."
+                            "data": "reset game cancel"
                         },
                         "margin": "md"
                     }
                 ]
             }
         });
+    }
+
+    getResetGameCancelContents(context) {
+        let contentText = this.Lang.resetGameCancel;
+
+        return context.replyFlex(`${contentText}`, {
+            "type": "bubble",
+            "direction": "ltr",
+            "size": "mega",
+            "body": {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                    {
+                        "type": "text",
+                        "text": `${contentText}`,
+                        "weight": "bold",
+                        "size": "md",
+                        "align": "start",
+                        "wrap": true
+                    }
+                ]
+            }
+        });
+    }
+
+    getNoUserToStartGameContents(context) {
+        const contentText = this.Lang.noUserToStartGame;
+
+        return context.replyText(contentText);
+    }
+
+    getNotJoinGameUserSelectNumberContents(context) {
+        const contentText = this.Lang.notJoinGameUserSelectNumber;
+
+        return context.replyText(contentText);
     }
 
     getErrorContents(context) {

@@ -61,7 +61,10 @@ module.exports = {
     },
 
     resetGame: "確定要重新開始遊戲嗎?",
+    resetGameCancel: "感謝您的遊玩，歡迎隨時輸入“reset game”再次啟動遊戲。",
 
+    noUserToStartGame: "目前沒有玩家加入遊戲，請先加入遊戲。",
+    notJoinGameUserSelectNumber: "你目前不是玩家，請不要選擇號碼。",
     error: "[error]啊，你點慢了一步。",
 
     roleCard: {

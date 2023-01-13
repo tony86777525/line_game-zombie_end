@@ -1,4 +1,3 @@
-const { router, line } = require('bottender/router');
 const querystring = require('querystring');
 const IndexController = require('./app/controllers/IndexController');
 
@@ -10,6 +9,8 @@ module.exports = async function App(context) {
             return IndexController.joinGame(context);
         else if('start game' === context.event.payload)
             return IndexController.SelectNumber(context);
+        else if('reset game cancel' === context.event.payload)
+            return IndexController.ResetGameCancel(context);
         else if(/^role=([\d]+)$/.test(context.event.payload)) {
             const params = _getParams(context.event.payload);
             return IndexController.SetRole(context, params);
@@ -32,9 +33,7 @@ module.exports = async function App(context) {
 
         switch (context.event.text) {
             case 'reset game':
-                return IndexController.resetGame(context);
-            // case 'reset game':
-            //     return IndexController.resetGame(context);
+                return IndexController.ResetGame(context);
             case 'call db':
                 return IndexController.callDB(context);
             case 'call game':

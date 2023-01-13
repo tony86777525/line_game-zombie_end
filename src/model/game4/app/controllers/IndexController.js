@@ -19,7 +19,8 @@ module.exports = {
     StartGame: StartGame,
     SelectScene: SelectScene,
     SelectRoleNumber: SelectRoleNumber,
-    resetGame: ResetGame,
+    ResetGame: ResetGame,
+    ResetGameCancel: ResetGameCancel,
     callDB: CallDB,
     callGame: CallGame,
     index: Index,
@@ -79,6 +80,13 @@ async function JoinGame(context) {
 }
 
 async function SelectNumber(context) {
+    const { users, userCount, robotCount } = GameState.getUsers(context);
+
+    if (users.length === 0) {
+        await Message.getNoUserToStartGameContents(context);
+        return;
+    }
+
     const isChangeState = GameState.setStateSelectNumber(context);
 
     if (false === isChangeState) {
@@ -89,7 +97,7 @@ async function SelectNumber(context) {
     let returnMessage = [];
 
     _startToSelectNumber(context);
-    const { users, userCount, robotCount } = GameState.getUsers(context);
+
     const roles = GameState.getRoles(context);
 
     returnMessage.push(Message.getStartToSelectNumberContents(context, userCount, robotCount));
@@ -109,6 +117,13 @@ async function SetRole(context, params) {
 
     const roleId = Number(params.role);
     const userId = context.session.user.id;
+    const isJoinUser = GameState.isJoinUser(context, userId);
+
+    if (false === isJoinUser) {
+        await Message.getNotJoinGameUserSelectNumberContents(context);
+        return;
+    }
+
     const $roleService = new roleService;
     const rolesTemplate = $roleService.getRolesTemplate();
     const isSetRoleToUser = GameState.setRoleToUser(context, userId, roleId, rolesTemplate);
@@ -250,6 +265,11 @@ async function SelectRoleNumber(context, selectRoleNumber) {
 async function ResetGame(context) {
 
     await Message.getResetGameContents(context);
+}
+
+async function ResetGameCancel(context) {
+
+    await Message.getResetGameCancelContents(context);
 }
 
 async function Index(context) {}

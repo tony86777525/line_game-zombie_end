@@ -193,6 +193,9 @@ img {
 .action__button__item--button[data-scene="6"]:after {
     background-image: url("/assets/img/game4/scenes/6.jpg");
 }
+.action__button__item--button[data-scene="7"]:after {
+    background-image: url("/assets/img/game4/scenes/7.jpg");
+}
 .action__button__item--text {
     font-size: 2rem;
     font-weight: bold;
