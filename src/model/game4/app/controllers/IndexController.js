@@ -77,6 +77,8 @@ async function JoinGame(context) {
 
         await returnMessage;
     }
+
+    GameState.setUpdatedAt(context);
 }
 
 async function SelectNumber(context) {
@@ -105,6 +107,8 @@ async function SelectNumber(context) {
     returnMessage.push(Message.getSelectNumberContents(context, roles, users));
 
     await returnMessage;
+
+    GameState.setUpdatedAt(context);
 }
 
 async function SetRole(context, params) {
@@ -150,6 +154,8 @@ async function SetRole(context, params) {
             await Message.getCheckRoleContents(context);
         }
     }
+
+    GameState.setUpdatedAt(context);
 }
 
 async function StartGame(context) {
@@ -167,6 +173,8 @@ async function StartGame(context) {
     returnMessage.push(_startGameRound(context));
 
     await returnMessage;
+
+    GameState.setUpdatedAt(context);
 }
 
 async function SelectScene(context, gameRound, sceneId) {
@@ -233,6 +241,8 @@ async function SelectScene(context, gameRound, sceneId) {
     }
 
     await returnMessage;
+
+    GameState.setUpdatedAt(context);
 }
 
 async function SelectRoleNumber(context, selectRoleNumber) {
@@ -260,16 +270,20 @@ async function SelectRoleNumber(context, selectRoleNumber) {
     returnMessage.push(Message.getGameEndContent(context, gameResultContentTag));
 
     await returnMessage;
+
+    GameState.setUpdatedAt(context);
 }
 
 async function ResetGame(context) {
-
     await Message.getResetGameContents(context);
+
+    GameState.setUpdatedAt(context);
 }
 
 async function ResetGameCancel(context) {
-
     await Message.getResetGameCancelContents(context);
+
+    GameState.setUpdatedAt(context);
 }
 
 async function Index(context) {}
@@ -309,4 +323,12 @@ function _startGameRound(context, gameRound = 0) {
     const newSceneNames = Scene.getSceneNameByIds(sceneIds)
 
     return Message.getGameRoundContents(context, gameRound, newSceneNames);
+}
+
+function _getErrorMessage() {
+    if (GameState.isOverDate(context, setUpdatedAt)) {
+        return Message.getOverDateContents(context);
+    } else {
+        return Message.getErrorContents(context);
+    }
 }

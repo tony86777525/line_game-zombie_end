@@ -35,6 +35,8 @@ class GameState
                 people: 0,
             },
             transformUser: [],
+            lastMessageContent: {},
+            updatedAt: Date.now(),
         };
 
         return this;
@@ -359,6 +361,25 @@ class GameState
                 gameRound.users.push({userId: userId, sceneId: sceneId, group: user.group});
                 result = true;
             }
+        }
+
+        return result;
+    }
+
+    setUpdatedAt(context) {
+        const game = context.state.gameStates[this.gameStatesId];
+
+        game.updatedAt = Date.now();
+    }
+
+    isOverDate(context) {
+        const game = context.state.gameStates[this.gameStatesId];
+        const nowDate = Date.now();
+
+        let result = false;
+
+        if (nowDate - game.updatedAt  > (5 * 60 * 1000)) {
+            result = true;
         }
 
         return result;

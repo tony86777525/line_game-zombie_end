@@ -671,6 +671,12 @@ class Message
         return context.replyText(contentText);
     }
 
+    getOverDateContents(context) {
+        const contentText = this.Lang.overDate;
+
+        return context.replyText(contentText);
+    }
+
     getErrorContents(context) {
         const contentText = this.Lang.error;
 

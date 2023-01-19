@@ -23,6 +23,11 @@ function initializeLiff(myLiffId) {
                 const userId = profile.userId;
                 const user = roleUsers.find(roleUser => roleUser.userId === userId);
 
+                if (undefined === roleUser) {
+                    alert('你不是本局玩家');
+                    liff.closeWindow();
+                }
+
                 for (let roleUser of roleUsers) {
                     let roleUserNumber = roleUser.number
 

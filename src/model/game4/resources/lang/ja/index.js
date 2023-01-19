@@ -47,6 +47,11 @@ module.exports = {
         5: "那裡什麼也沒有，沒有物資、沒有喪屍。",
     },
 
+    gameFinale: "遊戲終盤\n目前由{resultText}獲勝\n\n宿主玩家請選擇免疫者。",
+    gameFinaleButton: "請宿主選擇免疫者",
+
+    selectRoleNumberRight: "宿主猜對免疫者！",
+    selectRoleNumberWrong: "宿主猜錯免疫者！",
     gameEnd: "遊戲結束！\n由{resultText}獲勝\n\n本輪遊戲已結束是否要開啟新局？",
     gameEndAnd: "、",
     gameEndNumber: "號",
@@ -56,7 +61,10 @@ module.exports = {
     },
 
     resetGame: "確定要重新開始遊戲嗎?",
+    resetGameCancel: "感謝您的遊玩，歡迎隨時輸入“START”再次啟動遊戲。",
 
+    noUserToStartGame: "目前沒有玩家加入遊戲，請先加入遊戲。",
+    notJoinGameUserSelectNumber: "你目前不是玩家，請不要選擇號碼。",
     error: "[error]啊，你點慢了一步。",
 
     roleCard: {
@@ -92,12 +100,12 @@ module.exports = {
         7: "不會被感染成為「異變方」",
     },
     roleWinner: {
-        1: "人類方完成３次物資搜索／異變方阻礙３次物資搜索",
+        1: "人類方完成３次物資搜索且免疫者未被宿主殺死／異變方阻礙３次物資搜索",
         2: "阻礙３次物資搜索",
         3: "尋找並殺死人類方的「免疫者」",
-        4: "完成３次物資搜索",
-        5: "完成３次物資搜索",
-        6: "保護免疫者不被殺害",
+        4: "完成３次物資搜索且免疫者未被宿主殺死",
+        5: "完成３次物資搜索且免疫者未被宿主殺死",
+        6: "完成３次物資搜索且保護免疫者不被殺害",
         7: "不被宿主殺死並完成３次物資搜索",
     },
 
@@ -109,6 +117,7 @@ module.exports = {
             4: "旅館",
             5: "警局",
             6: "商辦",
+            7: "購物中心",
         },
         content: {
             1: "搜索人數2人",
@@ -117,6 +126,7 @@ module.exports = {
             4: "搜索人數3人",
             5: "搜索人數4人",
             6: "搜索人數5人",
+            7: "搜索人數5人",
         }
     },
 

@@ -32,7 +32,7 @@ module.exports = async function App(context) {
         }
 
         switch (context.event.text) {
-            case 'reset game':
+            case 'start':
                 return IndexController.ResetGame(context);
             case 'call db':
                 return IndexController.callDB(context);

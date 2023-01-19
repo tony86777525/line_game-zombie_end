@@ -22,6 +22,11 @@ function initializeLiff(myLiffId) {
             liff.getProfile().then(profile => {
                 const userId = profile.userId;
                 const roleUser = roleUsers.find(roleUser => roleUser.userId === userId);
+                if (undefined === roleUser) {
+                    alert('你不是本局玩家');
+                    liff.closeWindow();
+                }
+
                 const userRoleCard = roles[roleUser.roleId];
 
                 for (let number in numberGroupImages) {
