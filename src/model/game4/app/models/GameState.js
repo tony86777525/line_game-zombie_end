@@ -35,7 +35,10 @@ class GameState
                 people: 0,
             },
             transformUser: [],
-            lastMessageContent: {},
+            lastMessageContent: {
+                contentText: ``,
+                mainContentText: ``
+            },
             updatedAt: Date.now(),
         };
 
@@ -366,23 +369,25 @@ class GameState
         return result;
     }
 
-    setUpdatedAt(context) {
-        const game = context.state.gameStates[this.gameStatesId];
-
-        game.updatedAt = Date.now();
-    }
-
     isOverDate(context) {
         const game = context.state.gameStates[this.gameStatesId];
         const nowDate = Date.now();
 
         let result = false;
 
-        if (nowDate - game.updatedAt  > (5 * 60 * 1000)) {
+        if (nowDate - game.updatedAt > (5 * 60 * 1000)) {
+        // if (nowDate - game.updatedAt) {
+
             result = true;
         }
 
         return result;
+    }
+
+    getLastMessageContent(context) {
+        const game = context.state.gameStates[this.gameStatesId];
+
+        return game.lastMessageContent;
     }
 
     isGameRoundEnd(context, nowGameRound, sceneIds) {
@@ -413,6 +418,12 @@ class GameState
         }
 
         return result;
+    }
+
+    setLastMessageContent(context, contentText, mainContentText = '') {
+        context.state.gameStates[this.gameStatesId].lastMessageContent.contentText = contentText;
+        context.state.gameStates[this.gameStatesId].lastMessageContent.mainContentText = mainContentText;
+        context.state.gameStates[this.gameStatesId].updatedAt = Date.now();
     }
 
     dumpAll(context) {

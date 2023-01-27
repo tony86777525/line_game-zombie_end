@@ -12,6 +12,7 @@ const Scene = new SceneService();
 const GameRound = new GameRoundService();
 
 module.exports = {
+    Follow: Follow,
     newGame: NewGame,
     joinGame: JoinGame,
     SelectNumber: SelectNumber,
@@ -26,23 +27,27 @@ module.exports = {
     index: Index,
 };
 
+async function Follow(context) {
+    await Message.getFollowContents(context);
+}
+
 async function NewGame(context) {
     GameState.init(context);
     const isChangeState = GameState.setStateJoinGame(context);
 
     if (false === isChangeState) {
-        await Message.getErrorContents(context);
+        await _getErrorMessage(context);
         return;
     }
 
-    await Message.getNewGameContents(context);
+    await Message.getNewGameContents(context, GameState);
 }
 
 async function JoinGame(context) {
     const isStateJoinGame = GameState.isStateJoinGame(context);
 
     if (false === isStateJoinGame) {
-        await Message.getErrorContents(context);
+        await _getErrorMessage(context);
         return;
     }
 
@@ -56,14 +61,14 @@ async function JoinGame(context) {
         let returnMessage = [];
         const { userCount } = GameState.getUsers(context);
 
-        returnMessage.push(Message.getJoinGameContents(context, displayName, userCount));
+        returnMessage.push(Message.getJoinGameContents(context, GameState, displayName, userCount));
 
         // 人數10人 || 單人
         if (true === GameState.isFullUsers(context)) {
             const isChangeState = GameState.setStateSelectNumber(context);
 
             if (false === isChangeState) {
-                await Message.getErrorContents(context);
+                await _getErrorMessage(context);
                 return;
             }
 
@@ -71,14 +76,12 @@ async function JoinGame(context) {
             const { users, userCount, robotCount } = GameState.getUsers(context);
             const roles = GameState.getRoles(context);
 
-            returnMessage.push(Message.getStartToSelectNumberContents(context, userCount, robotCount));
-            returnMessage.push(Message.getSelectNumberContents(context, roles, users));
+            returnMessage.push(Message.getStartToSelectNumberContents(context, GameState, userCount, robotCount));
+            returnMessage.push(Message.getSelectNumberContents(context, GameState, roles, users));
         }
 
         await returnMessage;
     }
-
-    GameState.setUpdatedAt(context);
 }
 
 async function SelectNumber(context) {
@@ -92,7 +95,7 @@ async function SelectNumber(context) {
     const isChangeState = GameState.setStateSelectNumber(context);
 
     if (false === isChangeState) {
-        await Message.getErrorContents(context);
+        await _getErrorMessage(context);
         return;
     }
 
@@ -102,20 +105,18 @@ async function SelectNumber(context) {
 
     const roles = GameState.getRoles(context);
 
-    returnMessage.push(Message.getStartToSelectNumberContents(context, userCount, robotCount));
+    returnMessage.push(Message.getStartToSelectNumberContents(context, GameState, userCount, robotCount));
 
-    returnMessage.push(Message.getSelectNumberContents(context, roles, users));
+    returnMessage.push(Message.getSelectNumberContents(context, GameState, roles, users));
 
     await returnMessage;
-
-    GameState.setUpdatedAt(context);
 }
 
 async function SetRole(context, params) {
     const isStateSelectNumber = GameState.isStateSelectNumber(context);
 
     if (false === isStateSelectNumber) {
-        await Message.getErrorContents(context);
+        await _getErrorMessage(context);
         return;
     }
 
@@ -141,47 +142,43 @@ async function SetRole(context, params) {
             const { users } = GameState.getUsers(context);
             const roles = GameState.getRoles(context);
 
-            await Message.getSelectNumberContents(context, roles, users);
+            await Message.getSelectNumberContents(context, GameState, roles, users);
         } else {
             const isChangeState = GameState.setStateCheckRole(context);
 
             if (false === isChangeState) {
-                await Message.getErrorContents(context);
+                await _getErrorMessage(context);
                 return;
             }
 
             // open liff
-            await Message.getCheckRoleContents(context);
+            await Message.getCheckRoleContents(context, GameState);
         }
     }
-
-    GameState.setUpdatedAt(context);
 }
 
 async function StartGame(context) {
     const isChangeState = GameState.setStateStartGame(context);
 
     if (false === isChangeState) {
-        await Message.getErrorContents(context);
+        await _getErrorMessage(context);
         return;
     }
 
     let returnMessage = [];
 
-    returnMessage.push(Message.getStartGameContents(context));
+    returnMessage.push(Message.getStartGameContents(context, GameState));
 
     returnMessage.push(_startGameRound(context));
 
     await returnMessage;
-
-    GameState.setUpdatedAt(context);
 }
 
 async function SelectScene(context, gameRound, sceneId) {
     const isStateStartGame = GameState.isStateStartGame(context);
 
     if (false === isStateStartGame) {
-        await Message.getErrorContents(context);
+        await _getErrorMessage(context);
         return;
     }
 
@@ -189,7 +186,7 @@ async function SelectScene(context, gameRound, sceneId) {
     const isSetGameRoundScene = GameState.setGameRoundScene(context, gameRound, userId, sceneId);
 
     if (false === isSetGameRoundScene) {
-        await Message.getErrorContents(context);
+        await _getErrorMessage(context);
         return;
     }
 
@@ -215,7 +212,7 @@ async function SelectScene(context, gameRound, sceneId) {
         GameState.setTransformUser(context, gameRound, transformGroupUsers);
         GameState.setUserGroup(context, transformGroupUsers, targets, valueTarget);
 
-        returnMessage = returnMessage.concat(Message.getGameRoundEndContents(context, resultContentTag));
+        returnMessage = returnMessage.concat(Message.getGameRoundEndContents(context, GameState, resultContentTag));
 
         const winCount = GameState.setGameRoundResult(context, result);
         // const winCount = GameState.getGameRoundResult(context);
@@ -226,11 +223,11 @@ async function SelectScene(context, gameRound, sceneId) {
             if (true === gameResultContentTag.type) {
                 GameState.setStateEndGame(context);
 
-                returnMessage.push(Message.getGameEndContent(context, gameResultContentTag));
+                returnMessage.push(Message.getGameEndContent(context, GameState, gameResultContentTag));
             } else {
                 GameState.setStateFinaleGame(context);
 
-                returnMessage.push(Message.getGameFinaleContent(context, gameResultContentTag));
+                returnMessage.push(Message.getGameFinaleContent(context, GameState, gameResultContentTag));
             }
         } else {
             const { gameRoundNumber } = GameState.getGameRound(context);
@@ -241,15 +238,13 @@ async function SelectScene(context, gameRound, sceneId) {
     }
 
     await returnMessage;
-
-    GameState.setUpdatedAt(context);
 }
 
 async function SelectRoleNumber(context, selectRoleNumber) {
     const isStateFinaleGame = GameState.isStateFinaleGame(context);
 
     if (false === isStateFinaleGame) {
-        await Message.getErrorContents(context);
+        await _getErrorMessage(context);
         return;
     }
 
@@ -267,23 +262,17 @@ async function SelectRoleNumber(context, selectRoleNumber) {
 
     GameState.setStateEndGame(context);
 
-    returnMessage.push(Message.getGameEndContent(context, gameResultContentTag));
+    returnMessage.push(Message.getGameEndContent(context, GameState, gameResultContentTag));
 
     await returnMessage;
-
-    GameState.setUpdatedAt(context);
 }
 
 async function ResetGame(context) {
     await Message.getResetGameContents(context);
-
-    GameState.setUpdatedAt(context);
 }
 
 async function ResetGameCancel(context) {
     await Message.getResetGameCancelContents(context);
-
-    GameState.setUpdatedAt(context);
 }
 
 async function Index(context) {}
@@ -322,13 +311,15 @@ function _startGameRound(context, gameRound = 0) {
     // const newSceneIds = GameState.getNowScenes(context, gameRound);
     const newSceneNames = Scene.getSceneNameByIds(sceneIds)
 
-    return Message.getGameRoundContents(context, gameRound, newSceneNames);
+    return Message.getGameRoundContents(context, GameState, gameRound, newSceneNames);
 }
 
-function _getErrorMessage() {
-    if (GameState.isOverDate(context, setUpdatedAt)) {
-        return Message.getOverDateContents(context);
+function _getErrorMessage(context) {
+    if (true === GameState.isOverDate(context)) {
+        const lastMessageContent = GameState.getLastMessageContent(context);
+        console.log(lastMessageContent);
+        return Message.getOverDateContents(context, lastMessageContent);
     } else {
-        return Message.getErrorContents(context);
+        return _getErrorMessage(context);
     }
 }

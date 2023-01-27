@@ -8,12 +8,170 @@ class Message
         this.liffUri = `https://liff.line.me/${process.env.LINE_LIFF_ID}/liff2`;
     }
 
-    getNewGameContents(context) {
+    getFollowContents(context) {
+        let contentText = 'follow';
+        let buttonTextStartGame = this.Lang.startGame;
+        let heroUrl = `${this.imagePath}/message/follow.jpg`;
+        let bodyTitle = `末日危機`;
+        let bodyStar = [];
+        let bodyMember = [];
+        let bodyType = [];
+
+        let goldStar = {
+            "type": "icon",
+            "size": "sm",
+            "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png"
+        };
+
+        let grayStar = {
+            "type": "icon",
+            "size": "sm",
+            "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/review_gold_star_28.png"
+        };
+
+        while (bodyStar.length < 5) {
+            if (bodyStar.length < 4) {
+                bodyStar.push(goldStar);
+            } else {
+                bodyStar.push(grayStar);
+            }
+        }
+
+        bodyStar.push({
+            "type": "text",
+            "text": "4.0",
+            "size": "sm",
+            "color": "#999999",
+            "margin": "md",
+            "flex": 0
+        });
+
+        bodyStar.push({
+            "type": "text",
+            "text": "79人評價",
+            "size": "sm",
+            "margin": "md",
+            "color": "#999999",
+            "align": "center"
+        })
+
+        bodyMember.push({
+            "type": "text",
+            "text": "遊戲人數",
+            "color": "#aaaaaa",
+            "flex": 2,
+            "size": "sm"
+        });
+
+        bodyMember.push({
+            "type": "text",
+            "text": "5~10人",
+            "wrap": true,
+            "color": "#666666",
+            "size": "sm",
+            "flex": 5
+        });
+
+        bodyType.push({
+            "type": "text",
+            "text": "遊戲類型",
+            "color": "#aaaaaa",
+            "size": "sm",
+            "flex": 2
+        });
+
+        bodyType.push({
+            "type": "text",
+            "text": "陣營、心機、派對",
+            "wrap": true,
+            "color": "#666666",
+            "size": "sm",
+            "flex": 5
+        });
+
+        return context.replyFlex(`${contentText}`, {
+            "type": "bubble",
+            "hero": {
+                "type": "image",
+                "url": `${heroUrl}`,
+                "size": "full",
+                "aspectRatio": "20:13",
+                "aspectMode": "cover",
+            },
+            "body": {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                    {
+                        "type": "text",
+                        "text": `${bodyTitle}`,
+                        "weight": "bold",
+                        "size": "xl"
+                    },
+                    {
+                        "type": "box",
+                        "layout": "baseline",
+                        "margin": "md",
+                        "contents": bodyStar
+                    },
+                    {
+                        "type": "box",
+                        "layout": "vertical",
+                        "margin": "lg",
+                        "spacing": "sm",
+                        "contents": [
+                            {
+                                "type": "box",
+                                "layout": "baseline",
+                                "spacing": "sm",
+                                "contents": bodyMember
+                            },
+                            {
+                                "type": "box",
+                                "layout": "baseline",
+                                "spacing": "sm",
+                                "contents": bodyType
+                            }
+                        ]
+                    }
+                ]
+            },
+            "footer": {
+                "type": "box",
+                "layout": "vertical",
+                "spacing": "sm",
+                "contents": [
+                    {
+                        "type": "button",
+                        "style": "secondary",
+                        "height": "sm",
+                        "action": {
+                            "type": "uri",
+                            "label": "遊戲規則",
+                            "uri": "https://linecorp.com"
+                        }
+                    },
+                    {
+                        "type": "button",
+                        "style": "primary",
+                        "height": "sm",
+                        "action": {
+                            "type": "postback",
+                            "label": `${buttonTextStartGame}`,
+                            "data": "new game"
+                        },
+                    }
+                ]
+            }
+        });
+    }
+
+    getNewGameContents(context, GameState) {
         let contentText = this.Lang.newGame;
         let buttonTextJoinGame = this.Lang.joinGame;
         let buttonTextStartGame = this.Lang.startGame;
 
-        return context.replyFlex(`${contentText}`, {
+        let mainContentText = {
             "type": "bubble",
             "direction": "ltr",
             "body": {
@@ -56,7 +214,11 @@ class Message
                     }
                 ]
             }
-        });
+        };
+
+        GameState.setLastMessageContent(context, contentText, mainContentText);
+
+        return context.replyFlex(`${contentText}`, mainContentText);
     }
 
     getJoinGameAlreadyContents(context, name) {
@@ -67,14 +229,13 @@ class Message
         return context.replyText(`${contentText}`);
     }
 
-    getJoinGameContents(context, name, userCount) {
+    getJoinGameContents(context, GameState, name, userCount) {
         let contentText = this.Lang.joinGameState;
         let buttonTextJoinGame = this.Lang.joinGame;
         let buttonTextStartGame = this.Lang.startGame;
 
         contentText = contentText.replace(/{name}/g, name).replace(/{userCount}/g, userCount);
-
-        return context.replyFlex(`${contentText}`, {
+        let mainContentText = {
             "type": "bubble",
             "direction": "ltr",
             "body": {
@@ -117,10 +278,14 @@ class Message
                     }
                 ]
             }
-        });
+        };
+
+        GameState.setLastMessageContent(context, contentText, mainContentText);
+
+        return context.replyFlex(`${contentText}`, mainContentText);
     }
 
-    getStartToSelectNumberContents(context, userCount, robotCount) {
+    getStartToSelectNumberContents(context, GameState, userCount, robotCount) {
         let contentText = this.Lang.startToSelectNumber;
         let robotCountText = '';
         if (robotCount > 0) {
@@ -129,10 +294,12 @@ class Message
         }
         contentText = contentText.replace(/{userCount}/g, userCount).replace(/{robotCountText}/g, robotCountText);
 
+        GameState.setLastMessageContent(context, contentText);
+
         return context.replyText(`${contentText}`);
     }
 
-    getSelectNumberContents(context, roles, users) {
+    getSelectNumberContents(context, GameState, roles, users) {
         const { find } = require('lodash');
         let contents = [];
 
@@ -193,10 +360,14 @@ class Message
             });
         }
 
-        return context.replyFlex(`${contentText}`, {
+        let mainContentText = {
             "type": "carousel",
             "contents": contents
-        });
+        };
+
+        GameState.setLastMessageContent(context, contentText, mainContentText);
+
+        return context.replyFlex(`${contentText}`, mainContentText);
     }
 
     getSelectNumberAlreadyContents(context) {
@@ -206,7 +377,7 @@ class Message
     }
 
     // open liff
-    getCheckRoleContents(context) {
+    getCheckRoleContents(context, GameState) {
         const contentText = this.Lang.checkRole;
         let groupId = "";
 
@@ -218,7 +389,7 @@ class Message
 
         const uri = `${this.liffUri}/role?data=${groupId}`;
 
-        return context.replyFlex(`${contentText}`, {
+        let mainContentText = {
             "type": "bubble",
             "direction": "ltr",
             "footer": {
@@ -237,13 +408,17 @@ class Message
                     }
                 ]
             }
-        });
+        };
+
+        GameState.setLastMessageContent(context, contentText, mainContentText);
+
+        return context.replyFlex(`${contentText}`, mainContentText);
     }
 
-    getStartGameContents(context) {
+    getStartGameContents(context, GameState) {
         const contentText = this.Lang.gameStartStory;
 
-        return context.replyFlex(`${contentText}`, {
+        let mainContentText = {
             "type": "bubble",
             "direction": "ltr",
             "size": "giga",
@@ -261,10 +436,14 @@ class Message
                     }
                 ]
             },
-        });
+        };
+
+        GameState.setLastMessageContent(context, contentText, mainContentText);
+
+        return context.replyFlex(`${contentText}`, mainContentText);
     }
 
-    getGameRoundContents(context, gameRound, newSceneNames) {
+    getGameRoundContents(context, GameState, gameRound, newSceneNames) {
         let contentText = this.Lang.gameRound;
         const checkRoundText = this.Lang.checkRound;
 
@@ -281,8 +460,7 @@ class Message
         }
 
         let uri = `${this.liffUri}/round?data=${groupId}&round=${gameRound}`;
-
-        return context.replyFlex(`${contentText}`, {
+        let mainContentText = {
             "type": "bubble",
             "direction": "ltr",
             "size": "giga",
@@ -316,7 +494,11 @@ class Message
                     }
                 ]
             }
-        });
+        };
+
+        GameState.setLastMessageContent(context, contentText, mainContentText);
+
+        return context.replyFlex(`${contentText}`, mainContentText);
     }
 
     getStoryHandleContents() {
@@ -363,7 +545,7 @@ class Message
         return result;
     }
 
-    getGameRoundEndContents(context, resultContentTags) {
+    getGameRoundEndContents(context, GameState, resultContentTags) {
         let contentArray = [];
 
         for (let sceneId in resultContentTags) {
@@ -391,8 +573,7 @@ class Message
 
         // let uri = `${this.liffUri}/round?users=${encodeURIComponent(JSON.stringify(users))}`;
         // uri += `&scenes=${encodeURIComponent(JSON.stringify(sceneIds))}&round=${gameRound}`;
-
-        return context.replyFlex(`${contentText}`, {
+        let mainContentText = {
             "type": "bubble",
             "direction": "ltr",
             "size": "giga",
@@ -426,10 +607,14 @@ class Message
             //         }
             //     ]
             // }
-        });
+        };
+
+        GameState.setLastMessageContent(context, contentText, mainContentText);
+
+        return context.replyFlex(`${contentText}`, mainContentText);
     }
 
-    getGameFinaleContent(context, resultContentTag) {
+    getGameFinaleContent(context, GameState, resultContentTag) {
         let contentText = this.Lang.gameFinale;
         const checkButtonText = this.Lang.gameFinaleButton;
         let userNumbers = [];
@@ -452,8 +637,7 @@ class Message
         }
 
         const uri = `${this.liffUri}/checkImmunity?data=${groupId}`;
-
-        return context.replyFlex(`${contentText}`, {
+        let mainContentText = {
             "type": "bubble",
             "direction": "ltr",
             "size": "giga",
@@ -487,7 +671,11 @@ class Message
                     }
                 ]
             }
-        });
+        };
+
+        GameState.setLastMessageContent(context, contentText, mainContentText);
+
+        return context.replyFlex(`${contentText}`, mainContentText);
     }
 
     getSelectRoleNumberResultContent(context, isRight) {
@@ -519,7 +707,7 @@ class Message
         });
     }
 
-    getGameEndContent(context, resultContentTag) {
+    getGameEndContent(context, GameState, resultContentTag) {
         let contentText = this.Lang.gameEnd;
         let userNumbers = [];
 
@@ -534,8 +722,7 @@ class Message
 
         let buttonTextYes = this.Lang.yes;
         let buttonTextNo = this.Lang.no;
-
-        return context.replyFlex(`${contentText}`, {
+        let mainContentText = {
             "type": "bubble",
             "direction": "ltr",
             "size": "giga",
@@ -579,9 +766,12 @@ class Message
                     }
                 ]
             }
-        });
-    }
+        };
 
+        GameState.setLastMessageContent(context, contentText, mainContentText);
+
+        return context.replyFlex(`${contentText}`, mainContentText);
+    }
 
     getResetGameContents(context) {
         let contentText = this.Lang.resetGame;
@@ -671,16 +861,20 @@ class Message
         return context.replyText(contentText);
     }
 
-    getOverDateContents(context) {
+    getOverDateContents(context, lastMessageContent) {
+        let returnMessage = [];
         const contentText = this.Lang.overDate;
 
-        return context.replyText(contentText);
-    }
+        returnMessage.push(context.replyText(contentText));
 
-    getErrorContents(context) {
-        const contentText = this.Lang.error;
+        if ('' !== lastMessageContent.mainContentText) {
+            returnMessage.push(context.replyFlex(lastMessageContent.contentText
+                , lastMessageContent.mainContentText));
+        } else {
+            returnMessage.push(context.replyText(lastMessageContent.contentText));
+        }
 
-        return context.replyText(contentText);
+        return returnMessage;
     }
 
     getLiffRoles(roleCards, roleGroups) {

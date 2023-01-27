@@ -2,6 +2,10 @@ const querystring = require('querystring');
 const IndexController = require('./app/controllers/IndexController');
 
 module.exports = async function App(context) {
+    if (context.event.isFollow) {
+        return IndexController.Follow(context);
+    }
+
     if (context.event.isPostback) {
         if ("new game" === context.event.payload)
             return IndexController.newGame(context);
