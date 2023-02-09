@@ -12,7 +12,7 @@ const Scene = new SceneService();
 const GameRound = new GameRoundService();
 
 module.exports = {
-    Follow: Follow,
+    WelcomeToJoinGame: WelcomeToJoinGame,
     newGame: NewGame,
     joinGame: JoinGame,
     SelectNumber: SelectNumber,
@@ -27,7 +27,7 @@ module.exports = {
     index: Index,
 };
 
-async function Follow(context) {
+async function WelcomeToJoinGame(context) {
     await Message.getFollowContents(context);
 }
 

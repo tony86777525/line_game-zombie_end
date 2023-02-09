@@ -2,8 +2,11 @@ const querystring = require('querystring');
 const IndexController = require('./app/controllers/IndexController');
 
 module.exports = async function App(context) {
-    if (context.event.isFollow) {
-        return IndexController.Follow(context);
+    // context.event.isLeave
+    // context.event.isJoin
+    console.log(context.event);
+    if (context.event.isFollow || context.event.isJoin) {
+        return IndexController.WelcomeToJoinGame(context);
     }
 
     if (context.event.isPostback) {
@@ -35,7 +38,7 @@ module.exports = async function App(context) {
             }
         }
 
-        switch (context.event.text) {
+        switch ((context.event.text).toLowerCase()) {
             case 'start':
                 return IndexController.ResetGame(context);
             case 'call db':

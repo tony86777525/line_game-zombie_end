@@ -9,7 +9,7 @@ class Message
     }
 
     getFollowContents(context) {
-        let contentText = 'follow';
+        let contentText = 'Welcome To Join Game';
         let buttonTextStartGame = this.Lang.startGame;
         let heroUrl = `${this.imagePath}/message/follow.jpg`;
         let bodyTitle = `末日危機`;
