@@ -77,7 +77,7 @@ async function JoinGame(context) {
             const roles = GameState.getRoles(context);
 
             returnMessage.push(Message.getStartToSelectNumberContents(context, GameState, userCount, robotCount));
-            returnMessage.push(Message.getSelectNumberContents(context, GameState, roles, users));
+            returnMessage.push(Message.getSelectNumberContents(context, GameState, roles, users, userCount));
         }
 
         await returnMessage;
@@ -107,7 +107,7 @@ async function SelectNumber(context) {
 
     returnMessage.push(Message.getStartToSelectNumberContents(context, GameState, userCount, robotCount));
 
-    returnMessage.push(Message.getSelectNumberContents(context, GameState, roles, users));
+    returnMessage.push(Message.getSelectNumberContents(context, GameState, roles, users, userCount));
 
     await returnMessage;
 }
@@ -139,10 +139,10 @@ async function SetRole(context, params) {
         const isStartToCheckRole = GameState.isStartToCheckRole(context, rolesTemplate);
 
         if (false === isStartToCheckRole) {
-            const { users } = GameState.getUsers(context);
+            const { users, userCount } = GameState.getUsers(context);
             const roles = GameState.getRoles(context);
 
-            await Message.getSelectNumberContents(context, GameState, roles, users);
+            await Message.getSelectNumberContents(context, GameState, roles, users, userCount);
         } else {
             const isChangeState = GameState.setStateCheckRole(context);
 

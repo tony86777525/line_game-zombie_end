@@ -299,7 +299,7 @@ class Message
         return context.replyText(`${contentText}`);
     }
 
-    getSelectNumberContents(context, GameState, roles, users) {
+    getSelectNumberContents(context, GameState, roles, users, userCount) {
         const { find } = require('lodash');
         let contents = [];
 
@@ -307,7 +307,7 @@ class Message
         let selectedNumber = this.Lang.selectedNumber;
         let contentText = 'Select Number';
 
-        for (let key in roles) {
+        for (let key in roles.slice(0, userCount)) {
             let contentHeaderText = `${this.Lang.selectNumberTitle}${this.Lang.number[key]}`;
             let isUnSelected = true;
             let roleImage = Number(key);
