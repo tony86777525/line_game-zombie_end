@@ -25,14 +25,40 @@ body {
 .role__image__number__item {
     position: relative;
     width: calc(100% / 5);
+    visibility: hidden;
+}
+.role__image__number__item.active {
+    visibility: visible;
 }
 .role__image__number__item.active .group {
-    position: absolute;
+    position: absㄎolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 50%;
     height: auto;
+}
+.role__image__number__item:before {
+    content: '';
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 5%;
+    left: 5%;
+    background-repeat: no-repeat;
+    background-size: 33%;
+}
+.role__image__number__item[data-guess="1"]:before {
+    background-image: url("/assets/img/game4/guess/smile.png");
+}
+.role__image__number__item[data-guess="2"]:before {
+    background-image: url("/assets/img/game4/guess/cry.png");
+}
+.role__image__number__item[data-guess="3"]:before {
+    background-image: url("/assets/img/game4/guess/unknown.png");
+}
+.role__image__number__item[data-guess="4"]:before {
+    background-image: url("/assets/img/game4/guess/skull.png");
 }
 .role__image__number__item:after {
     content: '';

@@ -52,6 +52,30 @@ app.prepare().then(() => {
     //     }
     // });
 
+    server.post('/setGuess', async (req, res) => {
+        try {
+            const {sessionStoreKey, userId, userNumber, guess} = req.body;
+            const sessionStore = new FileSessionStore();
+            const allData = await sessionStore.read(`line:${sessionStoreKey}`);
+            const gameData = allData._state.gameStates[Config.gameStatesId];
+            let users = gameData.users;
+            let user = users.find(user => userId === user.id);
+            let userGuess = user.guess.find(userGuess => userGuess.number === userNumber);
+
+            if (undefined !== userGuess) {
+                userGuess.guess = guess;
+            } else {
+                user.guess.push({number: userNumber, guess: guess});
+            }
+
+            await sessionStore.write(`line:${userId}`, allData);
+
+            res.json({data: req.body});
+        } catch (e) {
+            res.end(e.message || e.toString());
+        }
+    });
+
     server.get('/liff2', async (req, res) => {
         // const params = getParams(req);
         const filename = path.join(`${__dirname}/${Config.route}/resources/view/liff/index.html`);
@@ -70,9 +94,9 @@ app.prepare().then(() => {
         // const version = params.type || 'index';
         const filename = path.join(`${__dirname}/${Config.route}/resources/view/liff/role.html`);
         const roles = Message.getLiffRoles(Role.getRolesTemplate(), Role.getRoleGroupsTemplate());
-        const key = params.data;
+        const sessionStoreKey = params.data;
         const sessionStore = new FileSessionStore();
-        const allData = await sessionStore.read(`line:${key}`);
+        const allData = await sessionStore.read(`line:${sessionStoreKey}`);
         const gameData = allData._state.gameStates[Config.gameStatesId];
         const roleUsers = GameState.getLiffCheckRoleUsers(gameData);
 
@@ -95,10 +119,10 @@ app.prepare().then(() => {
     server.get('/liff2/liff2/round', async (req, res) => {
         const params = getParams(req);
         const filename = path.join(`${__dirname}/${Config.route}/resources/view/liff/round.html`);
-        const key = params.data;
+        const sessionStoreKey = params.data;
         const gameRound = params.round;
         const sessionStore = new FileSessionStore();
-        const allData = await sessionStore.read(`line:${key}`);
+        const allData = await sessionStore.read(`line:${sessionStoreKey}`);
         const gameData = allData._state.gameStates[Config.gameStatesId];
         const roleUsers = GameState.getLiffCheckRoleUsers(gameData);
         const numberGroupImages = Role.getLiffNumberGroupImages(roleUsers);
@@ -111,6 +135,7 @@ app.prepare().then(() => {
 
         const data = {
             // url: `${Config.route}`,
+            sessionStoreKey: sessionStoreKey,
             roles: roles,
             canSeeAnyoneRoleId: canSeeAnyoneRoleId,
             canSeeImmunityRoleId: canSeeImmunityRoleId,
@@ -134,9 +159,9 @@ app.prepare().then(() => {
     server.get('/liff2/liff2/checkImmunity', async (req, res) => {
         const params = getParams(req);
         const filename = path.join(`${__dirname}/${Config.route}/resources/view/liff/checkImmunity.html`);
-        const key = params.data;
+        const sessionStoreKey = params.data;
         const sessionStore = new FileSessionStore();
-        const allData = await sessionStore.read(`line:${key}`);
+        const allData = await sessionStore.read(`line:${sessionStoreKey}`);
         const gameData = allData._state.gameStates[Config.gameStatesId];
         const roleUsers = GameState.getLiffCheckRoleUsers(gameData);
 

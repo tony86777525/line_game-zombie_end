@@ -29,14 +29,28 @@ function initializeLiff(myLiffId) {
 
                 const userRoleCard = roles[roleUser.roleId];
 
+                document.querySelectorAll(`[data-js-role-number]`).forEach(function(item, index){
+                    if (roleUsers.length > 5 || (roleUsers.length <= 5 && index < 5)) {
+                        item.classList.add('active');
+                        let userGuess = roleUser.guess.find(userGuess => Number(userGuess.number)
+                            === Number(item.dataset.jsRoleNumber));
+                        if (undefined !== userGuess) {
+                            item.dataset.guess = userGuess.guess;
+                        }
+                    }
+                });
+
                 for (let number in numberGroupImages) {
                     let image = numberGroupImages[number];
+                    let target = document.querySelector(`[data-js-role-number="${number}"]`);
 
                     if (Number(number) === roleUser.number) {
-                        document.querySelector(`[data-js-role-number="${number}"]`).dataset.group = `me`
+                        target.dataset.group = `me`;
                     } else if (canSeeAnyoneRoleId === roleUser.roleId
                             || canSeeImmunityRoleId === roleUser.roleId && "immunity" === image) {
-                        document.querySelector(`[data-js-role-number="${number}"]`).dataset.group = `${image}`
+                        target.dataset.group = `${image}`;
+                    } else {
+                        target.dataset.group = `other`;
                     }
                 }
                 let nameTarget = document.querySelector('[data-js-role="name"]');
@@ -60,7 +74,7 @@ function initializeLiff(myLiffId) {
                     el.querySelector(`[data-js-button="title"]`).innerHTML = scene.content;
                 });
 
-                changeToStartGame();
+                changeToStartGame(userId);
             }).catch((err) => {
                 console.log('error', err);
             });
@@ -70,7 +84,7 @@ function initializeLiff(myLiffId) {
     });
 }
 
-function changeToStartGame() {
+function changeToStartGame(userId) {
     document.querySelectorAll('[data-js-button="selectScene"]').forEach(button => {
         button.addEventListener('click', (el) => {
             const buttonMessageKey = el.target.getAttribute('data-scene');
@@ -83,4 +97,31 @@ function changeToStartGame() {
             });
         });
     });
+
+    document.querySelectorAll('[data-guess]:not([data-group=""])').forEach(guess => {
+        guess.addEventListener('click', (el) => {
+            let newGuess = (Number(el.target.getAttribute('data-guess')) + 1) % 5;
+            let userNumber = el.target.getAttribute('data-js-role-number');
+
+            fetch('/setGuess',{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    sessionStoreKey: `${sessionStoreKey}`,
+                    userId: `${userId}`,
+                    userNumber: `${userNumber}`,
+                    guess: `${newGuess}`
+                })
+            }).then(reqResponse => reqResponse.json())
+                .then(jsonResponse => {
+                    el.target.dataset.guess = newGuess;
+                }).catch(function(err){
+                console.log(err);
+            });
+        });
+    });
+
 }

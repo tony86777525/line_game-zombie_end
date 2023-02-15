@@ -14,7 +14,7 @@ class GameState
         };
 
         this.user = {
-            min_count: 5,
+            min_count: 6,
             max_count: 10,
             type: {
                 user: 1,
@@ -73,7 +73,8 @@ class GameState
                 type: this.user.type.user,
                 number: '',
                 role_id: '',
-                group: ''
+                group: '',
+                guess: [],
             });
 
             result = true;
@@ -109,7 +110,8 @@ class GameState
                 type: this.user.type.robot,
                 number: '',
                 role_id: '',
-                group: ''
+                group: '',
+                guess: [],
             });
         }
     }
@@ -504,6 +506,7 @@ class GameState
                 roleId: user.role_id,
                 group: user.group,
                 number: Number(user.number),
+                guess: user.guess,
             });
         }
 
