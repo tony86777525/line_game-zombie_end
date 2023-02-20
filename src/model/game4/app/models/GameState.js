@@ -14,7 +14,7 @@ class GameState
         };
 
         this.user = {
-            min_count: 6,
+            min_count: 5,
             max_count: 10,
             type: {
                 user: 1,

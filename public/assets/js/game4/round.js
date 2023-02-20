@@ -71,7 +71,8 @@ function initializeLiff(myLiffId) {
                 document.querySelectorAll(`[data-scene]`).forEach((el) => {
                     let scene = scenes.shift();
                     el.dataset.scene = scene.image;
-                    el.querySelector(`[data-js-button="title"]`).innerHTML = scene.content;
+                    el.querySelector(`[data-js-button="name"]`).innerHTML = `${scene.name}`;
+                    el.querySelector(`[data-js-button="content"]`).innerHTML = `${scene.content}`;
                 });
 
                 changeToStartGame(userId);

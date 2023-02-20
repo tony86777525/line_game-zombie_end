@@ -302,7 +302,8 @@ function _startToSelectNumber(context) {
 }
 
 function _startGameRound(context, gameRound = 0) {
-    const sceneIds = Scene.getSceneIds();
+    const { users } = GameState.getUsers(context);
+    const sceneIds = Scene.getSceneIds(users.length);
 
     GameState.setGameRound(context, gameRound);
     GameState.setScenes(context, gameRound, sceneIds);
