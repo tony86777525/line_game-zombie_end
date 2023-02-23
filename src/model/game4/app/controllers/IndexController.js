@@ -191,7 +191,7 @@ async function SelectScene(context, gameRound, sceneId) {
     }
 
     const sceneIds = GameState.getNowScenes(context, gameRound);
-    const isGameRoundEnd = GameState.isGameRoundEnd(context, gameRound, sceneIds)
+    const isGameRoundEnd = GameState.isGameRoundEnd(context, gameRound, sceneIds);
 
     let returnMessage = [];
 
@@ -237,7 +237,7 @@ async function SelectScene(context, gameRound, sceneId) {
         }
     }
 
-    await returnMessage;
+    // await returnMessage;
 }
 
 async function SelectRoleNumber(context, selectRoleNumber) {

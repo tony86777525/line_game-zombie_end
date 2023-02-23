@@ -258,13 +258,21 @@ img {
     border-color: buttonborder;
     border-image: initial;
 }
-.action__button__stay__content {
-    display: flex;
-    font-weight: bold;
-    justify-content: space-around;
-    align-items: center;
-    padding: 1rem 0 0;
+.action__button__stay--button[data-scene="0"]:after {
+    content: '';
+    display: block;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-image: url("/assets/img/game4/scenes/stay.png");
+    padding-top: calc(182 / 482 * 100%);
 }
+/*.action__button__stay__content {*/
+/*    display: flex;*/
+/*    font-weight: bold;*/
+/*    justify-content: space-around;*/
+/*    align-items: center;*/
+/*    padding: 1rem 0 0;*/
+/*}*/
 button {
     background: none;
     color: inherit;

@@ -4,6 +4,7 @@ class Scene
         this.Lang = require(`./../../resources/lang/${process.env.ROOT_LANG}/index`);
         this.selectSceneCount = 2;
         this.scenes = {
+            0: {maxUserCount: 10, image: '0'},
             1: {maxUserCount: 2, image: '1'},
             2: {maxUserCount: 2, image: '2'},
             3: {maxUserCount: 3, image: '3'},
@@ -82,7 +83,7 @@ class Scene
                 denominator.push(i);
             }
         }
-        console.log(denominator);
+
         while (result.length < selectSceneCount) {
             let numerator = Math.floor(Math.random() * denominator.length);
             let currentSceneId = denominator[numerator];
@@ -103,7 +104,10 @@ class Scene
         let sceneIds = Object.keys(this.scenes);
         let scenesProbability = this.scenesProbability[usersCount];
         let newSceneIds = this._shuffle(sceneIds, scenesProbability, this.selectSceneCount);
-console.log(newSceneIds);
+
+        //留守
+        newSceneIds.push('0');
+
         return newSceneIds;
     }
 

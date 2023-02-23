@@ -446,7 +446,7 @@ class GameState
             let consoleUser = [];
             let gameRoundUsers = gameRound.users;
             let round = gameRound.round;
-            consoleUser.push(`第${lang.number[gameRound.round]}回合`)
+            consoleUser.push(`第${lang.number[gameRound.round]}回合`);
 
             let scene = scenes.find(scene => scene.round === round);
             let currentScene = [];
@@ -454,7 +454,7 @@ class GameState
                 currentScene.push(`${lang.scenes.name[value]}`)
             }
 
-            consoleUser.push(`可選場景:${currentScene.join(lang.gameRoundEndAnd)}`)
+            consoleUser.push(`可選場景:${currentScene.join(lang.gameRoundEndAnd)}`);
 
             for (let gameRoundUser of gameRoundUsers) {
                 let user = users.find(user => user.id === gameRoundUser.userId);

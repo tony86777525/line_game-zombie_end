@@ -7,6 +7,7 @@ class GameRound
             result3: 3,
             result4: 4,
             result5: 5,
+            result6: 6,
         };
 
         this.gameRoundResult = {
@@ -15,6 +16,7 @@ class GameRound
             result3: false,
             result4: false,
             result5: false,
+            result6: false,
         };
 
         this.gameResultContent = {
@@ -50,38 +52,48 @@ class GameRound
 
         for (let scene in groupTypeByScene) {
             let group = groupTypeByScene[scene];
-            if (undefined === group[roleGroupsValue.uninfected]) group[roleGroupsValue.uninfected] = [];
-            if (undefined === group[roleGroupsValue.infected]) group[roleGroupsValue.infected] = [];
-            let uninfecteds = group[roleGroupsValue.uninfected];
-            let infecteds = group[roleGroupsValue.infected];
-            let uninfectedCount = uninfecteds.length;
-            let infectedCount = infecteds.length;
             let resultScene = {};
             resultScene['userNumbers'] = group.userNumbers.sort();
 
-            if (scenes[scene].maxUserCount < (Number(uninfectedCount) + Number(infectedCount))) {
-                resultScene['result'] = this.gameRoundResultContent.result5;
-                result.result.push(this.gameRoundResult.result5);
-            } else if (0 === Number(infectedCount)) {
-                resultScene['result'] = this.gameRoundResultContent.result1;
-                result.result.push(this.gameRoundResult.result1);
-            } else if (0 === Number(uninfectedCount)) {
-                resultScene['result'] = this.gameRoundResultContent.result4;
-                result.result.push(this.gameRoundResult.result4);
-            } else if (Number(uninfectedCount) > Number(infectedCount)) {
-                resultScene['result'] = this.gameRoundResultContent.result2;
-                result.result.push(this.gameRoundResult.result2);
-            } else if (Number(uninfectedCount) === Number(infectedCount)) {
-                resultScene['result'] = this.gameRoundResultContent.result3;
-                result.result.push(this.gameRoundResult.result3);
-                result.transformGroupUsers = result.transformGroupUsers.concat(group[roleGroupsValue.uninfected]);
-            } else if (Number(uninfectedCount) < Number(infectedCount)) {
-                resultScene['result'] = this.gameRoundResultContent.result4;
-                result.result.push(this.gameRoundResult.result4);
-                result.transformGroupUsers = result.transformGroupUsers.concat(group[roleGroupsValue.uninfected]);
-            }
+            if ('0' === scene) {
+                console.log(group.userNumbers.length, users.length);
+                if (group.userNumbers.length === users.length) {
+                    resultScene['result'] = this.gameRoundResultContent.result6;
+                    result.result.push(this.gameRoundResult.result6);
+                    result.resultContentTag[scene] = resultScene;
+                }
+            } else {
+                if (undefined === group[roleGroupsValue.uninfected]) group[roleGroupsValue.uninfected] = [];
+                if (undefined === group[roleGroupsValue.infected]) group[roleGroupsValue.infected] = [];
+                let uninfecteds = group[roleGroupsValue.uninfected];
+                let infecteds = group[roleGroupsValue.infected];
+                let uninfectedCount = uninfecteds.length;
+                let infectedCount = infecteds.length;
 
-            result.resultContentTag[scene] = resultScene;
+                if (scenes[scene].maxUserCount < (Number(uninfectedCount) + Number(infectedCount))) {
+                    resultScene['result'] = this.gameRoundResultContent.result5;
+                    result.result.push(this.gameRoundResult.result5);
+                } else if (0 === Number(infectedCount)) {
+                    resultScene['result'] = this.gameRoundResultContent.result1;
+                    result.result.push(this.gameRoundResult.result1);
+                } else if (0 === Number(uninfectedCount)) {
+                    resultScene['result'] = this.gameRoundResultContent.result4;
+                    result.result.push(this.gameRoundResult.result4);
+                } else if (Number(uninfectedCount) > Number(infectedCount)) {
+                    resultScene['result'] = this.gameRoundResultContent.result2;
+                    result.result.push(this.gameRoundResult.result2);
+                } else if (Number(uninfectedCount) === Number(infectedCount)) {
+                    resultScene['result'] = this.gameRoundResultContent.result3;
+                    result.result.push(this.gameRoundResult.result3);
+                    result.transformGroupUsers = result.transformGroupUsers.concat(group[roleGroupsValue.uninfected]);
+                } else if (Number(uninfectedCount) < Number(infectedCount)) {
+                    resultScene['result'] = this.gameRoundResultContent.result4;
+                    result.result.push(this.gameRoundResult.result4);
+                    result.transformGroupUsers = result.transformGroupUsers.concat(group[roleGroupsValue.uninfected]);
+                }
+
+                result.resultContentTag[scene] = resultScene;
+            }
         }
 
         return result;
