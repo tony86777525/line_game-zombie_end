@@ -36,6 +36,12 @@ module.exports = {
 
     checkRound: "確認本回合行動",
 
+    votingRound: "確認本回合探索分配",
+
+    votingRoundAlready: "請稍待其他玩家！",
+    votingRoundNotAgree: "本回合探索分配部分玩家不通過，請重新選擇！",
+    votingRoundAllNotAgree: "本回合探索分配全部玩家不通過，請重新選擇！",
+
     gameRoundEnd: "您好！\n收到本次的任務回報，\n{userNumberText}前去{sceneText}搜索，\n{resultText}",
     gameRoundEndAnd: "、",
     gameRoundEndNumber: "號",
@@ -140,6 +146,12 @@ module.exports = {
             power: "角色能力：",
             winner: "獲勝方式：",
             doctorMessage: "醫生的通報：本次搜索導致{userCount}名人類遭受感染。"
+        },
+
+        voting: {
+            title: "本次探索分配：",
+            contentScene: "有{userCount}名前往{sceneText}探索。",
+            contentStay: "有{userCount}名{sceneText}。",
         },
     }
 };

@@ -9,8 +9,9 @@ class GameState
             selectNumber: 2,
             checkRole: 3,
             startGame: 4,
-            finaleGame: 5,
-            endGame: 6,
+            votingRound: 5,
+            finaleGame: 6,
+            endGame: 7,
         };
 
         this.user = {
@@ -162,8 +163,11 @@ class GameState
         return this.state.startGame === context.state.gameStates[this.gameStatesId].state;
     }
 
+    isStateVotingRound(context) {
+        return this.state.votingRound === context.state.gameStates[this.gameStatesId].state;
+    }
+
     isStateFinaleGame(context) {
-        console.log(context.state.gameStates[this.gameStatesId].state);
         return this.state.finaleGame === context.state.gameStates[this.gameStatesId].state;
     }
 
@@ -237,6 +241,18 @@ class GameState
 
         if (true === this._isChangeState(context, this.state.checkRole)) {
             context.state.gameStates[this.gameStatesId].state = this.state.checkRole;
+            result = true;
+        }
+
+        return result;
+    }
+
+    setStateVotingRound(context) {
+        let result = false;
+
+        if (true === this._isChangeState(context, this.state.votingRound)) {
+            context.state.gameStates[this.gameStatesId].state = this.state.votingRound;
+
             result = true;
         }
 
@@ -347,7 +363,7 @@ class GameState
         return nowScenes;
     }
 
-    setGameRoundScene(context, newGameRound, userId, sceneId) {
+    setGameRoundScene(context, newGameRound, userId, sceneId, isAgree = null) {
         const { find } = require("lodash");
         const gameRounds = context.state.gameStates[this.gameStatesId].gameRounds;
         const scenes = context.state.gameStates[this.gameStatesId].scenes;
@@ -363,7 +379,25 @@ class GameState
             if (undefined === gameRoundUsers && undefined !== gameRoundScene) {
                 let user = users.find(user => user.id === userId);
 
-                gameRound.users.push({userId: userId, sceneId: sceneId, group: user.group});
+                gameRound.users.push({userId: userId, sceneId: sceneId, group: user.group, isAgree: isAgree});
+                result = true;
+            }
+        }
+
+        return result;
+    }
+
+    setGameRoundIsAgree(context, newGameRound, userId, isAgree) {
+        const { find } = require("lodash");
+        const gameRounds = context.state.gameStates[this.gameStatesId].gameRounds;
+        const gameRound = find(gameRounds, gameRound => Number(newGameRound) === gameRound.round);
+
+        let result = false;
+        if (undefined !== gameRound) {
+            let gameRoundUsers = find(gameRound.users, gameRoundUser => userId === gameRoundUser.userId);
+
+            if (undefined !== gameRoundUsers && null === gameRoundUsers.isAgree) {
+                gameRoundUsers.isAgree = isAgree;
                 result = true;
             }
         }
@@ -411,8 +445,9 @@ class GameState
 
             if (undefined === mappings) {
                 for (let user of users) {
+                    // set robot game round data scene and isAgree
                     let sceneIdsKey = Math.floor(Math.random() * sceneIds.length);
-                    this.setGameRoundScene(context, nowGameRound, user.id, sceneIds[sceneIdsKey]);
+                    this.setGameRoundScene(context, nowGameRound, user.id, sceneIds[sceneIdsKey], 1);
                 }
 
                 result = true;
@@ -420,6 +455,67 @@ class GameState
         }
 
         return result;
+    }
+
+    isGameRoundAgreeEnd(context, nowGameRound) {
+        const { find } = require("lodash");
+        const gameRounds = context.state.gameStates[this.gameStatesId].gameRounds;
+        const gameRound = find(gameRounds, gameRound => Number(nowGameRound) === gameRound.round);
+
+        let result = false;
+
+        if (undefined !== gameRound) {
+            const mappings = find(gameRound.users, user => user.isAgree === null);
+
+            if (undefined === mappings) {
+                result = true;
+            }
+        }
+
+        return result;
+    }
+
+    getGameRoundAgreeResult(context, nowGameRound) {
+        const { find } = require("lodash");
+        const gameRounds = context.state.gameStates[this.gameStatesId].gameRounds;
+        let gameRound = find(gameRounds, gameRound => Number(nowGameRound) === gameRound.round);
+
+        let result = false;
+
+        if (undefined !== gameRound) {
+            let gameRoundIsAgreeArray = {
+                0: 0,
+                1: 0
+            };
+            for (let user of gameRound.users) {
+                gameRoundIsAgreeArray[user.isAgree] += 1 ;
+            }
+
+            if (gameRoundIsAgreeArray[0] === 0) {
+                result = 1;
+            } else if (gameRoundIsAgreeArray[1] === 0) {
+                result = 0;
+            } else {
+                result = 2;
+            }
+        }
+
+        return result;
+    }
+
+    resetGameRound(context, nowGameRound) {
+        const gameRounds = context.state.gameStates[this.gameStatesId].gameRounds;
+        let gameRound = gameRounds.find(gameRound => Number(nowGameRound) === gameRound.round);
+
+        gameRound.users = [];
+    }
+
+    resetSceneGameRound(context, nowGameRound) {
+        const scenes = context.state.gameStates[this.gameStatesId].scenes;
+        let sceneKey = scenes.findIndex(scene => Number(nowGameRound) === scene.round);
+
+        scenes.splice(sceneKey, 1);
+        console.log(scenes);
     }
 
     setLastMessageContent(context, contentText, mainContentText = '') {
@@ -483,8 +579,10 @@ class GameState
             || (this.state.joinGame === nowState && this.state.selectNumber === newState)
             || (this.state.selectNumber === nowState && this.state.checkRole === newState)
             || (this.state.checkRole === nowState && this.state.startGame === newState)
-            || (this.state.startGame === nowState && this.state.endGame === newState)
-            || (this.state.startGame === nowState && this.state.finaleGame === newState)
+            || (this.state.startGame === nowState && this.state.votingRound === newState)
+            || (this.state.votingRound === nowState && this.state.startGame === newState)
+            || (this.state.votingRound === nowState && this.state.endGame === newState)
+            || (this.state.votingRound === nowState && this.state.finaleGame === newState)
             || (this.state.finaleGame === nowState && this.state.endGame === newState)
         ) {
             result = true;
@@ -513,9 +611,9 @@ class GameState
         return result;
     }
 
-    getLiffNowScenes(gameData, gameRound) {
+    getLiffNowScenes(gameData, nowGameRound) {
         const scenes = gameData.scenes;
-        const gameRoundScene = scenes.find(scene => scene.round === Number(gameRound));
+        const gameRoundScene = scenes.find(scene => scene.round === Number(nowGameRound));
 
         let nowScenes = [];
 
@@ -524,6 +622,26 @@ class GameState
         }
 
         return nowScenes;
+    }
+
+    getLiffSceneCount(gameData, nowGameRound) {
+        const gameRounds = gameData.gameRounds;
+        const gameRound = gameRounds.find(gameRound => Number(nowGameRound) === gameRound.round);
+
+        let result = this._groupBy(gameRound.users, 'sceneId');
+
+        return result;
+    }
+
+    _groupBy(arr, key) {
+        return arr.reduce((acc, obj) => {
+            const property = obj[key];
+            if (!acc[property]) {
+                acc[property] = [];
+            }
+            acc[property].push(obj);
+            return acc;
+        }, {});
     }
 }
 

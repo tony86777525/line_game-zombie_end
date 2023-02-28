@@ -36,6 +36,12 @@ module.exports = {
 
     checkRound: "確認本回合行動",
 
+    votingRound: "確認本回合探索分配",
+
+    votingRoundAlready: "請稍待其他玩家！",
+    votingRoundNotAgree: "本回合探索分配部分玩家不通過，請重新選擇！",
+    votingRoundAllNotAgree: "本回合探索分配全部玩家不通過，請重新選擇！",
+
     gameRoundEnd: "您好！\n收到本次的任務回報，\n{userNumberText}前去{sceneText}搜索，\n{resultText}",
     gameRoundEndAnd: "、",
     gameRoundEndNumber: "號",
@@ -45,6 +51,7 @@ module.exports = {
         3: "那裡有不少喪屍，所有物資都被破壞了。",
         4: "那裡聚集了許多喪屍，大家只顧著逃命。",
         5: "那裡什麼也沒有，沒有物資、沒有喪屍。",
+        6: "沒有人尋找物資。",
     },
 
     gameFinale: "遊戲終盤\n目前由{resultText}獲勝\n\n宿主玩家請選擇免疫者。",
@@ -65,6 +72,7 @@ module.exports = {
 
     noUserToStartGame: "目前沒有玩家加入遊戲，請先加入遊戲。",
     notJoinGameUserSelectNumber: "你目前不是玩家，請不要選擇號碼。",
+    overDate: "大家都在等你喔！！請選擇",
     error: "[error]啊，你點慢了一步。",
 
     roleCard: {
@@ -111,6 +119,7 @@ module.exports = {
 
     scenes: {
         name: {
+            0: "留守",
             1: "住家",
             2: "藥房",
             3: "教堂",
@@ -120,13 +129,14 @@ module.exports = {
             7: "購物中心",
         },
         content: {
-            1: "搜索人數2人",
-            2: "搜索人數2人",
-            3: "搜索人數3人",
-            4: "搜索人數3人",
-            5: "搜索人數4人",
-            6: "搜索人數5人",
-            7: "搜索人數5人",
+            0: "",
+            1: "上限二人",
+            2: "上限二人",
+            3: "上限三人",
+            4: "上限三人",
+            5: "上限四人",
+            6: "上限五人",
+            7: "上限五人",
         }
     },
 
@@ -136,6 +146,12 @@ module.exports = {
             power: "角色能力：",
             winner: "獲勝方式：",
             doctorMessage: "醫生的通報：本次搜索導致{userCount}名人類遭受感染。"
+        },
+
+        voting: {
+            title: "本次探索分配：",
+            contentScene: "有{userCount}名前往{sceneText}探索。",
+            contentStay: "有{userCount}名{sceneText}。",
         },
     }
 };

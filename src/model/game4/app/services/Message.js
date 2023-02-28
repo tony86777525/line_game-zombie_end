@@ -415,6 +415,62 @@ class Message
         return context.replyFlex(`${contentText}`, mainContentText);
     }
 
+    getVotingRoundMessage(context, GameState, gameRound) {
+        const contentText = this.Lang.votingRound;
+        let groupId = "";
+
+        if (undefined !== context.session.group) {
+            groupId = context.session.group.id;
+        } else if (undefined !== context.session.user) {
+            groupId = context.session.user.id;
+        }
+
+        let uri = `${this.liffUri}/round?data=${groupId}&round=${gameRound}&gameRoundType=votingRound`;
+
+        let mainContentText = {
+            "type": "bubble",
+            "direction": "ltr",
+            "footer": {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                    {
+                        "type": "button",
+                        "style": "primary",
+                        "action": {
+                            "type": "uri",
+                            "label": `${contentText}`,
+                            "uri": `${uri}`
+                        },
+                        "margin": "md"
+                    }
+                ]
+            }
+        };
+
+        GameState.setLastMessageContent(context, contentText, mainContentText);
+
+        return context.replyFlex(`${contentText}`, mainContentText);
+    }
+
+    getVotingRoundAlreadyContents(context) {
+        let contentText = this.Lang.votingRoundAlready;
+
+        return context.replyText(`${contentText}`);
+    }
+
+    getVotingRoundNotAgreeContents(context) {
+        let contentText = this.Lang.votingRoundNotAgree;
+
+        return context.replyText(`${contentText}`);
+    }
+
+    getVotingRoundAllNotAgreeContents(context) {
+        let contentText = this.Lang.votingRoundAllNotAgree;
+
+        return context.replyText(`${contentText}`);
+    }
+
     getStartGameContents(context, GameState) {
         const contentText = this.Lang.gameStartStory;
 
@@ -459,7 +515,7 @@ class Message
             contentText = contentText.replace(/{sceneText}/, newSceneNames.shift())
         }
 
-        let uri = `${this.liffUri}/round?data=${groupId}&round=${gameRound}`;
+        let uri = `${this.liffUri}/round?data=${groupId}&round=${gameRound}&gameRoundType=gameRound`;
         let mainContentText = {
             "type": "bubble",
             "direction": "ltr",
@@ -520,6 +576,22 @@ class Message
             let url = `https://i.imgur.com/MwS42AE.png?sender=selectScene&sceneId=${scene.id}&round=${round}`;
 
             result[scene.id] = [{
+                type: 'image',
+                originalContentUrl: `${url}`,
+                previewImageUrl: `${url}`,
+            }];
+        }
+
+        return result;
+    }
+
+    getVotingRoundHandleContents(isAgrees, round) {
+        let result = {};
+
+        for (let isAgree of isAgrees) {
+            let url = `https://i.imgur.com/MwS42AE.png?sender=votingRound&isAgree=${isAgree}&round=${round}`;
+
+            result[isAgree] = [{
                 type: 'image',
                 originalContentUrl: `${url}`,
                 previewImageUrl: `${url}`,
@@ -877,6 +949,12 @@ class Message
         return returnMessage;
     }
 
+    getErrorContents(context) {
+        const contentText = this.Lang.error;
+
+        return context.replyText(contentText);
+    }
+
     getLiffRoles(roleCards, roleGroups) {
         let roles = {};
 
@@ -905,6 +983,36 @@ class Message
             contentText = contentText.replace(/{userCount}/, users.length);
 
             result.push({roleId: doctorRoleId, message: contentText});
+        }
+
+        return result;
+    }
+
+    getLiffVotingRoundMessage(scenesCount, scenes) {
+        let titleText = this.Lang.liff.voting.title;
+        let contentSceneText = this.Lang.liff.voting.contentScene;
+        let contentStayText = this.Lang.liff.voting.contentStay;
+
+        let result = {
+            title: titleText,
+            content: []
+        };
+
+        result.title = titleText;
+
+        for (let sceneId in scenesCount) {
+            let userCount = scenesCount[sceneId].length;
+            let scene = scenes.find(scene => scene.id === sceneId);
+
+            if (undefined !== scene) {
+                let contentText = contentSceneText;
+                if (Number(sceneId) === 0) {
+                    contentText = contentStayText;
+                }
+                result.content.push(contentText.replace(/{userCount}/, userCount)
+                    .replace(/{sceneText}/, scene.name));
+
+            }
         }
 
         return result;

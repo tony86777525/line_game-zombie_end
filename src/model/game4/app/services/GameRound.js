@@ -56,7 +56,6 @@ class GameRound
             resultScene['userNumbers'] = group.userNumbers.sort();
 
             if ('0' === scene) {
-                console.log(group.userNumbers.length, users.length);
                 if (group.userNumbers.length === users.length) {
                     resultScene['result'] = this.gameRoundResultContent.result6;
                     result.result.push(this.gameRoundResult.result6);

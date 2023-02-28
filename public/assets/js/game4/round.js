@@ -77,6 +77,18 @@ function initializeLiff(myLiffId) {
                     if (null !== targetContent) targetContent.innerHTML = `${scene.content}`;
                 });
 
+                if (null !== votingRoundMessage) {
+                    let target = document.querySelector(`[data-js-popup="votingRound"]`);
+                    let targetTitle = target.querySelector(`[data-js-popup="title"]`);
+                    let targetContent = target.querySelector(`[data-js-popup="content"]`);
+
+                    targetTitle.innerHTML = votingRoundMessage.title;
+
+                    const arr = Object.keys(votingRoundMessage.content).map(key => votingRoundMessage.content[key]);
+
+                    targetContent.innerHTML = arr.join("<br>");
+                }
+
                 changeToStartGame(userId);
             }).catch((err) => {
                 console.log('error', err);
@@ -88,43 +100,58 @@ function initializeLiff(myLiffId) {
 }
 
 function changeToStartGame(userId) {
-    document.querySelectorAll('[data-js-button="selectScene"]').forEach(button => {
-        button.addEventListener('click', (el) => {
-            const buttonMessageKey = el.target.getAttribute('data-scene');
+    if (null !== votingRoundButtonMessage) {
+        document.querySelectorAll('[data-js-button="votingRound"]').forEach(button => {
+            button.addEventListener('click', (el) => {
+                const buttonMessageKey = el.target.getAttribute('data-isAgree');
 
-            liff.sendMessages(buttonMessage[buttonMessageKey]).then(() => {
-                console.log('message sent');
-                liff.closeWindow();
-            }).catch(err => {
-                window.alert('Error sending message: ' + err);
+                liff.sendMessages(votingRoundButtonMessage[buttonMessageKey]).then(() => {
+                    console.log('message sent');
+                    liff.closeWindow();
+                }).catch(err => {
+                    window.alert('Error sending message: ' + err);
+                });
             });
         });
-    });
+        document.querySelector('[data-js-popup="votingRound"]').classList.add('active');
+    } else {
+        document.querySelectorAll('[data-js-button="selectScene"]').forEach(button => {
+            button.addEventListener('click', (el) => {
+                const buttonMessageKey = el.target.getAttribute('data-scene');
 
-    document.querySelectorAll('[data-guess]:not([data-group=""])').forEach(guess => {
-        guess.addEventListener('click', (el) => {
-            let newGuess = (Number(el.target.getAttribute('data-guess')) + 1) % 5;
-            let userNumber = el.target.getAttribute('data-js-role-number');
-
-            fetch('/setGuess',{
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({
-                    sessionStoreKey: `${sessionStoreKey}`,
-                    userId: `${userId}`,
-                    userNumber: `${userNumber}`,
-                    guess: `${newGuess}`
-                })
-            }).then(reqResponse => reqResponse.json())
-                .then(jsonResponse => {
-                    el.target.dataset.guess = newGuess;
-                }).catch(function(err){
-                console.log(err);
+                liff.sendMessages(buttonMessage[buttonMessageKey]).then(() => {
+                    console.log('message sent');
+                    liff.closeWindow();
+                }).catch(err => {
+                    window.alert('Error sending message: ' + err);
+                });
             });
         });
-    });
 
+        document.querySelectorAll('[data-guess]:not([data-group=""])').forEach(guess => {
+            guess.addEventListener('click', (el) => {
+                let newGuess = (Number(el.target.getAttribute('data-guess')) + 1) % 5;
+                let userNumber = el.target.getAttribute('data-js-role-number');
+
+                fetch('/setGuess',{
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        sessionStoreKey: `${sessionStoreKey}`,
+                        userId: `${userId}`,
+                        userNumber: `${userNumber}`,
+                        guess: `${newGuess}`
+                    })
+                }).then(reqResponse => reqResponse.json())
+                    .then(jsonResponse => {
+                        el.target.dataset.guess = newGuess;
+                    }).catch(function(err){
+                    console.log(err);
+                });
+            });
+        });
+    }
 }

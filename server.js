@@ -121,6 +121,7 @@ app.prepare().then(() => {
         const filename = path.join(`${__dirname}/${Config.route}/resources/view/liff/round.html`);
         const sessionStoreKey = params.data;
         const gameRound = params.round;
+        const gameRoundType = params.gameRoundType;
         const sessionStore = new FileSessionStore();
         const allData = await sessionStore.read(`line:${sessionStoreKey}`);
         const gameData = allData._state.gameStates[Config.gameStatesId];
@@ -131,7 +132,8 @@ app.prepare().then(() => {
         const canSeeImmunityRoleId = Role.getCanSeeImmunityRole();
         const immunityRoleId = Role.getImmunityRole();
         const scenes = Scene.getLiffScenes(GameState.getLiffNowScenes(gameData, gameRound));
-        const roundMessages = Message.getLiffRoundMessage(gameData, gameRound, Role.getDoctorRole())
+        const roundMessages = Message.getLiffRoundMessage(gameData, gameRound, Role.getDoctorRole());
+
 
         const data = {
             // url: `${Config.route}`,
@@ -144,8 +146,19 @@ app.prepare().then(() => {
             numberGroupImages: numberGroupImages,
             scenes: scenes,
             buttonMessage: Message.getSelectSceneHandleContents(scenes, params.round),
-            roundMessages: roundMessages
+            roundMessages: roundMessages,
+            votingRoundMessage: null,
+            votingRoundButtonMessage: null
         };
+
+        if ('votingRound' === gameRoundType) {
+            const sceneCount = GameState.getLiffSceneCount(gameData, gameRound);
+            const isAgrees = [1, 0];
+
+            data.votingRoundMessage = Message.getLiffVotingRoundMessage(sceneCount, scenes);
+            data.votingRoundButtonMessage = Message.getVotingRoundHandleContents(isAgrees, gameRound)
+        }
+
         const options = {};
 
         ejs.renderFile(filename, data, options, function(err, str) {

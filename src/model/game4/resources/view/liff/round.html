@@ -17,6 +17,9 @@
         const scenes = <%- JSON.stringify(scenes) %>;
         const buttonMessage = <%- JSON.stringify(buttonMessage) %>;
         const roundMessages = <%- JSON.stringify(roundMessages) %>;
+        const votingRoundMessage = <%- JSON.stringify(votingRoundMessage) %>;
+        const votingRoundButtonMessage = <%- JSON.stringify(votingRoundButtonMessage) %>;
+
     </script>
 </head>
 <body>
@@ -86,6 +89,23 @@
         </div>
     </div>
 </section>
+
+<div class="popup" data-js-popup="votingRound">
+    <div class="popup__overlay"></div>
+    <div class="popup__container">
+        <div class="votingRound">
+            <div class="votingRound__text" >
+                <div class="title" data-js-popup="title"></div>
+                <div class="content" data-js-popup="content"></div>
+            </div>
+
+            <div class="votingRound__button flex">
+                <button class="flex__item" data-js-button="votingRound" data-isAgree="1">同意</button>
+                <button class="flex__item" data-js-button="votingRound" data-isAgree="0">反對</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
 <script src="/assets/js/game4/round.js"></script>

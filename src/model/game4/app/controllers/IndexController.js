@@ -19,12 +19,14 @@ module.exports = {
     SetRole: SetRole,
     StartGame: StartGame,
     SelectScene: SelectScene,
+    VotingRound : VotingRound,
     SelectRoleNumber: SelectRoleNumber,
     ResetGame: ResetGame,
     ResetGameCancel: ResetGameCancel,
     callDB: CallDB,
     callGame: CallGame,
     index: Index,
+    resetGameRound: ResetGameRound
 };
 
 async function WelcomeToJoinGame(context) {
@@ -197,47 +199,99 @@ async function SelectScene(context, gameRound, sceneId) {
 
     // 人數10人 || 單人
     if (true === isGameRoundEnd) {
-    // if (true) {
-        const { users } = GameState.getUsers(context);
-        const { nowGameRound } = GameState.getGameRound(context);
-        const $roleService = new roleService;
-        const roleGroups = $roleService.getRoleGroupsTemplate();
-        const roleGroupsValue = $roleService.getRoleGroupsValueTemplate();
-        const scenes = Scene.getScenesTemplate();
-        const { transformGroupUsers, resultContentTag, result }
-            = GameRound.getGameRoundResult(users, nowGameRound, roleGroups, roleGroupsValue, scenes);
-
-        const { targets, valueTarget } = $roleService.getChangeRoleGroupsTarget();
-
-        GameState.setTransformUser(context, gameRound, transformGroupUsers);
-        GameState.setUserGroup(context, transformGroupUsers, targets, valueTarget);
-
-        returnMessage = returnMessage.concat(Message.getGameRoundEndContents(context, GameState, resultContentTag));
-
-        const winCount = GameState.setGameRoundResult(context, result);
-        // const winCount = GameState.getGameRoundResult(context);
-        const gameResultContentTag = GameRound.getGameResult(winCount, users, roleGroups);
-
-        // game end
-        if (undefined !== gameResultContentTag) {
-            if (true === gameResultContentTag.type) {
-                GameState.setStateEndGame(context);
-
-                returnMessage.push(Message.getGameEndContent(context, GameState, gameResultContentTag));
-            } else {
-                GameState.setStateFinaleGame(context);
-
-                returnMessage.push(Message.getGameFinaleContent(context, GameState, gameResultContentTag));
-            }
-        } else {
-            const { gameRoundNumber } = GameState.getGameRound(context);
-            const newGameRound = gameRoundNumber;
-
-            returnMessage.push(_startGameRound(context, newGameRound));
-        }
+        GameState.setStateVotingRound(context);
+        returnMessage.push(Message.getVotingRoundMessage(context, GameState, gameRound));
     }
 
-    // await returnMessage;
+    await returnMessage;
+}
+
+async function VotingRound(context, gameRound, isAgree) {
+    const isStateVotingRound = GameState.isStateVotingRound(context);
+
+    if (false === isStateVotingRound) {
+        await _getErrorMessage(context);
+        return;
+    }
+
+    const userId = context.session.user.id;
+    const isSetGameRoundIsAgree = GameState.setGameRoundIsAgree(context, gameRound, userId, Number(isAgree));
+
+    if (false === isSetGameRoundIsAgree) {
+        await Message.getVotingRoundAlreadyContents(context);
+    } else {
+        const isGameRoundAgreeEnd = GameState.isGameRoundAgreeEnd(context, gameRound);
+
+        let returnMessage = [];
+
+        // 人數10人 || 單人
+        if (true === isGameRoundAgreeEnd) {
+            const gameRoundAgreeResult = GameState.getGameRoundAgreeResult(context, gameRound);
+
+            if (0 === gameRoundAgreeResult) {
+                const {nowGameRound} = GameState.getGameRound(context);
+                const nowGameRoundNumber = nowGameRound.round;
+
+                GameState.setStateStartGame(context);
+                GameState.resetGameRound(context, nowGameRoundNumber);
+                GameState.resetSceneGameRound(context, nowGameRoundNumber);
+
+                returnMessage.push(Message.getVotingRoundAllNotAgreeContents(context));
+                returnMessage.push(_startGameRound(context, nowGameRoundNumber));
+            } else if (2 === gameRoundAgreeResult) {
+                const {nowGameRound} = GameState.getGameRound(context);
+                const nowGameRoundNumber = nowGameRound.round;
+
+                GameState.setStateStartGame(context);
+                GameState.resetGameRound(context, nowGameRoundNumber);
+
+                returnMessage.push(Message.getVotingRoundNotAgreeContents(context));
+                returnMessage.push(_startGameRound(context, nowGameRoundNumber));
+            } else {
+                const {users} = GameState.getUsers(context);
+                const {nowGameRound} = GameState.getGameRound(context);
+                const $roleService = new roleService;
+                const roleGroups = $roleService.getRoleGroupsTemplate();
+                const roleGroupsValue = $roleService.getRoleGroupsValueTemplate();
+                const scenes = Scene.getScenesTemplate();
+                const {transformGroupUsers, resultContentTag, result}
+                    = GameRound.getGameRoundResult(users, nowGameRound, roleGroups, roleGroupsValue, scenes);
+
+                const {targets, valueTarget} = $roleService.getChangeRoleGroupsTarget();
+
+                GameState.setTransformUser(context, gameRound, transformGroupUsers);
+                GameState.setUserGroup(context, transformGroupUsers, targets, valueTarget);
+
+                returnMessage = returnMessage.concat(Message.getGameRoundEndContents(context, GameState, resultContentTag));
+
+                const winCount = GameState.setGameRoundResult(context, result);
+                // const winCount = GameState.getGameRoundResult(context);
+                const gameResultContentTag = GameRound.getGameResult(winCount, users, roleGroups);
+
+                // game end
+                if (undefined !== gameResultContentTag) {
+                    if (true === gameResultContentTag.type) {
+                        GameState.setStateEndGame(context);
+
+                        returnMessage.push(Message.getGameEndContent(context, GameState, gameResultContentTag));
+                    } else {
+                        GameState.setStateFinaleGame(context);
+
+                        returnMessage.push(Message.getGameFinaleContent(context, GameState, gameResultContentTag));
+                    }
+                } else {
+                    GameState.setStateStartGame(context);
+                    const {gameRoundNumber} = GameState.getGameRound(context);
+                    const newGameRound = gameRoundNumber;
+
+                    returnMessage.push(_startGameRound(context, newGameRound));
+                }
+            }
+
+        }
+
+        await returnMessage;
+    }
 }
 
 async function SelectRoleNumber(context, selectRoleNumber) {
@@ -292,6 +346,13 @@ async function CallGame(context) {
     // await context.replyText(result);
 }
 
+async function ResetGameRound(context) {
+    const { users } = GameState.getUsers(context);
+    const sceneIds = Scene.getSceneIds(users.length);
+    console.log(sceneIds);
+    // await context.replyText(result);
+}
+
 function _startToSelectNumber(context) {
     GameState.setRobot(context);
     const { users } = GameState.getUsers(context);
@@ -321,6 +382,6 @@ function _getErrorMessage(context) {
         console.log(lastMessageContent);
         return Message.getOverDateContents(context, lastMessageContent);
     } else {
-        return _getErrorMessage(context);
+        return Message.getErrorContents(context);
     }
 }

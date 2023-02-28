@@ -4,7 +4,7 @@ const IndexController = require('./app/controllers/IndexController');
 module.exports = async function App(context) {
     // context.event.isLeave
     // context.event.isJoin
-    console.log(context.event);
+    // console.log(context.event);
     if (context.event.isFollow || context.event.isJoin) {
         return IndexController.WelcomeToJoinGame(context);
     }
@@ -30,17 +30,22 @@ module.exports = async function App(context) {
             if ('startGame' === params.sender) {
                 return IndexController.StartGame(context);
             }
+            if ('selectRoleNumber' === params.sender) {
+                return IndexController.SelectRoleNumber(context, params.number);
+            }
             if ('selectScene' === params.sender) {
                 return IndexController.SelectScene(context, params.round, params.sceneId);
             }
-            if ('selectRoleNumber' === params.sender) {
-                return IndexController.SelectRoleNumber(context, params.number);
+            if ('votingRound' === params.sender) {
+                return IndexController.VotingRound(context, params.round, params.isAgree);
             }
         }
 
         switch ((context.event.text).toLowerCase()) {
             case 'start':
                 return IndexController.ResetGame(context);
+            case 'resetgameround':
+                return IndexController.resetGameRound(context);
             case 'call db':
                 return IndexController.callDB(context);
             case 'call game':
