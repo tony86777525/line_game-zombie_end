@@ -963,7 +963,7 @@ class Message
             let roleGroup = roleGroups[roleCard.group];
 
             roles[key] = {
-                name: `${this.Lang.liff.role.name}${this.Lang.roleType[roleCard.type]}${this.Lang.roleCard[key]}`,
+                name: `${this.Lang.liff.role.name}${this.Lang.roleType[roleCard.type]} ${this.Lang.roleCard[key]}`,
                 image: roleCard.image,
                 power: `${this.Lang.liff.role.power}${this.Lang.rolePower[roleCard.power]}`,
                 winner: `${this.Lang.liff.role.winner}${this.Lang.roleWinner[roleCard.winner]}`,
