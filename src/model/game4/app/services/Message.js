@@ -845,7 +845,7 @@ class Message
         return context.replyFlex(`${contentText}`, mainContentText);
     }
 
-    getResetGameContents(context) {
+    getResetGameContents(context, userCount) {
         let contentText = this.Lang.resetGame;
         let buttonTextYes = this.Lang.yes;
         let buttonTextNo = this.Lang.no;
@@ -878,7 +878,7 @@ class Message
                         "action": {
                             "type": "postback",
                             "label": `${buttonTextYes}`,
-                            "data": "new game"
+                            "data": `new game ${userCount}`
                         },
                         "margin": "md"
                     },

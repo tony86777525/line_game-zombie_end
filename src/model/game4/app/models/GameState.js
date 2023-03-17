@@ -24,9 +24,10 @@ class GameState
         };
     }
 
-    init(context) {
+    init(context, userCount = 0) {
         context.state.gameStates[this.gameStatesId] = {
             state: this.state.newGame,
+            userCount: userCount,
             users: [],
             roles: [],
             scenes: [],
@@ -100,9 +101,12 @@ class GameState
 
     setRobot(context) {
         const users = context.state.gameStates[this.gameStatesId].users;
+        const userCount = context.state.gameStates[this.gameStatesId].userCount;
+        const limitUserCount = userCount == 0 ? this.user.min_count : userCount;
+
         let i = 0;
 
-        while(this.user.min_count > users.length) {
+        while(limitUserCount > users.length) {
             i++;
             let name = `robot${i}`;
             context.state.gameStates[this.gameStatesId].users.push({

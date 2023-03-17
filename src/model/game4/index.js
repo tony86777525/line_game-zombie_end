@@ -10,9 +10,13 @@ module.exports = async function App(context) {
     }
 
     if (context.event.isPostback) {
-        if ("new game" === context.event.payload)
-            return IndexController.newGame(context);
-        else if ('join game' === context.event.payload)
+        if (/^new game \d{1,2}$/.test(context.event.payload)) {
+            let userCountArray = (context.event.payload).toLowerCase().match(/\d{1,2}/ig);
+            let userCount = 0;
+            if (userCountArray.length === 1) userCount = userCountArray.shift();
+
+            return IndexController.newGame(context, userCount);
+        } else if ('join game' === context.event.payload)
             return IndexController.joinGame(context);
         else if('start game' === context.event.payload)
             return IndexController.SelectNumber(context);
@@ -41,15 +45,23 @@ module.exports = async function App(context) {
             }
         }
 
-        switch ((context.event.text).toLowerCase()) {
-            case 'start':
-                return IndexController.ResetGame(context);
-            case 'resetgameround':
-                return IndexController.resetGameRound(context);
-            case 'call db':
-                return IndexController.callDB(context);
-            case 'call game':
-                return IndexController.callGame(context);
+        if (context.event.text) {
+            switch ((context.event.text).toLowerCase()) {
+                case 'start':
+                    return IndexController.ResetGame(context);
+                case 'resetgameround':
+                    return IndexController.resetGameRound(context);
+                case 'call db':
+                    return IndexController.callDB(context);
+                case 'call game':
+                    return IndexController.callGame(context);
+            }
+            if (/^start \d{1,2}$/.test((context.event.text).toLowerCase())) {
+                let userCountArray = (context.event.text).toLowerCase().match(/\d{1,2}/ig);
+                if (userCountArray.length === 1) {
+                    return IndexController.ResetGame(context, userCountArray.shift());
+                }
+            }
         }
     }
 

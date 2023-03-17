@@ -33,8 +33,8 @@ async function WelcomeToJoinGame(context) {
     await Message.getFollowContents(context);
 }
 
-async function NewGame(context) {
-    GameState.init(context);
+async function NewGame(context, userCount) {
+    GameState.init(context, userCount);
     const isChangeState = GameState.setStateJoinGame(context);
 
     if (false === isChangeState) {
@@ -170,8 +170,8 @@ async function StartGame(context) {
     let returnMessage = [];
 
     returnMessage.push(Message.getStartGameContents(context, GameState));
-
-    returnMessage.push(_startGameRound(context));
+    let a = _startGameRound(context);
+    returnMessage.push(a);
 
     await returnMessage;
 }
@@ -321,8 +321,11 @@ async function SelectRoleNumber(context, selectRoleNumber) {
     await returnMessage;
 }
 
-async function ResetGame(context) {
-    await Message.getResetGameContents(context);
+async function ResetGame(context, userCount = 0) {
+    if (!(userCount >= 5 && userCount <= 10)) {
+        userCount = 0;
+    }
+    await Message.getResetGameContents(context, userCount);
 }
 
 async function ResetGameCancel(context) {
@@ -369,9 +372,7 @@ function _startGameRound(context, gameRound = 0) {
     GameState.setGameRound(context, gameRound);
     GameState.setScenes(context, gameRound, sceneIds);
 
-    // const checkRoleUsers = GameState.getCheckRoleUsers(context);
-    // const newSceneIds = GameState.getNowScenes(context, gameRound);
-    const newSceneNames = Scene.getSceneNameByIds(sceneIds)
+    const newSceneNames = Scene.getSceneNameByIds(sceneIds);
 
     return Message.getGameRoundContents(context, GameState, gameRound, newSceneNames);
 }
