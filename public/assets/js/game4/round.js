@@ -22,6 +22,10 @@ function initializeLiff(myLiffId) {
             liff.getProfile().then(profile => {
                 const userId = profile.userId;
                 const roleUser = roleUsers.find(roleUser => roleUser.userId === userId);
+                let getUserGuess = null !== localStorage.getItem('guess') ? localStorage.getItem('guess') : JSON.stringify({});
+                getUserGuess = JSON.parse(getUserGuess);
+                getUserGuess = getUserGuess.id === guessKey ? JSON.parse(getUserGuess.data) : [];
+
                 if (undefined === roleUser) {
                     alert('你不是本局玩家');
                     liff.closeWindow();
@@ -32,7 +36,8 @@ function initializeLiff(myLiffId) {
                 document.querySelectorAll(`[data-js-role-number]`).forEach(function(item, index){
                     if (roleUsers.length > 5 || (roleUsers.length <= 5 && index < 5)) {
                         item.classList.add('active');
-                        let userGuess = roleUser.guess.find(userGuess => Number(userGuess.number)
+
+                        let userGuess = getUserGuess.find(userGuess => Number(userGuess.number)
                             === Number(item.dataset.jsRoleNumber));
                         if (undefined !== userGuess) {
                             item.dataset.guess = userGuess.guess;
@@ -131,26 +136,40 @@ function changeToStartGame(userId) {
         document.querySelectorAll('[data-guess]:not([data-group=""])').forEach(guess => {
             guess.addEventListener('click', (el) => {
                 let newGuess = (Number(el.target.getAttribute('data-guess')) + 1) % 5;
-                let userNumber = el.target.getAttribute('data-js-role-number');
+                // let userNumber = el.target.getAttribute('data-js-role-number');
 
-                fetch('/setGuess',{
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        sessionStoreKey: `${sessionStoreKey}`,
-                        userId: `${userId}`,
-                        userNumber: `${userNumber}`,
-                        guess: `${newGuess}`
-                    })
-                }).then(reqResponse => reqResponse.json())
-                    .then(jsonResponse => {
-                        el.target.dataset.guess = newGuess;
-                    }).catch(function(err){
-                    console.log(err);
+                el.target.dataset.guess = newGuess;
+
+                let newAllGuess = [];
+                document.querySelectorAll('[data-guess]:not([data-group=""])').forEach(element => {
+                    if ('0' !== element.dataset.guess) {
+                        newAllGuess.push({number: element.dataset.jsRoleNumber, guess: element.dataset.guess});
+                    }
                 });
+
+                localStorage.setItem('guess', JSON.stringify({
+                    id: guessKey,
+                    data: JSON.stringify(newAllGuess)
+                }));
+
+                // fetch('/setGuess',{
+                //     method: 'POST',
+                //     headers: {
+                //         'Content-Type': 'application/json',
+                //         'Accept': 'application/json'
+                //     },
+                //     body: JSON.stringify({
+                //         sessionStoreKey: `${sessionStoreKey}`,
+                //         userId: `${userId}`,
+                //         userNumber: `${userNumber}`,
+                //         guess: `${newGuess}`
+                //     })
+                // }).then(reqResponse => reqResponse.json())
+                //     .then(jsonResponse => {
+                //         el.target.dataset.guess = newGuess;
+                //     }).catch(function(err){
+                //     console.log(err);
+                // });
             });
         });
     }

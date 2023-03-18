@@ -52,29 +52,29 @@ app.prepare().then(() => {
     //     }
     // });
 
-    server.post('/setGuess', async (req, res) => {
-        try {
-            const {sessionStoreKey, userId, userNumber, guess} = req.body;
-            const sessionStore = new FileSessionStore();
-            const allData = await sessionStore.read(`line:${sessionStoreKey}`);
-            const gameData = allData._state.gameStates[Config.gameStatesId];
-            let users = gameData.users;
-            let user = users.find(user => userId === user.id);
-            let userGuess = user.guess.find(userGuess => userGuess.number === userNumber);
-
-            if (undefined !== userGuess) {
-                userGuess.guess = guess;
-            } else {
-                user.guess.push({number: userNumber, guess: guess});
-            }
-
-            await sessionStore.write(`line:${userId}`, allData);
-
-            res.json({data: req.body});
-        } catch (e) {
-            res.end(e.message || e.toString());
-        }
-    });
+    // server.post('/setGuess', async (req, res) => {
+    //     try {
+    //         const {sessionStoreKey, userId, userNumber, guess} = req.body;
+    //         const sessionStore = new FileSessionStore();
+    //         const allData = await sessionStore.read(`line:${sessionStoreKey}`);
+    //         const gameData = allData._state.gameStates[Config.gameStatesId];
+    //         let users = gameData.users;
+    //         let user = users.find(user => userId === user.id);
+    //         let userGuess = user.guess.find(userGuess => userGuess.number === userNumber);
+    //
+    //         if (undefined !== userGuess) {
+    //             userGuess.guess = guess;
+    //         } else {
+    //             user.guess.push({number: userNumber, guess: guess});
+    //         }
+    //
+    //         await sessionStore.write(`line:${userId}`, allData);
+    //
+    //         res.json({data: req.body});
+    //     } catch (e) {
+    //         res.end(e.message || e.toString());
+    //     }
+    // });
 
     server.get('/liff2', async (req, res) => {
         // const params = getParams(req);
@@ -137,6 +137,7 @@ app.prepare().then(() => {
 
         const data = {
             // url: `${Config.route}`,
+            guessKey: `${gameData.createdAt}`,
             sessionStoreKey: sessionStoreKey,
             roles: roles,
             canSeeAnyoneRoleId: canSeeAnyoneRoleId,

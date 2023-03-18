@@ -41,6 +41,7 @@ class GameState
                 contentText: ``,
                 mainContentText: ``
             },
+            createdAt: Date.now(),
             updatedAt: Date.now(),
         };
 
@@ -76,7 +77,6 @@ class GameState
                 number: '',
                 role_id: '',
                 group: '',
-                guess: [],
             });
 
             result = true;
@@ -116,7 +116,6 @@ class GameState
                 number: '',
                 role_id: '',
                 group: '',
-                guess: [],
             });
         }
     }
@@ -608,7 +607,6 @@ class GameState
                 roleId: user.role_id,
                 group: user.group,
                 number: Number(user.number),
-                guess: user.guess,
             });
         }
 

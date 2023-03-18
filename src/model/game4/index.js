@@ -2,20 +2,20 @@ const querystring = require('querystring');
 const IndexController = require('./app/controllers/IndexController');
 
 module.exports = async function App(context) {
-    // context.event.isLeave
-    // context.event.isJoin
-    // console.log(context.event);
     if (context.event.isFollow || context.event.isJoin) {
         return IndexController.WelcomeToJoinGame(context);
     }
 
     if (context.event.isPostback) {
+        console.log(context.event.payload);
         if (/^new game \d{1,2}$/.test(context.event.payload)) {
             let userCountArray = (context.event.payload).toLowerCase().match(/\d{1,2}/ig);
             let userCount = 0;
             if (userCountArray.length === 1) userCount = userCountArray.shift();
 
             return IndexController.newGame(context, userCount);
+        } else if ("new game" === context.event.payload) {
+            return IndexController.newGame(context);
         } else if ('join game' === context.event.payload)
             return IndexController.joinGame(context);
         else if('start game' === context.event.payload)
@@ -43,20 +43,17 @@ module.exports = async function App(context) {
             if ('votingRound' === params.sender) {
                 return IndexController.VotingRound(context, params.round, params.isAgree);
             }
-        }
-
-        if (context.event.text) {
-            switch ((context.event.text).toLowerCase()) {
-                case 'start':
-                    return IndexController.ResetGame(context);
-                case 'resetgameround':
-                    return IndexController.resetGameRound(context);
-                case 'call db':
-                    return IndexController.callDB(context);
-                case 'call game':
-                    return IndexController.callGame(context);
-            }
-            if (/^start \d{1,2}$/.test((context.event.text).toLowerCase())) {
+        } else if (context.event.text) {
+            let contextEventText = (context.event.text).toLowerCase();
+            if ('start' === contextEventText) {
+                return IndexController.ResetGame(context);
+            } else if ('resetgameround' === contextEventText) {
+                return IndexController.resetGameRound(context);
+            } else if ('call db' === contextEventText) {
+                return IndexController.callDB(context);
+            } else if ('call game' === contextEventText) {
+                return IndexController.callGame(context);
+            } else if (/^start \d{1,2}$/.test((context.event.text).toLowerCase())) {
                 let userCountArray = (context.event.text).toLowerCase().match(/\d{1,2}/ig);
                 if (userCountArray.length === 1) {
                     return IndexController.ResetGame(context, userCountArray.shift());

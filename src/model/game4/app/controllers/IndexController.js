@@ -33,7 +33,7 @@ async function WelcomeToJoinGame(context) {
     await Message.getFollowContents(context);
 }
 
-async function NewGame(context, userCount) {
+async function NewGame(context, userCount = 0) {
     GameState.init(context, userCount);
     const isChangeState = GameState.setStateJoinGame(context);
 
