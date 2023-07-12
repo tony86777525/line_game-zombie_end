@@ -48,6 +48,19 @@ class GameState
         return this;
     }
 
+    setLastUserId() {
+        const RECEIVE_POSTBACK_INTERVAL = 2000;
+
+        let result = false;
+
+        if (true === this._isChangeState(context, this.state.joinGame)) {
+            context.state.gameStates[this.gameStatesId].state = this.state.joinGame;
+            result = true;
+        }
+
+        return result;
+    }
+
     setStateJoinGame(context) {
         let result = false;
 

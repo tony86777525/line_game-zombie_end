@@ -1,7 +1,21 @@
 const querystring = require('querystring');
 const IndexController = require('./app/controllers/IndexController');
 
+const RECEIVE_POSTBACK_INTERVAL = 5000;
+let ReciveMsgLastTime = 0;
+
 module.exports = async function App(context) {
+    const { userId } = await context.getUserProfile();
+    // let ReciveMsgLastTime = context.state.ReciveMsgLastTime || 0;
+
+    if (context.state.ReciveMsgLastUserId === userId && ReciveMsgLastTime > 0) {
+        if (context.event.timestamp - ReciveMsgLastTime < RECEIVE_POSTBACK_INTERVAL) {
+            return;
+        }
+    }
+    context.state.ReciveMsgLastUserId = userId;
+    ReciveMsgLastTime = context.event.timestamp;
+
     if (context.event.isFollow || context.event.isJoin) {
         return IndexController.WelcomeToJoinGame(context);
     }
@@ -18,10 +32,12 @@ module.exports = async function App(context) {
             return IndexController.newGame(context);
         } else if ('join game' === context.event.payload)
             return IndexController.joinGame(context);
-        else if('start game' === context.event.payload)
+        else if ('start game' === context.event.payload)
             return IndexController.SelectNumber(context);
-        else if('reset game cancel' === context.event.payload)
+        else if ('reset game cancel' === context.event.payload)
             return IndexController.ResetGameCancel(context);
+        else if ('new game cancel' === context.event.payload)
+            return IndexController.NewGameCancel(context);
         else if(/^role=([\d]+)$/.test(context.event.payload)) {
             const params = _getParams(context.event.payload);
             return IndexController.SetRole(context, params);

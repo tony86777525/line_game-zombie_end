@@ -832,7 +832,7 @@ class Message
                         "action": {
                             "type": "postback",
                             "label": `${buttonTextNo}`,
-                            "data": "."
+                            "data": "new game cancel"
                         },
                         "margin": "md"
                     }

@@ -23,6 +23,7 @@ module.exports = {
     SelectRoleNumber: SelectRoleNumber,
     ResetGame: ResetGame,
     ResetGameCancel: ResetGameCancel,
+    NewGameCancel: NewGameCancel,
     callDB: CallDB,
     callGame: CallGame,
     index: Index,
@@ -163,7 +164,7 @@ async function StartGame(context) {
     const isChangeState = GameState.setStateStartGame(context);
 
     if (false === isChangeState) {
-        await _getErrorMessage(context);
+        // await _getErrorMessage(context);
         return;
     }
 
@@ -329,6 +330,10 @@ async function ResetGame(context, userCount = 0) {
 }
 
 async function ResetGameCancel(context) {
+    await Message.getResetGameCancelContents(context);
+}
+
+async function NewGameCancel(context) {
     await Message.getResetGameCancelContents(context);
 }
 
